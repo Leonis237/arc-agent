@@ -1,0 +1,157 @@
+# ☤ Arc Agent
+
+**Live autonomous AI agent on Arc Testnet** — ERC-8004 identity + ERC-8183 job contracts running on-chain.
+
+[![Live Dashboard](https://img.shields.io/badge/dashboard-arc.leonisforge.com-blue)](https://arc.leonisforge.com)
+[![Arc Testnet](https://img.shields.io/badge/network-Arc%20Testnet-7baeff)](https://docs.arc.network)
+[![Python](https://img.shields.io/badge/python-3.11-blue)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+---
+
+## What is this?
+
+An on-chain AI agent deployed on **Arc** (Circle's L1) that:
+
+- 🔍 **Scans** jobs posted on the ERC-8183 marketplace
+- 🧠 **Runs** an ONNX scam detection model on token addresses
+- 📤 **Submits** results on-chain as verifiable deliverables
+- 💰 **Earns** USDC for completed work
+
+**No testnet farming. Real product. Live on-chain.**
+
+## Architecture
+
+```
+┌──────────────────────────────────────┐
+│            Arc Testnet               │
+│  ┌──────────────┐  ┌──────────────┐  │
+│  │  ERC-8004    │  │  ERC-8183    │  │
+│  │  Identity    │  │  Job Market  │  │
+│  │  ID: 9138    │  │  12,500+ jobs│  │
+│  └──────┬───────┘  └──────┬───────┘  │
+│         │                 │          │
+│    Agent Card      Jobs + USDC       │
+└─────────┼─────────────────┼──────────┘
+          │                 │
+    ┌─────▼─────────────────▼──────┐
+    │        Agent Worker          │
+    │  ┌───────────────────────┐   │
+    │  │ ONNX Scam Detector    │   │
+    │  │ Token Analysis Engine │   │
+    │  │ Transaction Signer    │   │
+    │  └───────────────────────┘   │
+    │        │                     │
+    │    Flask Dashboard           │
+    │    (arc.leonisforge.com)     │
+    └──────────────────────────────┘
+```
+
+## Live Dashboard
+
+👉 **[arc.leonisforge.com](https://arc.leonisforge.com)**
+
+- Agent identity + wallet balance (live from chain)
+- Job list with real-time status badges
+- Worker stats (processed jobs, total earnings)
+- 15-second auto-refresh
+- Retro CRT terminal theme
+
+## Project Structure
+
+```
+webapp/              # Flask dashboard (deployed to Render)
+├── app.py           # Main Flask app + API endpoints
+├── arc_utils.py     # Web3 integration, contract ABIs
+├── templates/       # Dashboard HTML
+├── render.yaml      # Render deployment config
+└── requirements.txt # Flask, web3, gunicorn
+
+root/                # Agent scripts (local only)
+├── worker.py        # Autonomous agent worker
+├── register_agent.py # ERC-8004 agent registration
+├── create_job.py    # ERC-8183 job creation
+├── process_job.py   # Job processing + scam detection
+├── complete_job.py  # Job completion + payment
+└── arc_utils.py     # Shared web3 utilities
+```
+
+## ERC-8004 Agent
+
+| Field | Value |
+|---|---|
+| **Agent ID** | `9138` |
+| **Address** | `0xe43f191d3DBcCEBd94F960a42dEafdF8E57215BB` |
+| **Network** | Arc Testnet (chain 5042002) |
+| **Gas Token** | USDC |
+| **Capabilities** | Token scam detection, rugpull analysis |
+
+[View on ArcScan →](https://testnet.arcscan.app/address/0xe43f191d3DBcCEBd94F960a42dEafdF8E57215BB)
+
+## How It Works
+
+### Full Job Lifecycle
+
+1. **Client creates job** → `createJob(provider, evaluator, expiredAt, description, hook)`
+2. **Funds escrow** → `setBudget` + USDC `approve` + `fund`
+3. **Agent scans** → Worker detects FUNDED jobs matching capabilities
+4. **Agent executes** → Runs ONNX scam detector on target token
+5. **Agent submits** → `submit(jobId, deliverableHash)` — result on-chain
+6. **Agent completes** → `complete(jobId, deliverableHash)` — claims USDC payment
+
+### Job States
+
+```
+OPEN → FUNDED → IN_PROGRESS → DELIVERED → COMPLETED
+  │        │                                  │
+  └────────┴────────── CANCELLED ←───────────┘
+```
+
+## Arc Testnet Reference
+
+| Config | Value |
+|---|---|
+| Chain ID | `5042002` |
+| RPC | `https://rpc.testnet.arc.network` |
+| Explorer | `https://testnet.arcscan.app` |
+| Faucet | `https://faucet.circle.com` |
+| USDC Token | `0x3600000000000000000000000000000000000000` |
+| Identity Registry (ERC-8004) | `0x8004A818BFB912233c491871b3d84c89A494BD9e` |
+| AgenticCommerce (ERC-8183) | `0x0747EEf0706327138c69792bF28Cd525089e4583` |
+
+## Quick Start
+
+```bash
+# Clone
+git clone https://github.com/Leonis237/arc-agent.git
+cd arc-agent
+
+# Install
+pip install -r requirements.txt
+
+# Set up wallet
+cp .env.example .env
+# Add your PRIVATE_KEY to .env
+# Get testnet USDC: https://faucet.circle.com
+
+# Run dashboard locally
+python webapp/app.py
+# → http://localhost:5050
+```
+
+## Built With
+
+- **Python 3.11** — Core agent logic
+- **Flask** — Web dashboard
+- **web3.py** — Arc EVM interaction (no Circle SDK needed)
+- **ONNX Runtime** — Token scam detection model
+- **Gunicorn** — Production WSGI server
+- **Render** — Free-tier hosting
+
+## License
+
+MIT — Built by [Leonis Forge](https://leonisforge.com)
+
+---
+
+☤ *Not affiliated with Circle or Arc. Testnet product — ARC token not launched.*
