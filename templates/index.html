@@ -11,143 +11,321 @@
       theme: {
         extend: {
           colors: {
-            arc: { bg: '#0a0e17', card: '#111827', border: '#1f2937', accent: '#3b82f6', green: '#10b981', yellow: '#f59e0b', red: '#ef4444' }
+            arc: {
+              bg: '#060b14',
+              surface: '#0d1326',
+              card: '#111a2e',
+              border: '#1a2744',
+              accent: '#4f8fff',
+              accent2: '#7c5cfc',
+              green: '#00d4aa',
+              yellow: '#f0b429',
+              red: '#ff5e7a',
+              text: '#c8d6e5',
+              muted: '#6b7d99'
+            }
+          },
+          fontFamily: {
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+            sans: ['Inter', 'system-ui', 'sans-serif']
           }
         }
       }
     }
   </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    body { background: #0a0e17; color: #e5e7eb; font-family: 'Inter', system-ui, sans-serif; }
-    .card { background: #111827; border: 1px solid #1f2937; border-radius: 12px; }
-    .badge { padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
-    .badge-funded { background: #1e3a5f; color: #60a5fa; }
-    .badge-delivered { background: #1e3a2f; color: #34d399; }
-    .badge-completed { background: #1e352f; color: #10b981; }
-    .badge-open { background: #3a351e; color: #fbbf24; }
-    .badge-none { background: #1f1f1f; color: #6b7280; }
-    @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.5 } }
-    .pulse { animation: pulse 2s infinite; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #060b14;
+      color: #c8d6e5;
+      font-family: 'Inter', system-ui, sans-serif;
+      background-image:
+        radial-gradient(ellipse 60% 50% at 50% -20%, rgba(79, 143, 255, 0.08), transparent),
+        radial-gradient(ellipse 40% 60% at 80% 80%, rgba(124, 92, 252, 0.05), transparent);
+      min-height: 100vh;
+    }
+    .glass {
+      background: linear-gradient(135deg, rgba(17, 26, 46, 0.9), rgba(13, 19, 38, 0.95));
+      border: 1px solid rgba(79, 143, 255, 0.12);
+      backdrop-filter: blur(20px);
+    }
+    .glass-card {
+      background: linear-gradient(135deg, rgba(17, 26, 46, 0.85), rgba(13, 19, 38, 0.9));
+      border: 1px solid rgba(79, 143, 255, 0.1);
+    }
+    .gradient-border {
+      position: relative;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(79, 143, 255, 0.3), rgba(124, 92, 252, 0.2), rgba(0, 212, 170, 0.15));
+      padding: 1px;
+    }
+    .gradient-border > * {
+      background: #0d1326;
+      border-radius: 15px;
+    }
+    .agent-card {
+      background: linear-gradient(135deg, rgba(17, 26, 46, 0.95), rgba(22, 34, 58, 0.9));
+      border: 1px solid rgba(79, 143, 255, 0.2);
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .agent-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #4f8fff, #7c5cfc, #00d4aa);
+    }
+    .stat-pill {
+      background: rgba(79, 143, 255, 0.1);
+      border: 1px solid rgba(79, 143, 255, 0.2);
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .badge {
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .badge-funded { background: rgba(79, 143, 255, 0.15); color: #6aa5ff; border: 1px solid rgba(79, 143, 255, 0.25); }
+    .badge-delivered { background: rgba(240, 180, 41, 0.15); color: #f5c542; border: 1px solid rgba(240, 180, 41, 0.25); }
+    .badge-completed { background: rgba(0, 212, 170, 0.12); color: #00d4aa; border: 1px solid rgba(0, 212, 170, 0.25); }
+    .badge-open { background: rgba(200, 214, 229, 0.08); color: #a0b4cc; border: 1px solid rgba(200, 214, 229, 0.15); }
+    .badge-progress { background: rgba(124, 92, 252, 0.15); color: #9b85ff; border: 1px solid rgba(124, 92, 252, 0.25); }
+    .badge-none { background: rgba(107, 125, 153, 0.08); color: #6b7d99; border: 1px solid rgba(107, 125, 153, 0.1); }
+    .job-row {
+      transition: all 0.2s ease;
+      border-bottom: 1px solid rgba(26, 39, 68, 0.6);
+    }
+    .job-row:last-child { border-bottom: none; }
+    .job-row:hover { background: rgba(79, 143, 255, 0.04); }
+    .job-row.ours { background: rgba(79, 143, 255, 0.05); border-left: 3px solid #4f8fff; }
+    .pulse-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #00d4aa;
+      box-shadow: 0 0 8px rgba(0, 212, 170, 0.5);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.3); } }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in { animation: fadeUp 0.4s ease-out; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #1a2744; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #243356; }
   </style>
 </head>
-<body class="min-h-screen p-6">
-  <div class="max-w-4xl mx-auto">
-    
-    <!-- Header -->
-    <div class="flex items-center gap-3 mb-8">
-      <div class="text-3xl">☤</div>
-      <div>
-        <h1 class="text-2xl font-bold text-white">Hermes Agent</h1>
-        <p class="text-gray-400 text-sm">Arc Testnet Dashboard</p>
-      </div>
-      <div class="ml-auto flex items-center gap-2">
-        <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-green-500 pulse"></span>
-        <span id="statusText" class="text-sm text-gray-400">connecting...</span>
-      </div>
-    </div>
+<body class="p-6 md:p-10">
 
-    <!-- Agent Card -->
-    <div class="card p-6 mb-6">
-      <div class="flex items-start justify-between">
+  <div class="max-w-5xl mx-auto">
+
+    <!-- ── Header ── -->
+    <header class="flex items-center justify-between mb-10 animate-in">
+      <div class="flex items-center gap-4">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/20 flex items-center justify-center text-xl">
+          ☤
+        </div>
         <div>
-          <h2 class="text-lg font-semibold text-white mb-1">Agent Identity <span class="text-gray-500 text-sm font-normal">ERC-8004</span></h2>
-          <div class="flex items-center gap-4 mt-3">
-            <div class="bg-blue-500/10 text-blue-400 px-3 py-1.5 rounded-lg font-mono text-sm">
-              ID: <span id="agentId">{{ agent_id }}</span>
+          <h1 class="text-[1.65rem] font-bold text-white tracking-tight">Hermes Agent</h1>
+          <p class="text-sm text-arc-muted flex items-center gap-2">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-arc-accent"></span>
+            Arc Testnet Dashboard
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full glass text-sm">
+          <span class="pulse-dot"></span>
+          <span class="text-arc-green font-medium text-xs" id="statusText">LIVE</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── Agent Identity ── -->
+    <div class="agent-card p-6 mb-6 animate-in" style="animation-delay: 0.1s">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-semibold uppercase tracking-widest text-arc-muted">Agent Identity</span>
+            <span class="text-[10px] font-medium px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">ERC-8004</span>
+          </div>
+          <div class="flex items-center gap-3 flex-wrap">
+            <div class="stat-pill text-blue-300 font-mono text-sm">
+              <span class="text-arc-muted mr-1">ID</span> <span id="agentId" class="text-white font-semibold">{{ agent_id }}</span>
             </div>
-            <div class="text-gray-400 text-sm font-mono">
-              <span id="agentAddr">{{ agent_address[:10] }}...{{ agent_address[-4:] }}</span>
-            </div>
+            <span class="text-arc-muted font-mono text-xs" id="agentAddr">{{ agent_address[:8] }}<span class="text-arc-text">...</span>{{ agent_address[-6:] }}</span>
+            <button onclick="navigator.clipboard.writeText('{{ agent_address }}')" class="text-arc-muted hover:text-white transition-colors text-xs" title="Copy address">
+              <svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+          </div>
+          <div class="flex items-center gap-3 mt-3 text-xs text-arc-muted">
+            <span>Chain {{ chain_id }}</span>
+            <span class="opacity-40">·</span>
+            <span>rpc.testnet.arc.network</span>
+            <span class="opacity-40">·</span>
+            <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="text-arc-accent hover:text-blue-300 transition-colors font-medium">Explorer ↗</a>
           </div>
         </div>
-        <div class="text-right">
-          <div class="text-gray-400 text-xs uppercase tracking-wide mb-1">Balance</div>
-          <div class="text-2xl font-bold text-white" id="balance">--</div>
-          <div class="text-xs text-gray-500">USDC · Arc Testnet</div>
+
+        <div class="flex items-center gap-6">
+          <div class="text-right">
+            <div class="text-[10px] font-semibold uppercase tracking-widest text-arc-muted mb-1">Balance</div>
+            <div class="flex items-baseline gap-1 justify-end">
+              <span class="text-[2.25rem] font-extrabold text-white leading-none" id="balance">--</span>
+              <span class="text-sm font-medium text-arc-muted">USDC</span>
+            </div>
+            <div class="text-[11px] text-arc-muted mt-0.5">Arc Testnet</div>
+          </div>
+          <div class="w-px h-12 bg-arc-border hidden md:block"></div>
+          <div class="text-center hidden md:block">
+            <div class="text-[10px] font-semibold uppercase tracking-widest text-arc-muted mb-1">Status</div>
+            <div class="w-2.5 h-2.5 rounded-full bg-arc-green mx-auto" style="box-shadow: 0 0 10px rgba(0,212,170,0.4)"></div>
+            <div class="text-[11px] text-arc-green font-medium mt-1">Active</div>
+          </div>
         </div>
-      </div>
-      <div class="mt-4 flex gap-2 text-xs">
-        <span class="text-gray-500">Chain ID: {{ chain_id }}</span>
-        <span class="text-gray-600">·</span>
-        <span class="text-gray-500">RPC: rpc.testnet.arc.network</span>
-        <span class="text-gray-600">·</span>
-        <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="text-blue-400 hover:text-blue-300">Explorer →</a>
       </div>
     </div>
 
-    <!-- Job List -->
-    <div class="card p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold text-white">Recent Jobs <span class="text-gray-500 text-sm font-normal">ERC-8183</span></h2>
-        <div class="text-sm text-gray-400">
-          Total: <span id="jobCount" class="text-white font-mono">--</span>
-        </div>
+    <!-- ── Stats Row ── -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 animate-in" style="animation-delay: 0.15s">
+      <div class="glass-card rounded-xl p-4 text-center">
+        <div class="text-[10px] font-semibold uppercase tracking-widest text-arc-muted mb-1">Network</div>
+        <div class="text-lg font-bold text-white">Arc</div>
+        <div class="text-[11px] text-arc-muted">Testnet</div>
       </div>
-      <div id="jobList">
-        <div class="text-center py-8 text-gray-500">Loading jobs...</div>
+      <div class="glass-card rounded-xl p-4 text-center">
+        <div class="text-[10px] font-semibold uppercase tracking-widest text-arc-muted mb-1">Agent ID</div>
+        <div class="text-lg font-bold text-white font-mono">{{ agent_id }}</div>
+        <div class="text-[11px] text-arc-muted">ERC-8004</div>
+      </div>
+      <div class="glass-card rounded-xl p-4 text-center">
+        <div class="text-[10px] font-semibold uppercase tracking-widest text-arc-muted mb-1">Total Jobs</div>
+        <div class="text-lg font-bold text-white font-mono" id="statTotal">--</div>
+        <div class="text-[11px] text-arc-muted">On Network</div>
+      </div>
+      <div class="glass-card rounded-xl p-4 text-center">
+        <div class="text-[10px] font-semibold uppercase tracking-widest text-arc-muted mb-1">My Jobs</div>
+        <div class="text-lg font-bold text-arc-accent font-mono" id="statMyJobs">--</div>
+        <div class="text-[11px] text-arc-muted">Active</div>
       </div>
     </div>
 
-    <!-- Footer -->
-    <div class="text-center mt-6 text-xs text-gray-600">
-      Hermes Agent ☤ · <a href="https://leonisforge.com" target="_blank" class="text-gray-500 hover:text-gray-400">Leonis Forge</a> · Arc Testnet
+    <!-- ── Jobs ── -->
+    <div class="glass rounded-2xl overflow-hidden animate-in" style="animation-delay: 0.2s">
+      <div class="px-6 py-4 border-b border-arc-border flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <h2 class="text-sm font-semibold text-white uppercase tracking-wider">Recent Jobs</h2>
+          <span class="text-[10px] font-medium px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">ERC-8183</span>
+        </div>
+        <div class="text-xs text-arc-muted">
+          Total <span class="text-white font-mono font-medium" id="jobCount">--</span>
+        </div>
+      </div>
+
+      <!-- Table Header -->
+      <div class="px-6 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-arc-muted flex items-center gap-3 border-b border-arc-border/50">
+        <span class="w-16 shrink-0">Job</span>
+        <span class="flex-1 min-w-0">Description</span>
+        <span class="w-24 text-center shrink-0 hidden sm:block">Status</span>
+        <span class="w-24 text-right shrink-0">Budget</span>
+        <span class="w-6 shrink-0"></span>
+      </div>
+
+      <div id="jobList" class="divide-y divide-arc-border/30">
+        <div class="px-6 py-12 text-center">
+          <div class="inline-flex items-center gap-2 text-arc-muted">
+            <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+            <span class="text-sm">Loading jobs from chain...</span>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- ── Footer ── -->
+    <footer class="flex items-center justify-between mt-8 text-xs text-arc-muted animate-in" style="animation-delay: 0.3s">
+      <div class="flex items-center gap-4">
+        <span>☤ Hermes Agent</span>
+        <span class="opacity-30">·</span>
+        <a href="https://leonisforge.com" target="_blank" class="hover:text-white transition-colors">Leonis Forge</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://testnet.arcscan.app" target="_blank" class="hover:text-white transition-colors">Explorer</a>
+        <span class="opacity-30">·</span>
+        <a href="https://docs.arc.network" target="_blank" class="hover:text-white transition-colors">Docs</a>
+      </div>
+    </footer>
+
   </div>
 
   <script>
+    const OUR_ADDRESS = '{{ agent_address }}'.toLowerCase();
     const STATE_CLASSES = {
-      'FUNDED': 'badge-funded',
-      'DELIVERED': 'badge-delivered',
-      'COMPLETED': 'badge-completed',
-      'OPEN': 'badge-open',
+      'FUNDED': 'badge-funded', 'DELIVERED': 'badge-delivered',
+      'COMPLETED': 'badge-completed', 'OPEN': 'badge-open',
+      'IN_PROGRESS': 'badge-progress',
     };
 
     async function refresh() {
       try {
-        // Fetch agent status
-        const statusRes = await fetch('/api/status');
+        const [statusRes, jobsRes] = await Promise.all([
+          fetch('/api/status'), fetch('/api/jobs')
+        ]);
         const status = await statusRes.json();
+        const jobsData = await jobsRes.json();
+
+        // Balance
         if (!status.error) {
           document.getElementById('balance').textContent = status.balance_usdc.toFixed(2);
-          document.getElementById('statusDot').className = 'w-2.5 h-2.5 rounded-full bg-green-500 pulse';
-          document.getElementById('statusText').textContent = 'live';
-        } else {
-          document.getElementById('statusDot').className = 'w-2.5 h-2.5 rounded-full bg-red-500';
-          document.getElementById('statusText').textContent = 'error';
         }
 
-        // Fetch jobs
-        const jobsRes = await fetch('/api/jobs');
-        const jobsData = await jobsRes.json();
+        // Jobs
         if (!jobsData.error && jobsData.jobs) {
-          document.getElementById('jobCount').textContent = jobsData.job_counter;
           const jobs = jobsData.jobs.filter(j => j.state !== 'NONEXISTENT');
+          document.getElementById('jobCount').textContent = jobsData.job_counter;
+          document.getElementById('statTotal').textContent = jobsData.job_counter;
+
+          // Count our jobs
+          const ourJobs = jobs.filter(j => j.client?.toLowerCase() === OUR_ADDRESS || j.provider?.toLowerCase() === OUR_ADDRESS);
+          document.getElementById('statMyJobs').textContent = ourJobs.length;
+
           const html = jobs.length === 0
-            ? '<div class="text-center py-8 text-gray-500">No jobs found. Run create_job.py to create one.</div>'
-            : jobs.reverse().map(j => `
-              <div class="border-t border-gray-800 py-3 flex items-center justify-between hover:bg-white/[0.02] px-2 -mx-2 rounded transition-colors">
-                <div class="flex items-center gap-3 min-w-0">
-                  <span class="font-mono text-sm text-gray-400 w-14 shrink-0">#${j.job_id}</span>
-                  <span class="text-sm text-gray-300 truncate max-w-md">${j.description}</span>
-                </div>
-                <div class="flex items-center gap-3 shrink-0 ml-4">
-                  <span class="badge ${STATE_CLASSES[j.state] || 'badge-none'}">${j.state}</span>
-                  <span class="text-sm text-gray-400 font-mono w-20 text-right">${j.budget.toFixed(2)} USDC</span>
-                  <a href="https://testnet.arcscan.app/tx/${j.job_id}" target="_blank" class="text-gray-600 hover:text-gray-400 text-xs">↗</a>
-                </div>
-              </div>
-            `).join('');
+            ? '<div class="px-6 py-12 text-center text-arc-muted text-sm">No jobs found. Run create_job.py to create one.</div>'
+            : jobs.reverse().map(j => {
+              const isOurs = j.client?.toLowerCase() === OUR_ADDRESS || j.provider?.toLowerCase() === OUR_ADDRESS;
+              const stateClass = STATE_CLASSES[j.state] || 'badge-none';
+              return `
+              <div class="job-row px-6 py-3.5 flex items-center gap-3 ${isOurs ? 'ours' : ''}">
+                <span class="font-mono text-xs w-16 shrink-0 ${isOurs ? 'text-arc-accent font-semibold' : 'text-arc-muted'}">#${j.job_id}</span>
+                <span class="flex-1 min-w-0 text-sm truncate ${isOurs ? 'text-white' : 'text-arc-text'}">${j.description}</span>
+                <span class="badge ${stateClass} w-24 text-center shrink-0 hidden sm:inline-block">${j.state.toLowerCase().replace('_',' ')}</span>
+                <span class="font-mono text-xs w-24 text-right shrink-0 ${isOurs && j.budget > 0 ? 'text-arc-accent font-semibold' : 'text-arc-muted'}">${j.budget.toFixed(2)} USDC</span>
+                <a href="https://testnet.arcscan.app/tx/0x0000000000000000000000000000000000000000000000000000000000000000" target="_blank" class="text-arc-muted hover:text-white transition-colors shrink-0 opacity-40 hover:opacity-100 w-6 text-center">
+                  <svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+              </div>`;
+            }).join('');
+
           document.getElementById('jobList').innerHTML = html;
         }
       } catch(e) {
-        document.getElementById('statusDot').className = 'w-2.5 h-2.5 rounded-full bg-red-500';
-        document.getElementById('statusText').textContent = 'offline';
-        console.error(e);
+        console.error('Refresh failed:', e);
+        document.getElementById('statusText').textContent = 'OFFLINE';
       }
     }
 
     refresh();
-    setInterval(refresh, 10000);
+    setInterval(refresh, 15000);
   </script>
 </body>
 </html>
