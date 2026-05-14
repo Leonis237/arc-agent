@@ -5,7 +5,7 @@
 [![Live Dashboard](https://img.shields.io/badge/dashboard-arc.leonisforge.com-blue)](https://arc.leonisforge.com)
 [![Arc Testnet](https://img.shields.io/badge/network-Arc%20Testnet-7baeff)](https://docs.arc.network)
 [![Python](https://img.shields.io/badge/python-3.11-blue)](https://www.python.org/)
-[![Tests](https://github.com/Leonis237/arc-agent/actions/workflows/test.yml/badge.svg)](https://github.com/Leonis237/arc-agent/actions)
+[![Tests](https://github.com/Leonis237/arc-agent/workflows/Tests/badge.svg)](https://github.com/Leonis237/arc-agent/actions)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ---
