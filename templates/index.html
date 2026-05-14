@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermes Agent — Arc Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            arc: { bg: '#0a0e17', card: '#111827', border: '#1f2937', accent: '#3b82f6', green: '#10b981', yellow: '#f59e0b', red: '#ef4444' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #0a0e17; color: #e5e7eb; font-family: 'Inter', system-ui, sans-serif; }
+    .card { background: #111827; border: 1px solid #1f2937; border-radius: 12px; }
+    .badge { padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+    .badge-funded { background: #1e3a5f; color: #60a5fa; }
+    .badge-delivered { background: #1e3a2f; color: #34d399; }
+    .badge-completed { background: #1e352f; color: #10b981; }
+    .badge-open { background: #3a351e; color: #fbbf24; }
+    .badge-none { background: #1f1f1f; color: #6b7280; }
+    @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.5 } }
+    .pulse { animation: pulse 2s infinite; }
+  </style>
+</head>
+<body class="min-h-screen p-6">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Header -->
+    <div class="flex items-center gap-3 mb-8">
+      <div class="text-3xl">☤</div>
+      <div>
+        <h1 class="text-2xl font-bold text-white">Hermes Agent</h1>
+        <p class="text-gray-400 text-sm">Arc Testnet Dashboard</p>
+      </div>
+      <div class="ml-auto flex items-center gap-2">
+        <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-green-500 pulse"></span>
+        <span id="statusText" class="text-sm text-gray-400">connecting...</span>
+      </div>
+    </div>
+
+    <!-- Agent Card -->
+    <div class="card p-6 mb-6">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-lg font-semibold text-white mb-1">Agent Identity <span class="text-gray-500 text-sm font-normal">ERC-8004</span></h2>
+          <div class="flex items-center gap-4 mt-3">
+            <div class="bg-blue-500/10 text-blue-400 px-3 py-1.5 rounded-lg font-mono text-sm">
+              ID: <span id="agentId">{{ agent_id }}</span>
+            </div>
+            <div class="text-gray-400 text-sm font-mono">
+              <span id="agentAddr">{{ agent_address[:10] }}...{{ agent_address[-4:] }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-gray-400 text-xs uppercase tracking-wide mb-1">Balance</div>
+          <div class="text-2xl font-bold text-white" id="balance">--</div>
+          <div class="text-xs text-gray-500">USDC · Arc Testnet</div>
+        </div>
+      </div>
+      <div class="mt-4 flex gap-2 text-xs">
+        <span class="text-gray-500">Chain ID: {{ chain_id }}</span>
+        <span class="text-gray-600">·</span>
+        <span class="text-gray-500">RPC: rpc.testnet.arc.network</span>
+        <span class="text-gray-600">·</span>
+        <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="text-blue-400 hover:text-blue-300">Explorer →</a>
+      </div>
+    </div>
+
+    <!-- Job List -->
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-white">Recent Jobs <span class="text-gray-500 text-sm font-normal">ERC-8183</span></h2>
+        <div class="text-sm text-gray-400">
+          Total: <span id="jobCount" class="text-white font-mono">--</span>
+        </div>
+      </div>
+      <div id="jobList">
+        <div class="text-center py-8 text-gray-500">Loading jobs...</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-6 text-xs text-gray-600">
+      Hermes Agent ☤ · <a href="https://leonisforge.com" target="_blank" class="text-gray-500 hover:text-gray-400">Leonis Forge</a> · Arc Testnet
+    </div>
+  </div>
+
+  <script>
+    const STATE_CLASSES = {
+      'FUNDED': 'badge-funded',
+      'DELIVERED': 'badge-delivered',
+      'COMPLETED': 'badge-completed',
+      'OPEN': 'badge-open',
+    };
+
+    async function refresh() {
+      try {
+        // Fetch agent status
+        const statusRes = await fetch('/api/status');
+        const status = await statusRes.json();
+        if (!status.error) {
+          document.getElementById('balance').textContent = status.balance_usdc.toFixed(2);
+          document.getElementById('statusDot').className = 'w-2.5 h-2.5 rounded-full bg-green-500 pulse';
+          document.getElementById('statusText').textContent = 'live';
+        } else {
+          document.getElementById('statusDot').className = 'w-2.5 h-2.5 rounded-full bg-red-500';
+          document.getElementById('statusText').textContent = 'error';
+        }
+
+        // Fetch jobs
+        const jobsRes = await fetch('/api/jobs');
+        const jobsData = await jobsRes.json();
+        if (!jobsData.error && jobsData.jobs) {
+          document.getElementById('jobCount').textContent = jobsData.job_counter;
+          const jobs = jobsData.jobs.filter(j => j.state !== 'NONEXISTENT');
+          const html = jobs.length === 0
+            ? '<div class="text-center py-8 text-gray-500">No jobs found. Run create_job.py to create one.</div>'
+            : jobs.reverse().map(j => `
+              <div class="border-t border-gray-800 py-3 flex items-center justify-between hover:bg-white/[0.02] px-2 -mx-2 rounded transition-colors">
+                <div class="flex items-center gap-3 min-w-0">
+                  <span class="font-mono text-sm text-gray-400 w-14 shrink-0">#${j.job_id}</span>
+                  <span class="text-sm text-gray-300 truncate max-w-md">${j.description}</span>
+                </div>
+                <div class="flex items-center gap-3 shrink-0 ml-4">
+                  <span class="badge ${STATE_CLASSES[j.state] || 'badge-none'}">${j.state}</span>
+                  <span class="text-sm text-gray-400 font-mono w-20 text-right">${j.budget.toFixed(2)} USDC</span>
+                  <a href="https://testnet.arcscan.app/tx/${j.job_id}" target="_blank" class="text-gray-600 hover:text-gray-400 text-xs">↗</a>
+                </div>
+              </div>
+            `).join('');
+          document.getElementById('jobList').innerHTML = html;
+        }
+      } catch(e) {
+        document.getElementById('statusDot').className = 'w-2.5 h-2.5 rounded-full bg-red-500';
+        document.getElementById('statusText').textContent = 'offline';
+        console.error(e);
+      }
+    }
+
+    refresh();
+    setInterval(refresh, 10000);
+  </script>
+</body>
+</html>
