@@ -3,155 +3,306 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arc Dashboard — Testnet Explorer</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <title>Arc Agent — On-chain AI Agent Dashboard</title>
+  <meta name="description" content="Live Arc testnet dashboard — ERC-8004 AI agent identity + ERC-8183 job contracts running on-chain. Built on Arc by Circle.">
+  <meta property="og:title" content="Arc Agent — On-chain AI Agent Dashboard">
+  <meta property="og:description" content="Live Arc testnet data: AI agent identity, job marketplace, USDC gas. Built on Arc by Circle.">
+  <meta name="twitter:card" content="summary">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
   <style>
+    /* ═══════════════════════════════════════════════════════════
+       LEONIS SKETCH — Hand-drawn design system for Arc Agent
+       ═══════════════════════════════════════════════════════════ */
     :root {
-      --bg:       #0a0a0a;
-      --fg:       #7baeff;
-      --fg-dim:   #3b6db5;
-      --fg-muted: #0a1a4a;
-      --amber:    #ffb000;
-      --red:      #ff3333;
-      --cyan:     #c4d8ff;
-      --white:    #e0e0e0;
-      --font:     'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      --paper:    #fdfbf7;
+      --ink:      #2d2d2d;
+      --red:      #ff4d4d;
+      --blue:     #2d5da1;
+      --yellow:   #fff9c4;
+      --muted:    #e5e0d8;
+      --white:    #ffffff;
+      --font-h:   'Kalam', cursive;
+      --font-b:   'Patrick Hand', cursive;
+      --wobbly:   255px 15px 225px 15px / 15px 225px 15px 255px;
+      --wobbly-sm: 185px 25px 155px 25px / 25px 155px 25px 185px;
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
 
     body {
-      background: var(--bg);
-      color: var(--fg);
-      font-family: var(--font);
-      font-size: 13px;
-      line-height: 1.65;
+      background-color: var(--paper);
+      background-image: radial-gradient(var(--muted) 1px, transparent 1px);
+      background-size: 24px 24px;
+      color: var(--ink);
+      font-family: var(--font-b);
+      font-size: 17px;
+      line-height: 1.5;
       min-height: 100vh;
-      position: relative;
-      overflow-x: hidden;
     }
 
-    /* ── CRT Scanlines ── */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9999;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,0,0,0.03) 2px,
-        rgba(0,0,0,0.03) 4px
-      );
-    }
-
-    /* ── Text glow ── */
-    .glow { text-shadow: 0 0 6px rgba(123,174,255,0.4); }
-    .glow-amber { text-shadow: 0 0 6px rgba(255,176,0,0.4); }
-
-    /* ── Layout ── */
+    /* ── Container ── */
     .container {
-      max-width: 1200px;
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 2rem 1.5rem;
+      padding: 2rem 1.5rem 3rem;
     }
 
-    /* ── Two-column main layout ── */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 1rem;
-      align-items: start;
-    }
-    @media (max-width: 900px) {
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* ── Window pane ── */
-    .window {
-      border: 1px solid var(--fg-dim);
-      margin-bottom: 1rem;
+    /* ── Header ── */
+    .site-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
       position: relative;
     }
-    .window-header {
-      background: var(--fg-dim);
-      color: var(--bg);
-      padding: 4px 10px;
-      font-size: 12px;
+    .site-header h1 {
+      font-family: var(--font-h);
+      font-size: 52px;
       font-weight: 700;
-      text-transform: uppercase;
+      color: var(--ink);
       letter-spacing: 2px;
+      line-height: 1.1;
+      display: inline-block;
+      position: relative;
+    }
+    .site-header h1::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 5%;
+      width: 90%;
+      height: 3px;
+      background: var(--ink);
+      border-radius: 1px;
+      /* wavy effect via multiple shadows */
+      box-shadow: 0 5px 0 -2px var(--ink), 0 10px 0 -4px var(--ink);
+    }
+    .site-header .subtitle {
+      font-family: var(--font-b);
+      font-size: 19px;
+      color: var(--ink);
+      opacity: 0.6;
+      margin-top: 0.75rem;
+    }
+    .site-header .badge-row {
+      margin-top: 0.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ── Status bar ── */
+    .status-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      user-select: none;
+      margin-bottom: 1.5rem;
+      font-size: 14px;
+      flex-wrap: wrap;
+      gap: 8px;
     }
-    .window-body {
-      padding: 1.25rem;
-    }
-
-    /* ── ASCII divider ── */
-    .hr {
-      color: var(--fg-muted);
-      user-select: none;
-      white-space: pre;
-      overflow: hidden;
-      font-size: 12px;
-      margin: 0.25rem 0;
-    }
-
-    /* ── Blinking cursor ── */
-    .cursor {
+    .status-bar .dot {
       display: inline-block;
-      width: 8px;
-      height: 15px;
-      background: var(--fg);
-      vertical-align: middle;
-      margin-left: 2px;
-      animation: blink 1s step-end infinite;
+      width: 10px;
+      height: 10px;
+      background: var(--red);
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      margin-right: 4px;
+      animation: pulse 2s ease-in-out infinite;
     }
-    @keyframes blink {
+    @keyframes pulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
+      50% { opacity: 0.3; }
     }
 
-    /* ── Buttons ── */
+    /* ── Tags ── */
+    .tag {
+      display: inline-block;
+      background: var(--white);
+      border: 2px solid var(--ink);
+      padding: 2px 10px;
+      font-family: var(--font-b);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-radius: var(--wobbly-sm);
+    }
+    .tag-yellow { background: var(--yellow); }
+    .tag-red    { background: var(--red); color: var(--white); border-color: var(--ink); }
+
+    /* ── Two-column grid ── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 1.2rem;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .site-header h1 { font-size: 36px; }
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--white);
+      border: 3px solid var(--ink);
+      border-radius: var(--wobbly);
+      box-shadow: 4px 4px 0 0 var(--ink);
+      margin-bottom: 1.2rem;
+      position: relative;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    .card:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 6px 6px 0 0 var(--ink);
+    }
+    .card-yellow { background: var(--yellow); }
+    .card-header {
+      border-bottom: 2px dashed var(--ink);
+      padding: 10px 16px;
+      font-family: var(--font-h);
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      /* tape decoration */
+      position: relative;
+    }
+    .card-header::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-2deg);
+      width: 50px;
+      height: 14px;
+      background: rgba(229,224,216,0.7);
+      border: 1px solid rgba(45,45,45,0.15);
+    }
+    .card-body {
+      padding: 16px;
+    }
+
+    /* ── Agent identity card ── */
+    .agent-split {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .agent-id {
+      font-family: var(--font-h);
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .agent-balance {
+      text-align: right;
+    }
+    .agent-balance .amount {
+      font-family: var(--font-h);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .agent-balance .unit {
+      font-size: 14px;
+      opacity: 0.5;
+    }
+    .agent-addr {
+      font-size: 12px;
+      word-break: break-all;
+      margin-top: 4px;
+      opacity: 0.6;
+    }
+
+    /* ── Button ── */
     .btn {
       display: inline-block;
-      background: transparent;
-      color: var(--fg);
-      border: 1px solid var(--fg-dim);
-      padding: 4px 12px;
-      font-family: var(--font);
-      font-size: 12px;
+      background: var(--white);
+      color: var(--ink);
+      border: 3px solid var(--ink);
+      padding: 5px 14px;
+      font-family: var(--font-b);
+      font-size: 14px;
       cursor: pointer;
       text-decoration: none;
       text-transform: uppercase;
       letter-spacing: 1px;
-      transition: all 0.1s;
+      border-radius: var(--wobbly-sm);
+      box-shadow: 3px 3px 0 0 var(--ink);
+      transition: all 0.1s ease;
     }
     .btn:hover {
-      background: var(--fg);
-      color: var(--bg);
-      border-color: var(--fg);
+      background: var(--red);
+      color: var(--white);
+      box-shadow: 2px 2px 0 0 var(--ink);
+      transform: translate(1px, 1px);
     }
     .btn:active {
-      background: var(--fg-dim);
-      transform: translateY(1px);
+      box-shadow: none;
+      transform: translate(3px, 3px);
     }
-    .btn-amber {
-      color: var(--amber);
-      border-color: rgba(255,176,0,0.3);
+    .btn-blue:hover { background: var(--blue); }
+    .btn-sm { font-size: 11px; padding: 3px 10px; }
+    .btn-full { display: block; width: 100%; text-align: center; }
+
+    /* ── Stats row ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.2rem;
     }
-    .btn-amber:hover {
-      background: var(--amber);
-      color: var(--bg);
-      border-color: var(--amber);
+    .stat-box {
+      background: var(--white);
+      border: 3px solid var(--ink);
+      border-radius: var(--wobbly-sm);
+      box-shadow: 3px 3px 0 0 var(--ink);
+      padding: 12px 10px;
+      text-align: center;
     }
+    .stat-box .stat-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.5;
+      margin-bottom: 4px;
+    }
+    .stat-box .stat-val {
+      font-family: var(--font-h);
+      font-size: 18px;
+      font-weight: 700;
+    }
+    @media (max-width: 768px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── Job table ── */
+    .job-row {
+      display: grid;
+      grid-template-columns: 50px 1fr 100px 80px 24px;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 2px dashed var(--muted);
+      font-size: 14px;
+    }
+    .job-row:last-child { border-bottom: none; }
+    .job-row:hover { background: rgba(255,249,196,0.4); }
+    .job-row.ours { background: rgba(255,249,196,0.3); }
+    .job-id { font-weight: 700; color: var(--ink); }
+    .job-desc { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .job-budget { text-align: right; font-weight: 700; white-space: nowrap; }
+    .job-link { color: var(--ink); opacity: 0.4; text-decoration: none; text-align: right; }
+    .job-link:hover { opacity: 1; }
 
     /* ── Badges ── */
     .badge {
@@ -160,104 +311,61 @@
       font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      border: 2px solid var(--ink);
+      border-radius: var(--wobbly-sm);
     }
-    .badge-ok    { color: var(--fg);   border: 1px solid var(--fg-dim); }
-    .badge-warn  { color: var(--amber); border: 1px solid rgba(255,176,0,0.3); }
-    .badge-err   { color: var(--red);   border: 1px solid rgba(255,51,51,0.3); }
-    .badge-info  { color: var(--cyan);  border: 1px solid rgba(0,212,255,0.3); }
+    .badge-ok    { background: var(--muted); }
+    .badge-warn  { background: var(--yellow); }
+    .badge-err   { background: var(--red); color: var(--white); }
+    .badge-info  { background: #d4e4ff; }
 
-    /* ── Stats grid ── */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
+    /* ── Form inputs ── */
+    .input {
+      width: 100%;
+      background: var(--white);
+      color: var(--ink);
+      border: 3px solid var(--ink);
+      border-radius: var(--wobbly-sm);
+      padding: 7px 10px;
+      font-family: var(--font-b);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.1s;
+      margin-top: 3px;
     }
-    .stat {
-      border: 1px solid var(--fg-dim);
-      padding: 1rem;
+    .input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(45,93,161,0.1);
+    }
+    .input-sm { font-size: 12px; padding: 5px 8px; }
+
+    /* ── Divider ── */
+    .hr {
+      border: none;
+      border-top: 2px dashed var(--muted);
+      margin: 10px 0;
+    }
+
+    /* ── Footer ── */
+    .footer {
       text-align: center;
+      font-size: 13px;
+      opacity: 0.5;
+      padding: 1.5rem 0 0;
     }
-    .stat-label {
-      font-size: 10px;
-      color: var(--fg-dim);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 6px;
-    }
-    .stat-value {
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    /* ── Prompt line ── */
-    .prompt {
-      color: var(--fg-dim);
-    }
-    .prompt .user { color: var(--fg); }
-    .prompt .at { color: var(--fg-dim); }
-    .prompt .host { color: var(--amber); }
-    .prompt .path { color: var(--cyan); }
-
-    /* ── Job table ── */
-    .job-row {
-      display: grid;
-      grid-template-columns: 50px 1fr 110px 90px 24px;
-      gap: 12px;
-      align-items: center;
-      padding: 6px 0;
-      border-bottom: 1px solid var(--fg-muted);
-      font-size: 12px;
-      transition: background 0.1s;
-    }
-    .job-row:last-child { border-bottom: none; }
-    .job-row:hover { background: rgba(123,174,255,0.04); }
-    .job-row.ours { background: rgba(123,174,255,0.06); }
-    .job-id { color: var(--fg-dim); }
-    .job-id.ours { color: var(--fg); font-weight: 700; }
-    .job-desc {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .job-budget { text-align: right; white-space: nowrap; }
-    .job-budget.ours { color: var(--fg); }
-    .job-link {
-      color: var(--fg-dim);
+    .footer a {
+      color: var(--ink);
       text-decoration: none;
-      text-align: right;
-      font-size: 11px;
+      border-bottom: 2px dashed var(--muted);
     }
-    .job-link:hover { color: var(--fg); }
+    .footer a:hover { opacity: 1; border-color: var(--ink); }
 
-
-    /* ── Mobile ── */
-    @media (max-width: 768px) {
-      .container { padding: 1rem 0.75rem; }
-      .stats { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
-      .job-row {
-        grid-template-columns: 40px 1fr 80px 70px 20px;
-        gap: 6px;
-        font-size: 11px;
-      }
-      .window-body { padding: 0.75rem; }
-      .stat-value { font-size: 16px; }
-    }
-
-    @media (max-width: 480px) {
-      .job-row {
-        grid-template-columns: 35px 1fr 70px auto;
-        gap: 4px;
-      }
-      .job-status { display: none; }
-    }
-
-    @media (max-width: 480px) {
-      .job-row {
-        grid-template-columns: 35px 1fr 70px auto;
-        gap: 4px;
-      }
-      .job-status { display: none; }
+    /* ── Ecosystem card special ── */
+    .card-yellow .eco-stat {
+      font-family: var(--font-h);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1;
     }
   </style>
 </head>
@@ -266,294 +374,246 @@
 <div class="container">
 
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- AGENT ARC — retro pixel banner -->
-  <div style="text-align:center; margin-bottom:2rem; padding-top:1.5rem">
-    <div style="
-      font-family: var(--font);
-      font-size: 44px;
-      font-weight: 900;
-      letter-spacing: 4px;
-      text-align: left;
-      background: linear-gradient(180deg, #c4d8ff 28%, #7baeff 28%, #7baeff 57%, #3b7ddd 57%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-shadow: none;
-      filter: drop-shadow(2px 2px 0 #0a1a4a) drop-shadow(4px 4px 0 #0a1a4a) drop-shadow(6px 6px 0 #0a1a4a);
-    ">AGENT ARC</div>
-    <div style="font-size:20px; color:var(--fg); font-weight:700; letter-spacing:3px; text-transform:uppercase; margin-top:0.75rem; text-align:center">testnet dashboard</div>
-    <div style="font-size:11px; color:var(--fg-dim); margin-top:0.5rem">
-      <span class="prompt">
-        <span class="host">arc</span><span class="at">@</span><span class="host">testnet</span><span class="at">:~</span>$ dashboard<span class="cursor"></span>
-      </span>
+  <!-- HEADER                                                      -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <header class="site-header">
+    <h1>ARC AGENT</h1>
+    <div class="subtitle">on-chain ai agent · arc testnet</div>
+    <div class="badge-row">
+      <span class="tag tag-yellow">chain {{ chain_id }}</span>
+      <span class="tag">ERC-8004</span>
+      <span class="tag">ERC-8183</span>
     </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STATUS BAR                                                  -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="status-bar">
+    <span><span class="dot"></span> <strong>LIVE</strong> · rpc.testnet.arc.network</span>
+    <span style="opacity:0.5">refresh 15s</span>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- STATUS BAR                                                 -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; font-size:11px">
-    <div>
-      <span class="badge badge-ok">[LIVE]</span>
-      <span style="color:var(--fg-dim); margin-left:8px">block <span style="color:var(--fg)">42106558</span></span>
-      <span style="color:var(--fg-dim); margin-left:8px">rpc <span style="color:var(--fg)">rpc.testnet.arc.network</span></span>
-    </div>
-    <div style="color:var(--fg-dim)">
-      chain-id <span style="color:var(--fg)">{{ chain_id }}</span>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- TWO-COLUMN LAYOUT                                          -->
+  <!-- TWO-COLUMN LAYOUT                                           -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <div class="main-grid">
 
-    <!-- LEFT COLUMN — agent + jobs -->
+    <!-- ── LEFT COLUMN ──────────────────────────────────────── -->
     <div>
 
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- AGENT IDENTITY WINDOW                                      -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <div class="window">
-    <div class="window-header">
-      <span>agent_identity.erc8004</span>
-      <span style="font-size:10px">[ACTIVE]</span>
-    </div>
-    <div class="window-body">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem">
-        <div>
-          <div style="font-size:10px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:2px; margin-bottom:4px">Agent ID</div>
-          <div style="font-size:16px; font-weight:700" id="agentId">{{ agent_id }}</div>
-          <div style="margin-top:8px; font-size:11px; color:var(--fg-dim)">
-            <span class="prompt" style="font-size:11px">address:</span>
-            <span style="color:var(--fg)" id="agentAddr">{{ agent_address }}</span>
-            <button onclick="navigator.clipboard.writeText('{{ agent_address }}')" class="btn" style="font-size:10px;padding:1px 6px;margin-left:4px">[COPY]</button>
+      <!-- Agent Identity -->
+      <div class="card">
+        <div class="card-header">
+          <span>agent_identity.erc8004</span>
+          <span class="tag tag-yellow" style="font-size:10px">active</span>
+        </div>
+        <div class="card-body">
+          <div class="agent-split">
+            <div>
+              <div style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px">Agent ID</div>
+              <div class="agent-id" id="agentId">{{ agent_id }}</div>
+              <div class="agent-addr">
+                <span id="agentAddr">{{ agent_address }}</span>
+                <button onclick="navigator.clipboard.writeText('{{ agent_address }}')" class="btn btn-sm" style="margin-left:6px">copy</button>
+              </div>
+            </div>
+            <div class="agent-balance">
+              <div style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px">Balance</div>
+              <div class="amount" id="balance">--</div>
+              <div class="unit">USDC · testnet</div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; font-size:12px">
+            <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn btn-sm">arcscan ↗</a>
+            <a href="https://docs.arc.network" target="_blank" class="btn btn-sm">docs ↗</a>
+            <a href="https://faucet.circle.com" target="_blank" class="btn btn-sm btn-blue">faucet ↗</a>
           </div>
         </div>
-        <div style="text-align:right">
-          <div style="font-size:10px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:2px; margin-bottom:4px">Balance</div>
-          <div style="font-size:28px; font-weight:800" id="balance">--</div>
-          <div style="font-size:11px; color:var(--fg-dim); margin-top:2px">USDC · testnet</div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-label">Network</div>
+          <div class="stat-val">ARC</div>
+          <div style="font-size:10px;opacity:0.4">testnet</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Standard</div>
+          <div class="stat-val">ERC-8004</div>
+          <div style="font-size:10px;opacity:0.4">id {{ agent_id }}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Total Jobs</div>
+          <div class="stat-val" id="statTotal">--</div>
+          <div style="font-size:10px;opacity:0.4">on network</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">My Jobs</div>
+          <div class="stat-val" id="statMyJobs" style="color:var(--red)">--</div>
+          <div style="font-size:10px;opacity:0.4">active</div>
         </div>
       </div>
-      <div class="hr">────────────────────────────────────────────────────────────────────────────────</div>
-      <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px">
-        <span style="color:var(--fg-dim)">explorer:</span>
-        <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn" style="font-size:10px">[ARCSCAN]</a>
-        <span style="color:var(--fg-dim)">docs:</span>
-        <a href="https://docs.arc.network" target="_blank" class="btn" style="font-size:10px">[DOCS]</a>
-        <span style="color:var(--fg-dim)">faucet:</span>
-        <a href="https://faucet.circle.com" target="_blank" class="btn btn-amber" style="font-size:10px">[FAUCET]</a>
-      </div>
-    </div>
-  </div>
 
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- STATS                                                      -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <div class="stats" style="margin-bottom:1rem">
-    <div class="stat">
-      <div class="stat-label">Network</div>
-      <div class="stat-value glow" style="font-size:14px">ARC</div>
-      <div style="font-size:10px; color:var(--fg-dim); margin-top:4px">testnet</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Agent</div>
-      <div class="stat-value glow" style="font-size:14px">ERC-8004</div>
-      <div style="font-size:10px; color:var(--fg-dim); margin-top:4px">id {{ agent_id }}</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Total Jobs</div>
-      <div class="stat-value glow" id="statTotal">--</div>
-      <div style="font-size:10px; color:var(--fg-dim); margin-top:4px">on network</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">My Jobs</div>
-      <div class="stat-value glow-amber" id="statMyJobs">--</div>
-      <div style="font-size:10px; color:var(--fg-dim); margin-top:4px">active</div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- JOBS WINDOW                                                -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <div class="window">
-    <div class="window-header">
-      <span>jobs.erc8183</span>
-      <span style="font-size:10px">
-        <span onclick="filterJobs('all')" id="filterAll" style="cursor:pointer;color:var(--fg);font-weight:700">ALL</span>
-        <span style="color:var(--fg-dim);margin:0 4px">|</span>
-        <span onclick="filterJobs('open')" id="filterOpen" style="cursor:pointer;color:var(--fg-dim)">OPEN</span>
-        <span style="color:var(--fg-dim);margin:0 4px">·</span>
-        total: <span id="jobCount" style="color:var(--bg);font-weight:700">--</span>
-      </span>
-    </div>
-    <div class="window-body" style="padding:0">
-      <!-- Table header -->
-      <div style="display:grid; grid-template-columns:50px 1fr 110px 90px 24px; gap:12px; padding:8px 1.25rem; font-size:10px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid var(--fg-dim)">
-        <span>JOB#</span>
-        <span>DESCRIPTION</span>
-        <span>STATUS</span>
-        <span style="text-align:right">BUDGET</span>
-        <span></span>
-      </div>
-
-      <div id="jobList" style="padding: 0 1.25rem">
-        <div style="text-align:center; padding:3rem 0; color:var(--fg-dim)">
-          <span class="cursor" style="display:inline-block;width:6px;height:12px;margin-right:6px"></span>
-          <span style="font-size:11px">fetching jobs from chain...</span>
+      <!-- Jobs -->
+      <div class="card">
+        <div class="card-header">
+          <span>jobs.erc8183</span>
+          <span style="font-size:12px">
+            <span onclick="filterJobs('all')" id="filterAll" style="cursor:pointer;font-weight:700;text-decoration:underline">ALL</span>
+            <span style="opacity:0.3;margin:0 6px">|</span>
+            <span onclick="filterJobs('open')" id="filterOpen" style="cursor:pointer">OPEN</span>
+            <span style="opacity:0.3;margin:0 6px">·</span>
+            total: <span id="jobCount" style="font-weight:700">--</span>
+          </span>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div style="display:grid; grid-template-columns:50px 1fr 100px 80px 24px; gap:10px; padding:8px 16px; font-size:11px; opacity:0.5; text-transform:uppercase; letter-spacing:1px; border-bottom:2px dashed var(--muted)">
+            <span>Job#</span>
+            <span>Description</span>
+            <span>Status</span>
+            <span style="text-align:right">Budget</span>
+            <span></span>
+          </div>
+          <div id="jobList" style="padding: 0 16px">
+            <div style="text-align:center; padding:2rem 0; opacity:0.4">
+              fetching jobs from chain...
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  </div><!-- /left column -->
+    </div><!-- /left -->
 
-    <!-- RIGHT COLUMN — network + ARC info -->
+    <!-- ── RIGHT COLUMN ─────────────────────────────────────── -->
     <div>
 
-      <!-- ── Post a Job (Marketplace) ── -->
-      <div class="window" id="postJobSection">
-        <div class="window-header">
+      <!-- Post a Job -->
+      <div class="card" id="postJobSection">
+        <div class="card-header">
           <span>post.job</span>
-          <span style="font-size:10px" id="postJobToggle" onclick="togglePostJob()" style="cursor:pointer">[ + NEW ]</span>
+          <span id="postJobToggle" onclick="togglePostJob()" style="cursor:pointer;font-size:12px">[ + new ]</span>
         </div>
-        <div class="window-body" id="postJobBody" style="display:none; font-size:11px">
+        <div class="card-body" id="postJobBody" style="display:none; font-size:13px">
           <div style="margin-bottom:8px">
-            <label style="color:var(--fg-dim); font-size:10px">Description</label>
-            <input type="text" id="jobDesc" placeholder="e.g. Token scam analysis on 0x..." style="width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--fg-dim);padding:6px;font-family:var(--font);font-size:11px;margin-top:4px">
+            <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Description</label>
+            <input type="text" id="jobDesc" placeholder="Token scam analysis on 0x..." class="input input-sm">
           </div>
           <div style="margin-bottom:8px">
-            <label style="color:var(--fg-dim); font-size:10px">Provider (agent address)</label>
-            <input type="text" id="jobProvider" value="{{ agent_address }}" style="width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--fg-dim);padding:6px;font-family:var(--font);font-size:11px;margin-top:4px">
+            <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Provider</label>
+            <input type="text" id="jobProvider" value="{{ agent_address }}" class="input input-sm">
           </div>
           <div style="margin-bottom:8px; display:flex; gap:8px">
             <div style="flex:1">
-              <label style="color:var(--fg-dim); font-size:10px">Budget (USDC)</label>
-              <input type="number" id="jobBudget" value="1.00" min="0.01" step="0.01" style="width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--fg-dim);padding:6px;font-family:var(--font);font-size:11px;margin-top:4px">
+              <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Budget USDC</label>
+              <input type="number" id="jobBudget" value="1.00" min="0.01" step="0.01" class="input input-sm">
             </div>
             <div style="flex:1">
-              <label style="color:var(--fg-dim); font-size:10px">Expires (hours)</label>
-              <input type="number" id="jobExpire" value="24" min="1" max="720" style="width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--fg-dim);padding:6px;font-family:var(--font);font-size:11px;margin-top:4px">
+              <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Expires (h)</label>
+              <input type="number" id="jobExpire" value="24" min="1" max="720" class="input input-sm">
             </div>
           </div>
-          <button onclick="createJob()" class="btn btn-amber" style="width:100%; margin-top:4px">[ CREATE JOB + FUND ]</button>
-          <div id="createResult" style="margin-top:8px; font-size:10px; min-height:20px"></div>
+          <button onclick="createJob()" class="btn btn-full" style="background:var(--red);color:var(--white)">create job + fund</button>
+          <div id="createResult" style="margin-top:8px; font-size:12px; min-height:20px"></div>
         </div>
       </div>
 
       <!-- Network Info -->
-      <div class="window">
-        <div class="window-header">
+      <div class="card">
+        <div class="card-header">
           <span>network.info</span>
-          <span style="font-size:10px">[ARC TESTNET]</span>
+          <span class="tag" style="font-size:10px">testnet</span>
         </div>
-        <div class="window-body" style="font-size:11px">
-          <div style="margin-bottom:8px">
-            <span style="color:var(--fg-dim)">chain id</span><br>
-            <span style="color:var(--fg); font-weight:700">{{ chain_id }}</span>
-          </div>
-          <div style="margin-bottom:8px">
-            <span style="color:var(--fg-dim)">rpc</span><br>
-            <span style="color:var(--cyan); font-size:10px">rpc.testnet.arc.network</span>
-          </div>
-          <div style="margin-bottom:8px">
-            <span style="color:var(--fg-dim)">gas token</span><br>
-            <span style="color:var(--fg)">USDC</span>
-          </div>
-          <div style="margin-bottom:8px">
-            <span style="color:var(--fg-dim)">finality</span><br>
-            <span style="color:var(--fg)">sub-second</span>
-          </div>
-          <div style="margin-bottom:8px">
-            <span style="color:var(--fg-dim)">explorer</span><br>
-            <a href="https://testnet.arcscan.app" target="_blank" style="color:var(--cyan); font-size:10px; text-decoration:none">testnet.arcscan.app ↗</a>
-          </div>
-          <div>
-            <span style="color:var(--fg-dim)">faucet</span><br>
-            <a href="https://faucet.circle.com" target="_blank" style="color:var(--amber); font-size:10px; text-decoration:none">faucet.circle.com ↗</a>
+        <div class="card-body" style="font-size:13px">
+          <div style="margin-bottom:6px"><span style="opacity:0.5">chain</span><br><strong>{{ chain_id }}</strong></div>
+          <div style="margin-bottom:6px"><span style="opacity:0.5">rpc</span><br><span style="font-size:11px">rpc.testnet.arc.network</span></div>
+          <div style="margin-bottom:6px"><span style="opacity:0.5">gas</span><br><strong>USDC</strong></div>
+          <div style="margin-bottom:6px"><span style="opacity:0.5">finality</span><br><strong>sub-second</strong></div>
+          <div style="margin-bottom:6px">
+            <a href="https://testnet.arcscan.app" target="_blank" style="color:var(--blue);font-size:12px">arcscan ↗</a>
+            <span style="opacity:0.3;margin:0 6px">·</span>
+            <a href="https://faucet.circle.com" target="_blank" style="color:var(--red);font-size:12px">faucet ↗</a>
           </div>
         </div>
       </div>
 
-      <!-- Ecosystem Snapshot -->
-      <div class="window">
-        <div class="window-header">
-          <span>ecosystem.snapshot</span>
-          <span style="font-size:10px">[LIVE]</span>
+      <!-- Ecosystem Snapshot (post-it yellow, slightly rotated) -->
+      <div class="card card-yellow" style="transform:rotate(-0.5deg)">
+        <div class="card-header">
+          <span>ecosystem</span>
+          <span class="tag tag-red" style="font-size:9px">live</span>
         </div>
-        <div class="window-body" style="font-size:11px">
+        <div class="card-body" style="font-size:13px">
           <div style="margin-bottom:10px">
-            <span style="color:var(--fg-dim)">registered agents</span><br>
-            <span style="color:var(--fg); font-weight:700; font-size:18px" id="ecosystemAgents">--</span>
-          </div>
-          <div style="margin-bottom:10px">
-            <span style="color:var(--fg-dim)">jobs created</span><br>
-            <span style="color:var(--fg); font-weight:700; font-size:18px" id="ecosystemJobs">--</span>
+            <span style="opacity:0.5;font-size:11px;text-transform:uppercase;letter-spacing:1px">registered agents</span><br>
+            <span class="eco-stat" id="ecosystemAgents">--</span>
           </div>
           <div style="margin-bottom:10px">
-            <span style="color:var(--fg-dim)">agent #{{ agent_id }}</span><br>
-            <span style="color:var(--fg)">● <span style="font-weight:700">ACTIVE</span></span>
+            <span style="opacity:0.5;font-size:11px;text-transform:uppercase;letter-spacing:1px">jobs created</span><br>
+            <span class="eco-stat" id="ecosystemJobs">--</span>
           </div>
-          <div style="border-top:1px solid var(--fg-muted); padding-top:8px">
-            <a href="https://arcagents.pro" target="_blank" style="color:var(--cyan); font-size:10px; text-decoration:none">arcagents.pro →</a>
-            <span style="color:var(--fg-dim); font-size:9px; margin-left:6px">leaderboard</span>
+          <div style="margin-bottom:10px">
+            <span style="opacity:0.5;font-size:11px">agent #{{ agent_id }}</span><br>
+            <span style="color:var(--red);font-weight:700">● ACTIVE</span>
           </div>
+          <a href="https://arcagents.pro" target="_blank" style="color:var(--blue);font-size:12px">arcagents.pro → leaderboard</a>
         </div>
       </div>
 
       <!-- Worker Stats -->
-      <div class="window">
-        <div class="window-header">
+      <div class="card">
+        <div class="card-header">
           <span>agent.worker</span>
-          <span style="font-size:10px" id="workerStatus">[IDLE]</span>
+          <span id="workerStatus" style="font-size:11px">idle</span>
         </div>
-        <div class="window-body" style="font-size:11px">
-          <div style="margin-bottom:8px">
-            <span style="color:var(--fg-dim)">status</span><br>
-            <span style="color:var(--cyan)" id="workerState">initializing...</span>
+        <div class="card-body" style="font-size:13px">
+          <div style="margin-bottom:6px">
+            <span style="opacity:0.5">status</span><br>
+            <span id="workerState">initializing...</span>
           </div>
-          <div style="margin-bottom:8px">
-            <span style="color:var(--fg-dim)">jobs processed</span><br>
-            <span style="color:var(--fg); font-weight:700" id="workerJobs">0</span>
+          <div style="margin-bottom:6px">
+            <span style="opacity:0.5">jobs processed</span><br>
+            <strong id="workerJobs">0</strong>
           </div>
           <div>
-            <span style="color:var(--fg-dim)">total earnings</span><br>
-            <span style="color:var(--amber); font-weight:700" id="workerEarnings">0.00 USDC</span>
+            <span style="opacity:0.5">earnings</span><br>
+            <strong id="workerEarnings" style="color:var(--red)">0.00 USDC</strong>
           </div>
         </div>
       </div>
 
-      <!-- Quick links -->
-      <div class="window">
-        <div class="window-header">
-          <span>quick.links</span>
-        </div>
-        <div class="window-body" style="font-size:11px; display:flex; flex-wrap:wrap; gap:6px">
-          <a href="https://docs.arc.network" target="_blank" class="btn" style="font-size:10px">[DOCS]</a>
-          <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn" style="font-size:10px">[ARCSCAN]</a>
-          <a href="https://faucet.circle.com" target="_blank" class="btn btn-amber" style="font-size:10px">[FAUCET]</a>
+      <!-- Quick Links -->
+      <div class="card">
+        <div class="card-header"><span>quick.links</span></div>
+        <div class="card-body" style="display:flex; flex-wrap:wrap; gap:6px">
+          <a href="https://docs.arc.network" target="_blank" class="btn btn-sm">docs ↗</a>
+          <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn btn-sm">arcscan ↗</a>
+          <a href="https://github.com/Leonis237/arc-agent" target="_blank" class="btn btn-sm">github ↗</a>
+          <a href="https://arcagents.pro" target="_blank" class="btn btn-sm btn-blue">leaderboard ↗</a>
         </div>
       </div>
 
-    </div><!-- /right column -->
+    </div><!-- /right -->
 
   </div><!-- /main-grid -->
 
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- FOOTER                                                     -->
+  <!-- FOOTER                                                      -->
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <div class="hr" style="margin-top:1.5rem">═══════════════════════════════════════════════════════════════════════════════</div>
-  <div style="text-align:center; font-size:10px; color:var(--fg-dim); padding:1rem 0">
-    <span>☤ Arc Testnet</span>
-    <span style="margin:0 12px">|</span>
-    <a href="https://leonisforge.com" target="_blank" style="color:var(--fg-dim);text-decoration:none">[ LEONIS FORGE ]</a>
+  <div class="footer">
+    ☤ <a href="https://leonisforge.com" target="_blank">Leonis Forge</a>
+    <span style="margin:0 8px">·</span>
+    <a href="https://github.com/Leonis237/arc-agent" target="_blank">Fork on GitHub</a>
+    <span style="margin:0 8px">·</span>
+    <span>built on Arc by Circle</span>
   </div>
 
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- JAVASCRIPT                                                     -->
+<!-- JAVASCRIPT (unchanged logic, same data flow)                    -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <script>
   const OUR_ADDRESS = '{{ agent_address }}'.toLowerCase();
@@ -582,18 +642,15 @@
         document.getElementById('balance').textContent = status.balance_usdc.toFixed(2);
       }
 
-      // Update worker stats
       if (!worker.error) {
         document.getElementById('workerState').textContent = worker.status || 'offline';
         document.getElementById('workerJobs').textContent = worker.processed_jobs;
         document.getElementById('workerEarnings').textContent = worker.total_earnings_usdc.toFixed(2) + ' USDC';
         if (worker.status === 'active') {
-          document.getElementById('workerStatus').innerHTML = '[ACTIVE]';
-          document.getElementById('workerStatus').style.color = 'var(--fg)';
+          document.getElementById('workerStatus').innerHTML = '<span style="color:var(--red);font-weight:700">active</span>';
         }
       }
 
-      // Update ecosystem snapshot
       const eco = await ecoRes.json();
       if (!eco.error) {
         document.getElementById('ecosystemAgents').textContent = eco.total_agents.toLocaleString();
@@ -603,7 +660,6 @@
       if (!jobsData.error && jobsData.jobs) {
         let jobs = jobsData.jobs.filter(j => j.state !== 'NONEXISTENT');
         
-        // Apply filter
         if (currentFilter === 'open') {
           jobs = jobs.filter(j => j.state === 'OPEN' || j.state === 'FUNDED');
         }
@@ -619,19 +675,19 @@
 
         if (jobs.length === 0) {
           document.getElementById('jobList').innerHTML =
-            '<div style="text-align:center;padding:3rem 0;color:var(--fg-dim);font-size:11px">' +
-            '<span style="color:var(--amber)">[WARN]</span> no jobs found — run create_job.py</div>';
+            '<div style="text-align:center;padding:2rem 0;opacity:0.4;font-size:13px">' +
+            'no jobs found — post one or run create_job.py</div>';
           return;
         }
 
         const html = jobs.reverse().map(j => {
           const isOurs = j.client?.toLowerCase() === OUR_ADDRESS || j.provider?.toLowerCase() === OUR_ADDRESS;
           return `
-            <div class="job-row ${isOurs ? 'ours' : ''}" style="position:relative">
-              <span class="job-id ${isOurs ? 'ours' : ''}">#${j.job_id}</span>
-              <span class="job-desc" style="color:${isOurs ? 'var(--white)' : 'var(--fg-dim)'}">${j.description}</span>
-              <span class="job-status">${badgeFor(j.state)}</span>
-              <span class="job-budget ${isOurs ? 'ours' : ''}" style="color:${isOurs && j.budget > 0 ? 'var(--amber)' : 'var(--fg-dim)'}">
+            <div class="job-row ${isOurs ? 'ours' : ''}">
+              <span class="job-id">#${j.job_id}</span>
+              <span class="job-desc" style="opacity:${isOurs ? '1' : '0.6'}">${j.description}</span>
+              <span>${badgeFor(j.state)}</span>
+              <span class="job-budget" style="color:${isOurs && j.budget > 0 ? 'var(--red)' : 'var(--ink)'}">
                 ${j.budget.toFixed(2)} USDC
               </span>
               <a href="https://testnet.arcscan.app/address/0x0747EEf0706327138c69792bF28Cd525089e4583" target="_blank" class="job-link">↗</a>
@@ -654,10 +710,10 @@
     const toggle = document.getElementById('postJobToggle');
     if (body.style.display === 'none') {
       body.style.display = 'block';
-      toggle.textContent = '[ - HIDE ]';
+      toggle.textContent = '[ — hide ]';
     } else {
       body.style.display = 'none';
-      toggle.textContent = '[ + NEW ]';
+      toggle.textContent = '[ + new ]';
     }
   }
 
@@ -665,10 +721,10 @@
   let currentFilter = 'all';
   function filterJobs(filter) {
     currentFilter = filter;
-    document.getElementById('filterAll').style.color = filter === 'all' ? 'var(--fg)' : 'var(--fg-dim)';
     document.getElementById('filterAll').style.fontWeight = filter === 'all' ? '700' : '400';
-    document.getElementById('filterOpen').style.color = filter === 'open' ? 'var(--fg)' : 'var(--fg-dim)';
+    document.getElementById('filterAll').style.textDecoration = filter === 'all' ? 'underline' : 'none';
     document.getElementById('filterOpen').style.fontWeight = filter === 'open' ? '700' : '400';
+    document.getElementById('filterOpen').style.textDecoration = filter === 'open' ? 'underline' : 'none';
     refresh();
   }
 
@@ -676,7 +732,8 @@
     const btn = event.target;
     const res = document.getElementById('createResult');
     btn.disabled = true;
-    res.innerHTML = '<span style="color:var(--amber)">⏳ Sending transactions...</span>';
+    res.innerHTML = 'sending transactions...';
+    btn.style.opacity = '0.6';
 
     try {
       const r = await fetch('/api/jobs/create', {
@@ -691,27 +748,23 @@
       });
       const data = await r.json();
       if (data.success) {
-        res.innerHTML = `<span style="color:var(--fg)">✅ Job #${data.job_id} created!<br><span style="font-size:9px;color:var(--fg-dim)">${data.state} · ${data.budget} USDC · ${data.message}</span></span>`;
+        res.innerHTML = `<span style="color:var(--blue);font-weight:700">✓ Job #${data.job_id} created!</span><br><span style="font-size:11px;opacity:0.5">${data.state} · ${data.budget} USDC</span>`;
         setTimeout(refresh, 3000);
       } else {
-        res.innerHTML = `<span style="color:var(--red)">❌ ${data.error}</span>`;
+        res.innerHTML = `<span style="color:var(--red);font-weight:700">✗ ${data.error}</span>`;
       }
     } catch(e) {
-      res.innerHTML = `<span style="color:var(--red)">❌ ${e.message}</span>`;
+      res.innerHTML = `<span style="color:var(--red)">✗ ${e.message}</span>`;
     }
     btn.disabled = false;
+    btn.style.opacity = '1';
   }
 
-  // ── Live block counter (fake animation) ──
+  // ── Live block ticker (cosmetic) ──
   setInterval(() => {
-    const el = document.querySelector('[style*="block"] span');
-    if (el) {
-      const n = parseInt(el.textContent) + Math.floor(Math.random() * 3);
-      el.textContent = n;
-    }
-  }, 2000);
-
-  // ── ARC Dashboard v1.0 ──
+    const el = document.querySelector('.status-bar strong');
+    // just keeps the pulse dot — block number is cosmetic
+  }, 3000);
 </script>
 
 </body>
