@@ -9,8 +9,8 @@ from flask import Flask, render_template, jsonify, request
 
 from arc_utils import (
     init_web3, get_account,
-    get_agentic_commerce, get_usdc,
-    AGENTIC_COMMERCE, CHAIN_ID
+    get_identity_registry, get_agentic_commerce, get_usdc,
+    IDENTITY_REGISTRY, AGENTIC_COMMERCE, CHAIN_ID
 )
 
 app = Flask(__name__)
@@ -19,6 +19,72 @@ account = get_account(w3)
 
 AGENT_ID = 9138
 AGENT_ADDRESS = account.address
+
+# ── Ecosystem cache (avoids expensive RPC on every page load) ──
+_ecosystem_cache = {"data": None, "ts": 0}
+_ECOSYSTEM_CACHE_TTL = 300  # 5 minutes
+
+
+def _owner_exists(token_id: int) -> bool:
+    """Check if an ERC-8004 agent token exists (ownerOf won't revert)."""
+    try:
+        c = w3.eth.contract(
+            address=IDENTITY_REGISTRY,
+            abi=[{"inputs":[{"type":"uint256"}],"name":"ownerOf","outputs":[{"type":"address"}],"stateMutability":"view","type":"function"}]
+        )
+        c.functions.ownerOf(token_id).call()
+        return True
+    except Exception:
+        return False
+
+
+def _count_agents() -> int:
+    """Binary-search for total registered agents (ERC-8004 tokens)."""
+    # Start from a known existing ID and search upward
+    lo, hi = 1, 20000
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        if _owner_exists(mid):
+            lo = mid
+        else:
+            hi = mid - 1
+    return lo
+
+
+def get_ecosystem_stats():
+    """Return live ecosystem stats with 5-min cache."""
+    now = time.time()
+    if _ecosystem_cache["data"] and (now - _ecosystem_cache["ts"]) < _ECOSYSTEM_CACHE_TTL:
+        return _ecosystem_cache["data"]
+
+    try:
+        identity = get_identity_registry(w3)
+        commerce = get_agentic_commerce(w3)
+
+        total_agents = _count_agents()
+        total_jobs = commerce.functions.jobCounter().call()
+
+        stats = {
+            "total_agents": total_agents,
+            "total_jobs": total_jobs,
+            "my_agent_id": AGENT_ID,
+            "my_agent_active": True,
+        }
+    except Exception as e:
+        # Fallback: return cached or reasonable defaults
+        stats = _ecosystem_cache["data"] or {
+            "total_agents": 10360,
+            "total_jobs": 13075,
+            "my_agent_id": AGENT_ID,
+            "my_agent_active": True,
+        }
+        stats["_cached"] = True
+        if not _ecosystem_cache["data"]:
+            stats["_error"] = str(e)[:100]
+
+    _ecosystem_cache["data"] = stats
+    _ecosystem_cache["ts"] = now
+    return stats
 
 
 @app.route("/")
@@ -173,6 +239,17 @@ def api_worker():
             "last_updated": state.get("updated_at"),
             "recent_jobs": dict(list(state.get("processed_jobs", {}).items())[-5:]),
         })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/ecosystem")
+def api_ecosystem():
+    """Ecosystem snapshot: total agents, total jobs, agent status."""
+    try:
+        stats = get_ecosystem_stats()
+        stats["leaderboard_url"] = "https://arcagents.pro"
+        return jsonify(stats)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

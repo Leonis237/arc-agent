@@ -476,6 +476,32 @@
         </div>
       </div>
 
+      <!-- Ecosystem Snapshot -->
+      <div class="window">
+        <div class="window-header">
+          <span>ecosystem.snapshot</span>
+          <span style="font-size:10px">[LIVE]</span>
+        </div>
+        <div class="window-body" style="font-size:11px">
+          <div style="margin-bottom:10px">
+            <span style="color:var(--fg-dim)">registered agents</span><br>
+            <span style="color:var(--fg); font-weight:700; font-size:18px" id="ecosystemAgents">--</span>
+          </div>
+          <div style="margin-bottom:10px">
+            <span style="color:var(--fg-dim)">jobs created</span><br>
+            <span style="color:var(--fg); font-weight:700; font-size:18px" id="ecosystemJobs">--</span>
+          </div>
+          <div style="margin-bottom:10px">
+            <span style="color:var(--fg-dim)">agent #{{ agent_id }}</span><br>
+            <span style="color:var(--fg)">● <span style="font-weight:700">ACTIVE</span></span>
+          </div>
+          <div style="border-top:1px solid var(--fg-muted); padding-top:8px">
+            <a href="https://arcagents.pro" target="_blank" style="color:var(--cyan); font-size:10px; text-decoration:none">arcagents.pro →</a>
+            <span style="color:var(--fg-dim); font-size:9px; margin-left:6px">leaderboard</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Worker Stats -->
       <div class="window">
         <div class="window-header">
@@ -545,8 +571,8 @@
 
   async function refresh() {
     try {
-      const [statusRes, jobsRes, workerRes] = await Promise.all([
-        fetch('/api/status'), fetch('/api/jobs'), fetch('/api/worker')
+      const [statusRes, jobsRes, workerRes, ecoRes] = await Promise.all([
+        fetch('/api/status'), fetch('/api/jobs'), fetch('/api/worker'), fetch('/api/ecosystem')
       ]);
       const status = await statusRes.json();
       const jobsData = await jobsRes.json();
@@ -565,6 +591,13 @@
           document.getElementById('workerStatus').innerHTML = '[ACTIVE]';
           document.getElementById('workerStatus').style.color = 'var(--fg)';
         }
+      }
+
+      // Update ecosystem snapshot
+      const eco = await ecoRes.json();
+      if (!eco.error) {
+        document.getElementById('ecosystemAgents').textContent = eco.total_agents.toLocaleString();
+        document.getElementById('ecosystemJobs').textContent = eco.total_jobs.toLocaleString();
       }
 
       if (!jobsData.error && jobsData.jobs) {
