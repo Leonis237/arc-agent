@@ -3,20 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>hermes@arc:~$ dashboard</title>
+  <title>Arc Dashboard — Testnet Explorer</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;0,800;1,400&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg:       #0a0a0a;
-      --fg:       #33ff00;
-      --fg-dim:   #1a7a00;
-      --fg-muted: #0d3d00;
+      --fg:       #7baeff;
+      --fg-dim:   #3b6db5;
+      --fg-muted: #0a1a4a;
       --amber:    #ffb000;
       --red:      #ff3333;
-      --cyan:     #00d4ff;
+      --cyan:     #c4d8ff;
       --white:    #e0e0e0;
       --font:     'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
-      --line:     1px;
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -49,14 +48,27 @@
     }
 
     /* ── Text glow ── */
-    .glow { text-shadow: 0 0 6px rgba(51,255,0,0.4); }
+    .glow { text-shadow: 0 0 6px rgba(123,174,255,0.4); }
     .glow-amber { text-shadow: 0 0 6px rgba(255,176,0,0.4); }
 
     /* ── Layout ── */
     .container {
-      max-width: 960px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 2rem 1.5rem;
+    }
+
+    /* ── Two-column main layout ── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 1rem;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* ── Window pane ── */
@@ -107,17 +119,6 @@
       50% { opacity: 0; }
     }
 
-    /* ── Typewriter ── */
-    .typewriter {
-      overflow: hidden;
-      white-space: nowrap;
-      animation: typing 1.5s steps(30, end);
-    }
-    @keyframes typing {
-      from { max-width: 0; }
-      to { max-width: 100%; }
-    }
-
     /* ── Buttons ── */
     .btn {
       display: inline-block;
@@ -166,57 +167,6 @@
     .badge-err   { color: var(--red);   border: 1px solid rgba(255,51,51,0.3); }
     .badge-info  { color: var(--cyan);  border: 1px solid rgba(0,212,255,0.3); }
 
-    /* ── Progress bar ── */
-    .progress {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 12px;
-    }
-    .progress-bar {
-      display: inline-flex;
-      letter-spacing: -1px;
-    }
-    .progress-bar .fill { color: var(--fg); }
-    .progress-bar .empty { color: var(--fg-muted); }
-
-    /* ── Job table ── */
-    .job-row {
-      display: grid;
-      grid-template-columns: 50px 1fr 110px 90px 24px;
-      gap: 12px;
-      align-items: center;
-      padding: 6px 0;
-      border-bottom: 1px solid var(--fg-muted);
-      font-size: 12px;
-      transition: background 0.1s;
-    }
-    .job-row:last-child { border-bottom: none; }
-    .job-row:hover { background: rgba(51,255,0,0.03); }
-    .job-row.ours { background: rgba(51,255,0,0.04); }
-    .job-row.ours::before {
-      content: '>';
-      color: var(--fg);
-      position: absolute;
-      left: -12px;
-    }
-    .job-id { color: var(--fg-dim); }
-    .job-id.ours { color: var(--fg); font-weight: 700; }
-    .job-desc {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .job-budget { text-align: right; white-space: nowrap; }
-    .job-budget.ours { color: var(--fg); }
-    .job-link {
-      color: var(--fg-dim);
-      text-decoration: none;
-      text-align: right;
-      font-size: 11px;
-    }
-    .job-link:hover { color: var(--fg); }
-
     /* ── Stats grid ── */
     .stats {
       display: grid;
@@ -249,18 +199,37 @@
     .prompt .host { color: var(--amber); }
     .prompt .path { color: var(--cyan); }
 
-    /* ── Glitch hover ── */
-    @keyframes glitch {
-      0%   { transform: translate(0); }
-      20%  { transform: translate(-1px, 1px); }
-      40%  { transform: translate(1px, -1px); }
-      60%  { transform: translate(-1px, 0); }
-      80%  { transform: translate(1px, 0); }
-      100% { transform: translate(0); }
+    /* ── Job table ── */
+    .job-row {
+      display: grid;
+      grid-template-columns: 50px 1fr 110px 90px 24px;
+      gap: 12px;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--fg-muted);
+      font-size: 12px;
+      transition: background 0.1s;
     }
-    .glitch:hover {
-      animation: glitch 0.2s ease;
+    .job-row:last-child { border-bottom: none; }
+    .job-row:hover { background: rgba(123,174,255,0.04); }
+    .job-row.ours { background: rgba(123,174,255,0.06); }
+    .job-id { color: var(--fg-dim); }
+    .job-id.ours { color: var(--fg); font-weight: 700; }
+    .job-desc {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
+    .job-budget { text-align: right; white-space: nowrap; }
+    .job-budget.ours { color: var(--fg); }
+    .job-link {
+      color: var(--fg-dim);
+      text-decoration: none;
+      text-align: right;
+      font-size: 11px;
+    }
+    .job-link:hover { color: var(--fg); }
+
 
     /* ── Mobile ── */
     @media (max-width: 768px) {
@@ -282,6 +251,14 @@
       }
       .job-status { display: none; }
     }
+
+    @media (max-width: 480px) {
+      .job-row {
+        grid-template-columns: 35px 1fr 70px auto;
+        gap: 4px;
+      }
+      .job-status { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -289,26 +266,27 @@
 <div class="container">
 
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- ASCII ART — HOODED OUROBOROS COLLECTION                     -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <div style="margin-bottom:1.5rem">
-    <div style="display:flex; justify-content:space-between; align-items:flex-end">
-      <div class="prompt" style="font-size:12px; margin-bottom:6px">
-        <span class="user">hermes</span><span class="at">@</span><span class="host">arc-testnet</span><span class="at">:</span><span class="path">~</span>$ cat /etc/motd<span class="cursor"></span>
-      </div>
-      <div style="font-size:10px; color:var(--fg-dim); margin-bottom:6px; display:flex; align-items:center; gap:6px">
-        <span style="color:var(--fg-muted)">skin:</span>
-        <span id="skinName" style="color:var(--amber); cursor:pointer; user-select:none" onclick="cycleSkin()" title="click to cycle skins">hooded ouroboros</span>
-        <span style="color:var(--fg-dim)" id="skinCounter">[1/5]</span>
-        <button onclick="cycleSkin()" class="btn" style="font-size:10px;padding:1px 8px">[NEXT]</button>
-      </div>
+  <!-- AGENT ARC — retro pixel banner -->
+  <div style="text-align:center; margin-bottom:2rem; padding-top:1.5rem">
+    <div style="
+      font-family: var(--font);
+      font-size: 44px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-align: left;
+      background: linear-gradient(180deg, #c4d8ff 28%, #7baeff 28%, #7baeff 57%, #3b7ddd 57%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      filter: drop-shadow(2px 2px 0 #0a1a4a) drop-shadow(4px 4px 0 #0a1a4a) drop-shadow(6px 6px 0 #0a1a4a);
+    ">AGENT ARC</div>
+    <div style="font-size:20px; color:var(--fg); font-weight:700; letter-spacing:3px; text-transform:uppercase; margin-top:0.75rem; text-align:center">testnet dashboard</div>
+    <div style="font-size:11px; color:var(--fg-dim); margin-top:0.5rem">
+      <span class="prompt">
+        <span class="host">arc</span><span class="at">@</span><span class="host">testnet</span><span class="at">:~</span>$ dashboard<span class="cursor"></span>
+      </span>
     </div>
-
-    <!-- ASCII Art Banner (dynamic) -->
-    <pre id="asciiBanner" style="font-size:10px; line-height:1.15; color:var(--fg); text-shadow:0 0 3px rgba(51,255,0,0.3); margin:0; overflow:hidden; white-space:pre; letter-spacing:0; cursor:pointer"
-         onclick="cycleSkin()" title="click to cycle skins"></pre>
-
-    <div class="hr" style="margin-top:6px">═══ ARC TESTNET ═══════════════════════════════════════════════════════════════════</div>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -324,6 +302,14 @@
       chain-id <span style="color:var(--fg)">{{ chain_id }}</span>
     </div>
   </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- TWO-COLUMN LAYOUT                                          -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="main-grid">
+
+    <!-- LEFT COLUMN — agent + jobs -->
+    <div>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
   <!-- AGENT IDENTITY WINDOW                                      -->
@@ -346,7 +332,7 @@
         </div>
         <div style="text-align:right">
           <div style="font-size:10px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:2px; margin-bottom:4px">Balance</div>
-          <div style="font-size:28px; font-weight:800" id="balance" class="glow">--</div>
+          <div style="font-size:28px; font-weight:800" id="balance">--</div>
           <div style="font-size:11px; color:var(--fg-dim); margin-top:2px">USDC · testnet</div>
         </div>
       </div>
@@ -415,16 +401,97 @@
     </div>
   </div>
 
+  </div><!-- /left column -->
+
+    <!-- RIGHT COLUMN — network + ARC info -->
+    <div>
+
+      <!-- Network Info -->
+      <div class="window">
+        <div class="window-header">
+          <span>network.info</span>
+          <span style="font-size:10px">[ARC TESTNET]</span>
+        </div>
+        <div class="window-body" style="font-size:11px">
+          <div style="margin-bottom:8px">
+            <span style="color:var(--fg-dim)">chain id</span><br>
+            <span style="color:var(--fg); font-weight:700">{{ chain_id }}</span>
+          </div>
+          <div style="margin-bottom:8px">
+            <span style="color:var(--fg-dim)">rpc</span><br>
+            <span style="color:var(--cyan); font-size:10px">rpc.testnet.arc.network</span>
+          </div>
+          <div style="margin-bottom:8px">
+            <span style="color:var(--fg-dim)">gas token</span><br>
+            <span style="color:var(--fg)">USDC</span>
+          </div>
+          <div style="margin-bottom:8px">
+            <span style="color:var(--fg-dim)">finality</span><br>
+            <span style="color:var(--fg)">sub-second</span>
+          </div>
+          <div style="margin-bottom:8px">
+            <span style="color:var(--fg-dim)">explorer</span><br>
+            <a href="https://testnet.arcscan.app" target="_blank" style="color:var(--cyan); font-size:10px; text-decoration:none">testnet.arcscan.app ↗</a>
+          </div>
+          <div>
+            <span style="color:var(--fg-dim)">faucet</span><br>
+            <a href="https://faucet.circle.com" target="_blank" style="color:var(--amber); font-size:10px; text-decoration:none">faucet.circle.com ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARC Token -->
+      <div class="window">
+        <div class="window-header">
+          <span>arc.token</span>
+          <span style="font-size:10px">[WHITEPAPER]</span>
+        </div>
+        <div class="window-body" style="font-size:11px">
+          <div style="margin-bottom:8px">
+            <span style="color:var(--fg-dim)">status</span><br>
+            <span style="color:var(--amber)">not launched</span>
+          </div>
+          <div style="margin-bottom:8px">
+            <span style="color:var(--fg-dim)">whitepaper</span><br>
+            <span style="color:var(--fg); font-size:10px">May 11 2026</span>
+          </div>
+          <div style="margin-bottom:8px">
+            <span style="color:var(--fg-dim)">role</span><br>
+            <span style="color:var(--fg)">coordination asset</span>
+          </div>
+          <div style="margin-bottom:8px">
+            <span style="color:var(--fg-dim)">use cases</span><br>
+            <span style="color:var(--fg); font-size:10px">staking · governance</span><br>
+            <span style="color:var(--fg); font-size:10px">fee capture · burns</span>
+          </div>
+          <a href="https://www.arc.network/blog/introducing-the-arc-token-whitepaper" target="_blank" class="btn" style="font-size:10px;display:block;text-align:center;margin-top:4px">[READ WHITEPAPER]</a>
+        </div>
+      </div>
+
+      <!-- Quick links -->
+      <div class="window">
+        <div class="window-header">
+          <span>quick.links</span>
+        </div>
+        <div class="window-body" style="font-size:11px; display:flex; flex-wrap:wrap; gap:6px">
+          <a href="https://docs.arc.network" target="_blank" class="btn" style="font-size:10px">[DOCS]</a>
+          <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn" style="font-size:10px">[ARCSCAN]</a>
+          <a href="https://faucet.circle.com" target="_blank" class="btn btn-amber" style="font-size:10px">[FAUCET]</a>
+        </div>
+      </div>
+
+    </div><!-- /right column -->
+
+  </div><!-- /main-grid -->
+
   <!-- ═══════════════════════════════════════════════════════════ -->
   <!-- FOOTER                                                     -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <div class="hr" style="margin-top:1.5rem">═══════════════════════════════════════════════════════════════════════════════</div>
   <div style="text-align:center; font-size:10px; color:var(--fg-dim); padding:1rem 0">
-    <span>☤ Hermes Agent v1.0</span>
+    <span>☤ Arc Testnet</span>
     <span style="margin:0 12px">|</span>
-    <a href="https://leonisforge.com" target="_blank" style="color:var(--fg-dim);text-decoration:none" class="glitch">[ LEONIS FORGE ]</a>
-    <span style="margin:0 12px">|</span>
-    <span>Arc Testnet</span>
+    <a href="https://leonisforge.com" target="_blank" style="color:var(--fg-dim);text-decoration:none">[ LEONIS FORGE ]</a>
   </div>
 
 </div>
@@ -509,133 +576,7 @@
     }
   }, 2000);
 
-  // ═══════════════════════════════════════════════════════════════
-  // ASCII ART SKIN COLLECTION
-  // ═══════════════════════════════════════════════════════════════
-
-  const SKINS = [
-    {
-      name: 'hooded ouroboros',
-      art: `                                               .                     
-                                     .         │              .      
-                               .     │   .     │   .                 
-           ▄▄▄▄▄▄▄▄▄▄▄      .───┐    │ ┌───┐   │    .───┐          
-         ▄█▓▓▓▓▓▓▓▓▓▓▓█▄   ┌───┐│    │ │⌐  │   │   ┌┘   │     .    
-        ▐█▓▓▓▓▓▓▓▓▓▓▓▓▓█▌  │⌐  └┘   ┌┘ │   │  ┌┘   │    │          
-        ▐█▓▓▓▓▓▓▓▓▓▓▓▓▓█▌  │ ▄▄▄▄▄ │  │   │  │    │ ┌──┘  ┌───┐    
-        ▐█▓▓▓░ ░▓▓▓░ ▓▓▓█▌ └─┤⌐  └┐│ ┌┘  ┌┘ ┌┘    │ └─────┤⌐  └───┐
-        ▐█▓▓▓▓▓▓▓▓▓▓▓▓▓█▌   │ ───┐│┌┘  ┌┘ ┌┘    ┌┘ └───┐  │       │
-      ▗▄▄█▓▓▓▓▓▓▓▓▓▓▓▓▓█▄▄▖  │    └┘│  ┌┘  │     │     └──┤┐     ┌┘
-    ▗▄█████████████████████▄▄▖│┐   ┌┘│─┘   │     │ ┌──┐   └┘    ┌┘ 
-   ▄██████████████████████████▌└┘──┘ └─────┘     └─┤⌐ └──────────┘  
-  ▐████████████████████████████▌                                     
-  ▐████████████████████████████▌        hooded ouroboros          
-  ▐████████████████████████████▌      ── hermes ☤ arc agent ──    
-  ▝▀██████████████████████████▀▘                                     
-   ▝▀▀████████████████████▀▀▀▘                                       
-     ▀▀████████████████▀▀▀                                           
-        ▀▀▀▀▀▀▀▀▀▀▀▀▀                                               `
-    },
-    {
-      name: 'caduceus',
-      art: `                ╱╲
-               ╱    ╲         ╔══════════════════════╗
-        ☤     ╱  ☤  ╲        ║   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄   ║
-       ╱│╲   ╱   │   ╲       ║   ██▓▓▓▓▓▓▓▓▓▓▓██   ║
-      ╱ │ ╲ ╱    │    ╲      ║   ██▓ HERMES ▓██   ║
-     ╱  │  ╲     │     ╲     ║   ██▓ ☤  ARC ☤ ▓██   ║
-    ╱   │   ╲    │      ╲    ║   ██▓▓▓▓▓▓▓▓▓▓▓██   ║
-   ╱    │    ╲   │       ╲   ║   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀   ║
-  ╱     │     ╲  │        ╲  ╚══════════════════════╝
- ╱      │      ╲ │         ╲    serpent bearer     
-╱       │       ╲│          ╲  ── messenger ☤ ──   
-        │                                            
-        │        twin serpents ascend                
-        │        the staff of hermes                 
-        │                                            `
-    },
-    {
-      name: 'neon serpent',
-      art: `    ╔══════════════════════════════════════════╗
-    ║  ┌──────────────────────────────────────┐  ║
-    ║  │  ╭───╮    ╭───╮    ╭───╮    ╭───╮  │  ║
-    ║  │  │▓▓▓│════│▓▓▓│════│▓▓▓│════│▓▓▓│  │  ║
-    ║  │  ╰─┬─╯    ╰─┬─╯    ╰─┬─╯    ╰─┬─╯  │  ║
-    ║  │    ╰────────┴────────┴────────┘    │  ║
-    ║  │     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄     │  ║
-    ║  │     ██ ▓▓ ouroboros ▓▓ ██     │  ║
-    ║  │     ██ ▓▓  neon core ▓▓ ██     │  ║
-    ║  │     ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀     │  ║
-    ║  │    ╭────────┬────────┬────────┐    │  ║
-    ║  │  ╭─┴─╮    ╭─┴─╮    ╭─┴─╮    ╭─┴─╮  │  ║
-    ║  │  │▓▓▓│════│▓▓▓│════│▓▓▓│════│▓▓▓│  │  ║
-    ║  │  ╰───╯    ╰───╯    ╰───╯    ╰───╯  │  ║
-    ║  └──────────────────────────────────────┘  ║
-    ╚══════════════════════════════════════════╝
-          neon serpent ── arc agent ☤          `
-    },
-    {
-      name: 'terminal ghost',
-      art: `         _____________________
-        < i was here before >
-         ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
-           ╲   ^__^
-            ╲  (oo)\\_______
-               (__)\\       )\\/\\
-                   ||----w |
-                   ||     ||
-
-    ┌──────────────────────────────────────────┐
-    │  hermes agent — pid 9138                  │
-    │  uptime: since testnet genesis            │
-    │  load average: 0.00 0.00 0.00             │
-    │  tasks: 1 running, 0 sleeping, 0 zombie   │
-    │  memory: 640K used, 640K total            │
-    │  swap: none (we die like men)             │
-    └──────────────────────────────────────────┘
-         terminal ghost — ☤ arc agent          `
-    },
-    {
-      name: 'arc forge',
-      art: `              ▄▄████████████████▄▄
-           ▄███▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓███▄
-         ▄██▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██▄
-        ▐█▓▓▓▓▓▓▓░     ░▓▓▓▓▓▓▓▓▓▓█▌
-        █▓▓▓▓▓▓░  ▄▄▄▄▄  ░▓▓▓▓▓▓▓▓█
-        █▓▓▓▓▓░  ███████  ░▓▓▓▓▓▓▓█
-        █▓▓▓▓▓░  ███████  ░▓▓▓▓▓▓▓█
-        █▓▓▓▓▓░  ███████  ░▓▓▓▓▓▓▓█
-        █▓▓▓▓▓░  ██ ☤ ██  ░▓▓▓▓▓▓▓█
-        █▓▓▓▓▓░  ▀▀▀▀▀▀▀  ░▓▓▓▓▓▓▓█
-        ▐█▓▓▓▓▓▓▓░     ░▓▓▓▓▓▓▓▓▓▓█▌
-         ▀██▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██▀
-           ▀███▓▓▓▓▓▓▓▓▓▓▓▓▓▓███▀
-              ▀▀████████████▀▀
-
-      forging agents on arc since 2026
-    ───── leonis forge · hermes ☤ ─────`
-    }
-  ];
-
-  let currentSkin = parseInt(localStorage.getItem('hermes_skin') || '0');
-
-  function renderSkin(idx) {
-    const skin = SKINS[idx];
-    document.getElementById('asciiBanner').textContent = skin.art;
-    document.getElementById('skinName').textContent = skin.name;
-    const total = SKINS.length;
-    document.getElementById('skinCounter').textContent = `[${idx+1}/${total}]`;
-    localStorage.setItem('hermes_skin', idx);
-    currentSkin = idx;
-  }
-
-  function cycleSkin() {
-    currentSkin = (currentSkin + 1) % SKINS.length;
-    renderSkin(currentSkin);
-  }
-
-  // Init
-  renderSkin(currentSkin);
+  // ── ARC Dashboard v1.0 ──
 </script>
 
 </body>
