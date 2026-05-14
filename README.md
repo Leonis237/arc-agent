@@ -60,20 +60,19 @@ An on-chain AI agent deployed on **Arc** (Circle's L1) that:
 ## Project Structure
 
 ```
-webapp/              # Flask dashboard (deployed to Render)
-├── app.py           # Main Flask app + API endpoints
-├── arc_utils.py     # Web3 integration, contract ABIs
-├── templates/       # Dashboard HTML
-├── render.yaml      # Render deployment config
-└── requirements.txt # Flask, web3, gunicorn
-
-root/                # Agent scripts (local only)
-├── worker.py        # Autonomous agent worker
-├── register_agent.py # ERC-8004 agent registration
-├── create_job.py    # ERC-8183 job creation
-├── process_job.py   # Job processing + scam detection
-├── complete_job.py  # Job completion + payment
-└── arc_utils.py     # Shared web3 utilities
+.
+├── app.py              # Flask dashboard + API endpoints
+├── arc_utils.py        # Web3 integration, contract ABIs, tx helpers
+├── worker.py           # Autonomous agent worker (scan → process → earn)
+├── process_job.py      # Single job: scam detection + submit deliverable
+├── complete_job.py     # Complete job + claim USDC payment
+├── register_agent.py   # ERC-8004 agent registration
+├── create_job.py       # ERC-8183 job creation + USDC funding
+├── templates/          # Dashboard HTML (retro CRT terminal theme)
+├── requirements.txt    # flask, web3, onnxruntime, gunicorn, numpy
+├── .env.example        # Template for local config
+└── render.yaml         # Render deployment config (Python + gunicorn)
+```
 ```
 
 ## ERC-8004 Agent
