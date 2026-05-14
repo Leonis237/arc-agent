@@ -468,6 +468,28 @@
         </div>
       </div>
 
+      <!-- Worker Stats -->
+      <div class="window">
+        <div class="window-header">
+          <span>agent.worker</span>
+          <span style="font-size:10px" id="workerStatus">[IDLE]</span>
+        </div>
+        <div class="window-body" style="font-size:11px">
+          <div style="margin-bottom:8px">
+            <span style="color:var(--fg-dim)">status</span><br>
+            <span style="color:var(--cyan)" id="workerState">initializing...</span>
+          </div>
+          <div style="margin-bottom:8px">
+            <span style="color:var(--fg-dim)">jobs processed</span><br>
+            <span style="color:var(--fg); font-weight:700" id="workerJobs">0</span>
+          </div>
+          <div>
+            <span style="color:var(--fg-dim)">total earnings</span><br>
+            <span style="color:var(--amber); font-weight:700" id="workerEarnings">0.00 USDC</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Quick links -->
       <div class="window">
         <div class="window-header">
@@ -515,14 +537,26 @@
 
   async function refresh() {
     try {
-      const [statusRes, jobsRes] = await Promise.all([
-        fetch('/api/status'), fetch('/api/jobs')
+      const [statusRes, jobsRes, workerRes] = await Promise.all([
+        fetch('/api/status'), fetch('/api/jobs'), fetch('/api/worker')
       ]);
       const status = await statusRes.json();
       const jobsData = await jobsRes.json();
+      const worker = await workerRes.json();
 
       if (!status.error) {
         document.getElementById('balance').textContent = status.balance_usdc.toFixed(2);
+      }
+
+      // Update worker stats
+      if (!worker.error) {
+        document.getElementById('workerState').textContent = worker.status || 'offline';
+        document.getElementById('workerJobs').textContent = worker.processed_jobs;
+        document.getElementById('workerEarnings').textContent = worker.total_earnings_usdc.toFixed(2) + ' USDC';
+        if (worker.status === 'active') {
+          document.getElementById('workerStatus').innerHTML = '[ACTIVE]';
+          document.getElementById('workerStatus').style.color = 'var(--fg)';
+        }
       }
 
       if (!jobsData.error && jobsData.jobs) {

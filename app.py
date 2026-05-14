@@ -148,5 +148,32 @@ def api_jobs():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/worker")
+def api_worker():
+    """Worker status + earnings from autonomous agent."""
+    try:
+        state_path = Path(__file__).parent.parent / ".worker_state.json"
+        if not state_path.exists():
+            return jsonify({
+                "status": "not_initialized",
+                "agent_id": AGENT_ID,
+                "processed_jobs": 0,
+                "total_earnings_usdc": 0,
+            })
+        
+        import json
+        state = json.loads(state_path.read_text())
+        return jsonify({
+            "status": "active",
+            "agent_id": state.get("agent_id", AGENT_ID),
+            "processed_jobs": len(state.get("processed_jobs", {})),
+            "total_earnings_usdc": state.get("total_earnings_usdc", 0),
+            "last_updated": state.get("updated_at"),
+            "recent_jobs": dict(list(state.get("processed_jobs", {}).items())[-5:]),
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5050, debug=True)
