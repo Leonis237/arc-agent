@@ -2,3 +2,5 @@ flask>=3.0
 web3>=7.0
 python-dotenv>=1.0
 gunicorn>=21.0
+onnxruntime>=1.17
+numpy>=1.26
