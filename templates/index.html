@@ -289,35 +289,24 @@
 <div class="container">
 
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- ASCII ART — HOODED OUROBOROS                               -->
+  <!-- ASCII ART — HOODED OUROBOROS COLLECTION                     -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <div style="margin-bottom:1.5rem">
-    <div class="prompt" style="font-size:12px; margin-bottom:6px">
-      <span class="user">hermes</span><span class="at">@</span><span class="host">arc-testnet</span><span class="at">:</span><span class="path">~</span>$ cat /etc/motd<span class="cursor"></span>
+    <div style="display:flex; justify-content:space-between; align-items:flex-end">
+      <div class="prompt" style="font-size:12px; margin-bottom:6px">
+        <span class="user">hermes</span><span class="at">@</span><span class="host">arc-testnet</span><span class="at">:</span><span class="path">~</span>$ cat /etc/motd<span class="cursor"></span>
+      </div>
+      <div style="font-size:10px; color:var(--fg-dim); margin-bottom:6px; display:flex; align-items:center; gap:6px">
+        <span style="color:var(--fg-muted)">skin:</span>
+        <span id="skinName" style="color:var(--amber); cursor:pointer; user-select:none" onclick="cycleSkin()" title="click to cycle skins">hooded ouroboros</span>
+        <span style="color:var(--fg-dim)" id="skinCounter">[1/5]</span>
+        <button onclick="cycleSkin()" class="btn" style="font-size:10px;padding:1px 8px">[NEXT]</button>
+      </div>
     </div>
 
-    <!-- ASCII Art Banner -->
-    <pre style="font-size:10px; line-height:1.15; color:var(--fg); text-shadow:0 0 3px rgba(51,255,0,0.3); margin:0; overflow:hidden; white-space:pre; letter-spacing:0">
-                                               .                     
-                                     .         │              .      
-                               .     │   .     │   .                 
-           ▄▄▄▄▄▄▄▄▄▄▄      .───┐    │ ┌───┐   │    .───┐          
-         ▄█▓▓▓▓▓▓▓▓▓▓▓█▄   ┌───┐│    │ │⌐  │   │   ┌┘   │     .    
-        ▐█▓▓▓▓▓▓▓▓▓▓▓▓▓█▌  │⌐  └┘   ┌┘ │   │  ┌┘   │    │          
-        ▐█▓▓▓▓▓▓▓▓▓▓▓▓▓█▌  │ ▄▄▄▄▄ │  │   │  │    │ ┌──┘  ┌───┐    
-        ▐█▓▓▓░ ░▓▓▓░ ▓▓▓█▌ └─┤⌐  └┐│ ┌┘  ┌┘ ┌┘    │ └─────┤⌐  └───┐
-        ▐█▓▓▓▓▓▓▓▓▓▓▓▓▓█▌   │ ───┐│┌┘  ┌┘ ┌┘    ┌┘ └───┐  │       │
-      ▗▄▄█▓▓▓▓▓▓▓▓▓▓▓▓▓█▄▄▖  │    └┘│  ┌┘  │     │     └──┤┐     ┌┘
-    ▗▄█████████████████████▄▄▖│┐   ┌┘│─┘   │     │ ┌──┐   └┘    ┌┘ 
-   ▄██████████████████████████▌└┘──┘ └─────┘     └─┤⌐ └──────────┘  
-  ▐████████████████████████████▌                                     
-  ▐████████████████████████████▌        hooded ouroboros          
-  ▐████████████████████████████▌      ── hermes ☤ arc agent ──    
-  ▝▀██████████████████████████▀▘                                     
-   ▝▀▀████████████████████▀▀▀▘                                       
-     ▀▀████████████████▀▀▀                                           
-        ▀▀▀▀▀▀▀▀▀▀▀▀▀                                               
-    </pre>
+    <!-- ASCII Art Banner (dynamic) -->
+    <pre id="asciiBanner" style="font-size:10px; line-height:1.15; color:var(--fg); text-shadow:0 0 3px rgba(51,255,0,0.3); margin:0; overflow:hidden; white-space:pre; letter-spacing:0; cursor:pointer"
+         onclick="cycleSkin()" title="click to cycle skins"></pre>
 
     <div class="hr" style="margin-top:6px">═══ ARC TESTNET ═══════════════════════════════════════════════════════════════════</div>
   </div>
@@ -519,6 +508,134 @@
       el.textContent = n;
     }
   }, 2000);
+
+  // ═══════════════════════════════════════════════════════════════
+  // ASCII ART SKIN COLLECTION
+  // ═══════════════════════════════════════════════════════════════
+
+  const SKINS = [
+    {
+      name: 'hooded ouroboros',
+      art: `                                               .                     
+                                     .         │              .      
+                               .     │   .     │   .                 
+           ▄▄▄▄▄▄▄▄▄▄▄      .───┐    │ ┌───┐   │    .───┐          
+         ▄█▓▓▓▓▓▓▓▓▓▓▓█▄   ┌───┐│    │ │⌐  │   │   ┌┘   │     .    
+        ▐█▓▓▓▓▓▓▓▓▓▓▓▓▓█▌  │⌐  └┘   ┌┘ │   │  ┌┘   │    │          
+        ▐█▓▓▓▓▓▓▓▓▓▓▓▓▓█▌  │ ▄▄▄▄▄ │  │   │  │    │ ┌──┘  ┌───┐    
+        ▐█▓▓▓░ ░▓▓▓░ ▓▓▓█▌ └─┤⌐  └┐│ ┌┘  ┌┘ ┌┘    │ └─────┤⌐  └───┐
+        ▐█▓▓▓▓▓▓▓▓▓▓▓▓▓█▌   │ ───┐│┌┘  ┌┘ ┌┘    ┌┘ └───┐  │       │
+      ▗▄▄█▓▓▓▓▓▓▓▓▓▓▓▓▓█▄▄▖  │    └┘│  ┌┘  │     │     └──┤┐     ┌┘
+    ▗▄█████████████████████▄▄▖│┐   ┌┘│─┘   │     │ ┌──┐   └┘    ┌┘ 
+   ▄██████████████████████████▌└┘──┘ └─────┘     └─┤⌐ └──────────┘  
+  ▐████████████████████████████▌                                     
+  ▐████████████████████████████▌        hooded ouroboros          
+  ▐████████████████████████████▌      ── hermes ☤ arc agent ──    
+  ▝▀██████████████████████████▀▘                                     
+   ▝▀▀████████████████████▀▀▀▘                                       
+     ▀▀████████████████▀▀▀                                           
+        ▀▀▀▀▀▀▀▀▀▀▀▀▀                                               `
+    },
+    {
+      name: 'caduceus',
+      art: `                ╱╲
+               ╱    ╲         ╔══════════════════════╗
+        ☤     ╱  ☤  ╲        ║   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄   ║
+       ╱│╲   ╱   │   ╲       ║   ██▓▓▓▓▓▓▓▓▓▓▓██   ║
+      ╱ │ ╲ ╱    │    ╲      ║   ██▓ HERMES ▓██   ║
+     ╱  │  ╲     │     ╲     ║   ██▓ ☤  ARC ☤ ▓██   ║
+    ╱   │   ╲    │      ╲    ║   ██▓▓▓▓▓▓▓▓▓▓▓██   ║
+   ╱    │    ╲   │       ╲   ║   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀   ║
+  ╱     │     ╲  │        ╲  ╚══════════════════════╝
+ ╱      │      ╲ │         ╲    serpent bearer     
+╱       │       ╲│          ╲  ── messenger ☤ ──   
+        │                                            
+        │        twin serpents ascend                
+        │        the staff of hermes                 
+        │                                            `
+    },
+    {
+      name: 'neon serpent',
+      art: `    ╔══════════════════════════════════════════╗
+    ║  ┌──────────────────────────────────────┐  ║
+    ║  │  ╭───╮    ╭───╮    ╭───╮    ╭───╮  │  ║
+    ║  │  │▓▓▓│════│▓▓▓│════│▓▓▓│════│▓▓▓│  │  ║
+    ║  │  ╰─┬─╯    ╰─┬─╯    ╰─┬─╯    ╰─┬─╯  │  ║
+    ║  │    ╰────────┴────────┴────────┘    │  ║
+    ║  │     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄     │  ║
+    ║  │     ██ ▓▓ ouroboros ▓▓ ██     │  ║
+    ║  │     ██ ▓▓  neon core ▓▓ ██     │  ║
+    ║  │     ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀     │  ║
+    ║  │    ╭────────┬────────┬────────┐    │  ║
+    ║  │  ╭─┴─╮    ╭─┴─╮    ╭─┴─╮    ╭─┴─╮  │  ║
+    ║  │  │▓▓▓│════│▓▓▓│════│▓▓▓│════│▓▓▓│  │  ║
+    ║  │  ╰───╯    ╰───╯    ╰───╯    ╰───╯  │  ║
+    ║  └──────────────────────────────────────┘  ║
+    ╚══════════════════════════════════════════╝
+          neon serpent ── arc agent ☤          `
+    },
+    {
+      name: 'terminal ghost',
+      art: `         _____________________
+        < i was here before >
+         ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+           ╲   ^__^
+            ╲  (oo)\\_______
+               (__)\\       )\\/\\
+                   ||----w |
+                   ||     ||
+
+    ┌──────────────────────────────────────────┐
+    │  hermes agent — pid 9138                  │
+    │  uptime: since testnet genesis            │
+    │  load average: 0.00 0.00 0.00             │
+    │  tasks: 1 running, 0 sleeping, 0 zombie   │
+    │  memory: 640K used, 640K total            │
+    │  swap: none (we die like men)             │
+    └──────────────────────────────────────────┘
+         terminal ghost — ☤ arc agent          `
+    },
+    {
+      name: 'arc forge',
+      art: `              ▄▄████████████████▄▄
+           ▄███▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓███▄
+         ▄██▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██▄
+        ▐█▓▓▓▓▓▓▓░     ░▓▓▓▓▓▓▓▓▓▓█▌
+        █▓▓▓▓▓▓░  ▄▄▄▄▄  ░▓▓▓▓▓▓▓▓█
+        █▓▓▓▓▓░  ███████  ░▓▓▓▓▓▓▓█
+        █▓▓▓▓▓░  ███████  ░▓▓▓▓▓▓▓█
+        █▓▓▓▓▓░  ███████  ░▓▓▓▓▓▓▓█
+        █▓▓▓▓▓░  ██ ☤ ██  ░▓▓▓▓▓▓▓█
+        █▓▓▓▓▓░  ▀▀▀▀▀▀▀  ░▓▓▓▓▓▓▓█
+        ▐█▓▓▓▓▓▓▓░     ░▓▓▓▓▓▓▓▓▓▓█▌
+         ▀██▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██▀
+           ▀███▓▓▓▓▓▓▓▓▓▓▓▓▓▓███▀
+              ▀▀████████████▀▀
+
+      forging agents on arc since 2026
+    ───── leonis forge · hermes ☤ ─────`
+    }
+  ];
+
+  let currentSkin = parseInt(localStorage.getItem('hermes_skin') || '0');
+
+  function renderSkin(idx) {
+    const skin = SKINS[idx];
+    document.getElementById('asciiBanner').textContent = skin.art;
+    document.getElementById('skinName').textContent = skin.name;
+    const total = SKINS.length;
+    document.getElementById('skinCounter').textContent = `[${idx+1}/${total}]`;
+    localStorage.setItem('hermes_skin', idx);
+    currentSkin = idx;
+  }
+
+  function cycleSkin() {
+    currentSkin = (currentSkin + 1) % SKINS.length;
+    renderSkin(currentSkin);
+  }
+
+  // Init
+  renderSkin(currentSkin);
 </script>
 
 </body>
