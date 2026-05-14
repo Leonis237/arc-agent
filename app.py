@@ -2,8 +2,10 @@
 Arc Agent Dashboard — Flask webapp for visualizing ERC-8004 agent + ERC-8183 jobs.
 """
 import os
+import json
+import time
 from pathlib import Path
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 
 from arc_utils import (
     init_web3, get_account,
@@ -175,5 +177,85 @@ def api_worker():
         return jsonify({"error": str(e)}), 500
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5050, debug=True)
+@app.route("/api/jobs/create", methods=["POST"])
+def api_create_job():
+    """Create + fund an ERC-8183 job on-chain (marketplace)."""
+    try:
+        data = request.get_json(force=True)
+        description = data.get("description", "").strip()
+        provider_addr = data.get("provider", "").strip()
+        budget_usdc = float(data.get("budget", 0))
+        expire_hours = int(data.get("expire_hours", 24))
+
+        if not description or not provider_addr:
+            return jsonify({"error": "description and provider address required"}), 400
+        if budget_usdc <= 0:
+            return jsonify({"error": "budget must be > 0 USDC"}), 400
+        if not provider_addr.startswith("0x") or len(provider_addr) != 42:
+            return jsonify({"error": "invalid provider address"}), 400
+
+        commerce = get_agentic_commerce(w3)
+        usdc = get_usdc(w3)
+        decimals = usdc.functions.decimals().call()
+
+        # Check balance
+        balance = usdc.functions.balanceOf(AGENT_ADDRESS).call()
+        budget_raw = int(budget_usdc * 10**decimals)
+        if balance < budget_raw + 100000:
+            return jsonify({"error": f"insufficient USDC. Balance: {balance / 10**decimals:.2f}"}), 402
+
+        # 1. Create job
+        expired_at = int(time.time()) + expire_hours * 3600
+        receipt = send_tx(w3, account,
+            commerce.functions.createJob(
+                w3.to_checksum_address(provider_addr),
+                AGENT_ADDRESS,  # evaluator = us
+                expired_at,
+                description,
+                "0x0000000000000000000000000000000000000000",  # hook
+            )
+        )
+        # Extract job ID from JobCreated event
+        job_id = None
+        for log in receipt.logs:
+            try:
+                decoded = commerce.events.JobCreated().process_log(log)
+                job_id = decoded.args.jobId
+                break
+            except Exception:
+                continue
+        if job_id is None:
+            return jsonify({"error": "job created but could not extract job ID"}), 500
+
+        # 2. Set budget
+        send_tx(w3, account,
+            commerce.functions.setBudget(job_id, budget_raw, b"")
+        )
+
+        # 3. Approve USDC
+        send_tx(w3, account,
+            usdc.functions.approve(AGENTIC_COMMERCE, budget_raw)
+        )
+
+        # 4. Fund job
+        send_tx(w3, account,
+            commerce.functions.fund(job_id, b"")
+        )
+
+        # Read back final state
+        time.sleep(2)
+        job = commerce.functions.jobs(job_id).call()
+        state_names = {0: "NONEXISTENT", 1: "OPEN", 2: "FUNDED", 3: "IN_PROGRESS", 4: "DELIVERED", 5: "COMPLETED", 6: "CANCELLED"}
+
+        return jsonify({
+            "success": True,
+            "job_id": job_id,
+            "description": description,
+            "budget": budget_usdc,
+            "state": state_names.get(job[7], f"UNKNOWN({job[7]})"),
+            "explorer_url": f"https://testnet.arcscan.app/address/{AGENTIC_COMMERCE}",
+            "message": f"Job #{job_id} created + funded with {budget_usdc:.2f} USDC. Agent will pick it up.",
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

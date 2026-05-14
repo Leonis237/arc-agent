@@ -380,7 +380,13 @@
   <div class="window">
     <div class="window-header">
       <span>jobs.erc8183</span>
-      <span style="font-size:10px">total: <span id="jobCount" style="color:var(--bg);font-weight:700">--</span></span>
+      <span style="font-size:10px">
+        <span onclick="filterJobs('all')" id="filterAll" style="cursor:pointer;color:var(--fg);font-weight:700">ALL</span>
+        <span style="color:var(--fg-dim);margin:0 4px">|</span>
+        <span onclick="filterJobs('open')" id="filterOpen" style="cursor:pointer;color:var(--fg-dim)">OPEN</span>
+        <span style="color:var(--fg-dim);margin:0 4px">·</span>
+        total: <span id="jobCount" style="color:var(--bg);font-weight:700">--</span>
+      </span>
     </div>
     <div class="window-body" style="padding:0">
       <!-- Table header -->
@@ -405,6 +411,36 @@
 
     <!-- RIGHT COLUMN — network + ARC info -->
     <div>
+
+      <!-- ── Post a Job (Marketplace) ── -->
+      <div class="window" id="postJobSection">
+        <div class="window-header">
+          <span>post.job</span>
+          <span style="font-size:10px" id="postJobToggle" onclick="togglePostJob()" style="cursor:pointer">[ + NEW ]</span>
+        </div>
+        <div class="window-body" id="postJobBody" style="display:none; font-size:11px">
+          <div style="margin-bottom:8px">
+            <label style="color:var(--fg-dim); font-size:10px">Description</label>
+            <input type="text" id="jobDesc" placeholder="e.g. Token scam analysis on 0x..." style="width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--fg-dim);padding:6px;font-family:var(--font);font-size:11px;margin-top:4px">
+          </div>
+          <div style="margin-bottom:8px">
+            <label style="color:var(--fg-dim); font-size:10px">Provider (agent address)</label>
+            <input type="text" id="jobProvider" value="{{ agent_address }}" style="width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--fg-dim);padding:6px;font-family:var(--font);font-size:11px;margin-top:4px">
+          </div>
+          <div style="margin-bottom:8px; display:flex; gap:8px">
+            <div style="flex:1">
+              <label style="color:var(--fg-dim); font-size:10px">Budget (USDC)</label>
+              <input type="number" id="jobBudget" value="1.00" min="0.01" step="0.01" style="width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--fg-dim);padding:6px;font-family:var(--font);font-size:11px;margin-top:4px">
+            </div>
+            <div style="flex:1">
+              <label style="color:var(--fg-dim); font-size:10px">Expires (hours)</label>
+              <input type="number" id="jobExpire" value="24" min="1" max="720" style="width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--fg-dim);padding:6px;font-family:var(--font);font-size:11px;margin-top:4px">
+            </div>
+          </div>
+          <button onclick="createJob()" class="btn btn-amber" style="width:100%; margin-top:4px">[ CREATE JOB + FUND ]</button>
+          <div id="createResult" style="margin-top:8px; font-size:10px; min-height:20px"></div>
+        </div>
+      </div>
 
       <!-- Network Info -->
       <div class="window">
@@ -532,8 +568,14 @@
       }
 
       if (!jobsData.error && jobsData.jobs) {
-        const jobs = jobsData.jobs.filter(j => j.state !== 'NONEXISTENT');
-        document.getElementById('jobCount').textContent = jobsData.job_counter;
+        let jobs = jobsData.jobs.filter(j => j.state !== 'NONEXISTENT');
+        
+        // Apply filter
+        if (currentFilter === 'open') {
+          jobs = jobs.filter(j => j.state === 'OPEN' || j.state === 'FUNDED');
+        }
+        
+        document.getElementById('jobCount').textContent = jobs.length;
         document.getElementById('statTotal').textContent = jobsData.job_counter;
 
         const ourJobs = jobs.filter(j =>
@@ -572,6 +614,60 @@
 
   refresh();
   setInterval(refresh, 15000);
+
+  // ── Post Job Marketplace ──
+  function togglePostJob() {
+    const body = document.getElementById('postJobBody');
+    const toggle = document.getElementById('postJobToggle');
+    if (body.style.display === 'none') {
+      body.style.display = 'block';
+      toggle.textContent = '[ - HIDE ]';
+    } else {
+      body.style.display = 'none';
+      toggle.textContent = '[ + NEW ]';
+    }
+  }
+
+  // ── Job filter ──
+  let currentFilter = 'all';
+  function filterJobs(filter) {
+    currentFilter = filter;
+    document.getElementById('filterAll').style.color = filter === 'all' ? 'var(--fg)' : 'var(--fg-dim)';
+    document.getElementById('filterAll').style.fontWeight = filter === 'all' ? '700' : '400';
+    document.getElementById('filterOpen').style.color = filter === 'open' ? 'var(--fg)' : 'var(--fg-dim)';
+    document.getElementById('filterOpen').style.fontWeight = filter === 'open' ? '700' : '400';
+    refresh();
+  }
+
+  async function createJob() {
+    const btn = event.target;
+    const res = document.getElementById('createResult');
+    btn.disabled = true;
+    res.innerHTML = '<span style="color:var(--amber)">⏳ Sending transactions...</span>';
+
+    try {
+      const r = await fetch('/api/jobs/create', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          description: document.getElementById('jobDesc').value,
+          provider: document.getElementById('jobProvider').value,
+          budget: parseFloat(document.getElementById('jobBudget').value),
+          expire_hours: parseInt(document.getElementById('jobExpire').value)
+        })
+      });
+      const data = await r.json();
+      if (data.success) {
+        res.innerHTML = `<span style="color:var(--fg)">✅ Job #${data.job_id} created!<br><span style="font-size:9px;color:var(--fg-dim)">${data.state} · ${data.budget} USDC · ${data.message}</span></span>`;
+        setTimeout(refresh, 3000);
+      } else {
+        res.innerHTML = `<span style="color:var(--red)">❌ ${data.error}</span>`;
+      }
+    } catch(e) {
+      res.innerHTML = `<span style="color:var(--red)">❌ ${e.message}</span>`;
+    }
+    btn.disabled = false;
+  }
 
   // ── Live block counter (fake animation) ──
   setInterval(() => {
