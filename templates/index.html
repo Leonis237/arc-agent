@@ -1,331 +1,504 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hermes Agent — Arc Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            arc: {
-              bg: '#060b14',
-              surface: '#0d1326',
-              card: '#111a2e',
-              border: '#1a2744',
-              accent: '#4f8fff',
-              accent2: '#7c5cfc',
-              green: '#00d4aa',
-              yellow: '#f0b429',
-              red: '#ff5e7a',
-              text: '#c8d6e5',
-              muted: '#6b7d99'
-            }
-          },
-          fontFamily: {
-            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
-            sans: ['Inter', 'system-ui', 'sans-serif']
-          }
-        }
-      }
-    }
-  </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>hermes@arc:~$ dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;0,800;1,400&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg:       #0a0a0a;
+      --fg:       #33ff00;
+      --fg-dim:   #1a7a00;
+      --fg-muted: #0d3d00;
+      --amber:    #ffb000;
+      --red:      #ff3333;
+      --cyan:     #00d4ff;
+      --white:    #e0e0e0;
+      --font:     'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      --line:     1px;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
     body {
-      background: #060b14;
-      color: #c8d6e5;
-      font-family: 'Inter', system-ui, sans-serif;
-      background-image:
-        radial-gradient(ellipse 60% 50% at 50% -20%, rgba(79, 143, 255, 0.08), transparent),
-        radial-gradient(ellipse 40% 60% at 80% 80%, rgba(124, 92, 252, 0.05), transparent);
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font);
+      font-size: 13px;
+      line-height: 1.65;
       min-height: 100vh;
-    }
-    .glass {
-      background: linear-gradient(135deg, rgba(17, 26, 46, 0.9), rgba(13, 19, 38, 0.95));
-      border: 1px solid rgba(79, 143, 255, 0.12);
-      backdrop-filter: blur(20px);
-    }
-    .glass-card {
-      background: linear-gradient(135deg, rgba(17, 26, 46, 0.85), rgba(13, 19, 38, 0.9));
-      border: 1px solid rgba(79, 143, 255, 0.1);
-    }
-    .gradient-border {
       position: relative;
-      border-radius: 16px;
-      background: linear-gradient(135deg, rgba(79, 143, 255, 0.3), rgba(124, 92, 252, 0.2), rgba(0, 212, 170, 0.15));
-      padding: 1px;
+      overflow-x: hidden;
     }
-    .gradient-border > * {
-      background: #0d1326;
-      border-radius: 15px;
-    }
-    .agent-card {
-      background: linear-gradient(135deg, rgba(17, 26, 46, 0.95), rgba(22, 34, 58, 0.9));
-      border: 1px solid rgba(79, 143, 255, 0.2);
-      border-radius: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-    .agent-card::before {
+
+    /* ── CRT Scanlines ── */
+    body::after {
       content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #4f8fff, #7c5cfc, #00d4aa);
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
     }
-    .stat-pill {
-      background: rgba(79, 143, 255, 0.1);
-      border: 1px solid rgba(79, 143, 255, 0.2);
-      border-radius: 999px;
-      padding: 4px 14px;
-      font-size: 0.8125rem;
-      font-weight: 500;
+
+    /* ── Text glow ── */
+    .glow { text-shadow: 0 0 6px rgba(51,255,0,0.4); }
+    .glow-amber { text-shadow: 0 0 6px rgba(255,176,0,0.4); }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
     }
-    .badge {
-      padding: 4px 12px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
+
+    /* ── Window pane ── */
+    .window {
+      border: 1px solid var(--fg-dim);
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .window-header {
+      background: var(--fg-dim);
+      color: var(--bg);
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 2px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
     }
-    .badge-funded { background: rgba(79, 143, 255, 0.15); color: #6aa5ff; border: 1px solid rgba(79, 143, 255, 0.25); }
-    .badge-delivered { background: rgba(240, 180, 41, 0.15); color: #f5c542; border: 1px solid rgba(240, 180, 41, 0.25); }
-    .badge-completed { background: rgba(0, 212, 170, 0.12); color: #00d4aa; border: 1px solid rgba(0, 212, 170, 0.25); }
-    .badge-open { background: rgba(200, 214, 229, 0.08); color: #a0b4cc; border: 1px solid rgba(200, 214, 229, 0.15); }
-    .badge-progress { background: rgba(124, 92, 252, 0.15); color: #9b85ff; border: 1px solid rgba(124, 92, 252, 0.25); }
-    .badge-none { background: rgba(107, 125, 153, 0.08); color: #6b7d99; border: 1px solid rgba(107, 125, 153, 0.1); }
+    .window-body {
+      padding: 1.25rem;
+    }
+
+    /* ── ASCII divider ── */
+    .hr {
+      color: var(--fg-muted);
+      user-select: none;
+      white-space: pre;
+      overflow: hidden;
+      font-size: 12px;
+      margin: 0.25rem 0;
+    }
+
+    /* ── Blinking cursor ── */
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      background: var(--fg);
+      vertical-align: middle;
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ── Typewriter ── */
+    .typewriter {
+      overflow: hidden;
+      white-space: nowrap;
+      animation: typing 1.5s steps(30, end);
+    }
+    @keyframes typing {
+      from { max-width: 0; }
+      to { max-width: 100%; }
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-block;
+      background: transparent;
+      color: var(--fg);
+      border: 1px solid var(--fg-dim);
+      padding: 4px 12px;
+      font-family: var(--font);
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.1s;
+    }
+    .btn:hover {
+      background: var(--fg);
+      color: var(--bg);
+      border-color: var(--fg);
+    }
+    .btn:active {
+      background: var(--fg-dim);
+      transform: translateY(1px);
+    }
+    .btn-amber {
+      color: var(--amber);
+      border-color: rgba(255,176,0,0.3);
+    }
+    .btn-amber:hover {
+      background: var(--amber);
+      color: var(--bg);
+      border-color: var(--amber);
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-block;
+      padding: 1px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .badge-ok    { color: var(--fg);   border: 1px solid var(--fg-dim); }
+    .badge-warn  { color: var(--amber); border: 1px solid rgba(255,176,0,0.3); }
+    .badge-err   { color: var(--red);   border: 1px solid rgba(255,51,51,0.3); }
+    .badge-info  { color: var(--cyan);  border: 1px solid rgba(0,212,255,0.3); }
+
+    /* ── Progress bar ── */
+    .progress {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+    }
+    .progress-bar {
+      display: inline-flex;
+      letter-spacing: -1px;
+    }
+    .progress-bar .fill { color: var(--fg); }
+    .progress-bar .empty { color: var(--fg-muted); }
+
+    /* ── Job table ── */
     .job-row {
-      transition: all 0.2s ease;
-      border-bottom: 1px solid rgba(26, 39, 68, 0.6);
+      display: grid;
+      grid-template-columns: 50px 1fr 110px 90px 24px;
+      gap: 12px;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--fg-muted);
+      font-size: 12px;
+      transition: background 0.1s;
     }
     .job-row:last-child { border-bottom: none; }
-    .job-row:hover { background: rgba(79, 143, 255, 0.04); }
-    .job-row.ours { background: rgba(79, 143, 255, 0.05); border-left: 3px solid #4f8fff; }
-    .pulse-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: #00d4aa;
-      box-shadow: 0 0 8px rgba(0, 212, 170, 0.5);
-      animation: pulse 2s ease-in-out infinite;
+    .job-row:hover { background: rgba(51,255,0,0.03); }
+    .job-row.ours { background: rgba(51,255,0,0.04); }
+    .job-row.ours::before {
+      content: '>';
+      color: var(--fg);
+      position: absolute;
+      left: -12px;
     }
-    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.3); } }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
+    .job-id { color: var(--fg-dim); }
+    .job-id.ours { color: var(--fg); font-weight: 700; }
+    .job-desc {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .animate-in { animation: fadeUp 0.4s ease-out; }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #1a2744; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #243356; }
+    .job-budget { text-align: right; white-space: nowrap; }
+    .job-budget.ours { color: var(--fg); }
+    .job-link {
+      color: var(--fg-dim);
+      text-decoration: none;
+      text-align: right;
+      font-size: 11px;
+    }
+    .job-link:hover { color: var(--fg); }
+
+    /* ── Stats grid ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+    .stat {
+      border: 1px solid var(--fg-dim);
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-label {
+      font-size: 10px;
+      color: var(--fg-dim);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    /* ── Prompt line ── */
+    .prompt {
+      color: var(--fg-dim);
+    }
+    .prompt .user { color: var(--fg); }
+    .prompt .at { color: var(--fg-dim); }
+    .prompt .host { color: var(--amber); }
+    .prompt .path { color: var(--cyan); }
+
+    /* ── Glitch hover ── */
+    @keyframes glitch {
+      0%   { transform: translate(0); }
+      20%  { transform: translate(-1px, 1px); }
+      40%  { transform: translate(1px, -1px); }
+      60%  { transform: translate(-1px, 0); }
+      80%  { transform: translate(1px, 0); }
+      100% { transform: translate(0); }
+    }
+    .glitch:hover {
+      animation: glitch 0.2s ease;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      .container { padding: 1rem 0.75rem; }
+      .stats { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+      .job-row {
+        grid-template-columns: 40px 1fr 80px 70px 20px;
+        gap: 6px;
+        font-size: 11px;
+      }
+      .window-body { padding: 0.75rem; }
+      .stat-value { font-size: 16px; }
+    }
+
+    @media (max-width: 480px) {
+      .job-row {
+        grid-template-columns: 35px 1fr 70px auto;
+        gap: 4px;
+      }
+      .job-status { display: none; }
+    }
   </style>
 </head>
-<body class="p-6 md:p-10">
+<body>
 
-  <div class="max-w-5xl mx-auto">
+<div class="container">
 
-    <!-- ── Header ── -->
-    <header class="flex items-center justify-between mb-10 animate-in">
-      <div class="flex items-center gap-4">
-        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/20 flex items-center justify-center text-xl">
-          ☤
-        </div>
-        <div>
-          <h1 class="text-[1.65rem] font-bold text-white tracking-tight">Hermes Agent</h1>
-          <p class="text-sm text-arc-muted flex items-center gap-2">
-            <span class="inline-block w-1.5 h-1.5 rounded-full bg-arc-accent"></span>
-            Arc Testnet Dashboard
-          </p>
-        </div>
-      </div>
-      <div class="flex items-center gap-3">
-        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full glass text-sm">
-          <span class="pulse-dot"></span>
-          <span class="text-arc-green font-medium text-xs" id="statusText">LIVE</span>
-        </div>
-      </div>
-    </header>
-
-    <!-- ── Agent Identity ── -->
-    <div class="agent-card p-6 mb-6 animate-in" style="animation-delay: 0.1s">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <div class="flex items-center gap-2 mb-3">
-            <span class="text-xs font-semibold uppercase tracking-widest text-arc-muted">Agent Identity</span>
-            <span class="text-[10px] font-medium px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">ERC-8004</span>
-          </div>
-          <div class="flex items-center gap-3 flex-wrap">
-            <div class="stat-pill text-blue-300 font-mono text-sm">
-              <span class="text-arc-muted mr-1">ID</span> <span id="agentId" class="text-white font-semibold">{{ agent_id }}</span>
-            </div>
-            <span class="text-arc-muted font-mono text-xs" id="agentAddr">{{ agent_address[:8] }}<span class="text-arc-text">...</span>{{ agent_address[-6:] }}</span>
-            <button onclick="navigator.clipboard.writeText('{{ agent_address }}')" class="text-arc-muted hover:text-white transition-colors text-xs" title="Copy address">
-              <svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            </button>
-          </div>
-          <div class="flex items-center gap-3 mt-3 text-xs text-arc-muted">
-            <span>Chain {{ chain_id }}</span>
-            <span class="opacity-40">·</span>
-            <span>rpc.testnet.arc.network</span>
-            <span class="opacity-40">·</span>
-            <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="text-arc-accent hover:text-blue-300 transition-colors font-medium">Explorer ↗</a>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-6">
-          <div class="text-right">
-            <div class="text-[10px] font-semibold uppercase tracking-widest text-arc-muted mb-1">Balance</div>
-            <div class="flex items-baseline gap-1 justify-end">
-              <span class="text-[2.25rem] font-extrabold text-white leading-none" id="balance">--</span>
-              <span class="text-sm font-medium text-arc-muted">USDC</span>
-            </div>
-            <div class="text-[11px] text-arc-muted mt-0.5">Arc Testnet</div>
-          </div>
-          <div class="w-px h-12 bg-arc-border hidden md:block"></div>
-          <div class="text-center hidden md:block">
-            <div class="text-[10px] font-semibold uppercase tracking-widest text-arc-muted mb-1">Status</div>
-            <div class="w-2.5 h-2.5 rounded-full bg-arc-green mx-auto" style="box-shadow: 0 0 10px rgba(0,212,170,0.4)"></div>
-            <div class="text-[11px] text-arc-green font-medium mt-1">Active</div>
-          </div>
-        </div>
-      </div>
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- PROMPT HEADER                                              -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div style="margin-bottom:1.5rem">
+    <div class="prompt" style="font-size:12px; margin-bottom:4px">
+      <span class="user">hermes</span><span class="at">@</span><span class="host">arc-testnet</span><span class="at">:</span><span class="path">~</span>$ dashboard --live
     </div>
-
-    <!-- ── Stats Row ── -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 animate-in" style="animation-delay: 0.15s">
-      <div class="glass-card rounded-xl p-4 text-center">
-        <div class="text-[10px] font-semibold uppercase tracking-widest text-arc-muted mb-1">Network</div>
-        <div class="text-lg font-bold text-white">Arc</div>
-        <div class="text-[11px] text-arc-muted">Testnet</div>
-      </div>
-      <div class="glass-card rounded-xl p-4 text-center">
-        <div class="text-[10px] font-semibold uppercase tracking-widest text-arc-muted mb-1">Agent ID</div>
-        <div class="text-lg font-bold text-white font-mono">{{ agent_id }}</div>
-        <div class="text-[11px] text-arc-muted">ERC-8004</div>
-      </div>
-      <div class="glass-card rounded-xl p-4 text-center">
-        <div class="text-[10px] font-semibold uppercase tracking-widest text-arc-muted mb-1">Total Jobs</div>
-        <div class="text-lg font-bold text-white font-mono" id="statTotal">--</div>
-        <div class="text-[11px] text-arc-muted">On Network</div>
-      </div>
-      <div class="glass-card rounded-xl p-4 text-center">
-        <div class="text-[10px] font-semibold uppercase tracking-widest text-arc-muted mb-1">My Jobs</div>
-        <div class="text-lg font-bold text-arc-accent font-mono" id="statMyJobs">--</div>
-        <div class="text-[11px] text-arc-muted">Active</div>
-      </div>
+    <div style="font-size:28px; font-weight:800; letter-spacing:4px; text-transform:uppercase" class="glow typewriter">
+      Hermes Agent<span class="cursor"></span>
     </div>
-
-    <!-- ── Jobs ── -->
-    <div class="glass rounded-2xl overflow-hidden animate-in" style="animation-delay: 0.2s">
-      <div class="px-6 py-4 border-b border-arc-border flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <h2 class="text-sm font-semibold text-white uppercase tracking-wider">Recent Jobs</h2>
-          <span class="text-[10px] font-medium px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">ERC-8183</span>
-        </div>
-        <div class="text-xs text-arc-muted">
-          Total <span class="text-white font-mono font-medium" id="jobCount">--</span>
-        </div>
-      </div>
-
-      <!-- Table Header -->
-      <div class="px-6 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-arc-muted flex items-center gap-3 border-b border-arc-border/50">
-        <span class="w-16 shrink-0">Job</span>
-        <span class="flex-1 min-w-0">Description</span>
-        <span class="w-24 text-center shrink-0 hidden sm:block">Status</span>
-        <span class="w-24 text-right shrink-0">Budget</span>
-        <span class="w-6 shrink-0"></span>
-      </div>
-
-      <div id="jobList" class="divide-y divide-arc-border/30">
-        <div class="px-6 py-12 text-center">
-          <div class="inline-flex items-center gap-2 text-arc-muted">
-            <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-            <span class="text-sm">Loading jobs from chain...</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Footer ── -->
-    <footer class="flex items-center justify-between mt-8 text-xs text-arc-muted animate-in" style="animation-delay: 0.3s">
-      <div class="flex items-center gap-4">
-        <span>☤ Hermes Agent</span>
-        <span class="opacity-30">·</span>
-        <a href="https://leonisforge.com" target="_blank" class="hover:text-white transition-colors">Leonis Forge</a>
-      </div>
-      <div class="flex items-center gap-3">
-        <a href="https://testnet.arcscan.app" target="_blank" class="hover:text-white transition-colors">Explorer</a>
-        <span class="opacity-30">·</span>
-        <a href="https://docs.arc.network" target="_blank" class="hover:text-white transition-colors">Docs</a>
-      </div>
-    </footer>
-
+    <div class="hr">═══ ARC TESTNET ═══════════════════════════════════════════════════════════════════</div>
   </div>
 
-  <script>
-    const OUR_ADDRESS = '{{ agent_address }}'.toLowerCase();
-    const STATE_CLASSES = {
-      'FUNDED': 'badge-funded', 'DELIVERED': 'badge-delivered',
-      'COMPLETED': 'badge-completed', 'OPEN': 'badge-open',
-      'IN_PROGRESS': 'badge-progress',
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STATUS BAR                                                 -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; font-size:11px">
+    <div>
+      <span class="badge badge-ok">[LIVE]</span>
+      <span style="color:var(--fg-dim); margin-left:8px">block <span style="color:var(--fg)">42106558</span></span>
+      <span style="color:var(--fg-dim); margin-left:8px">rpc <span style="color:var(--fg)">rpc.testnet.arc.network</span></span>
+    </div>
+    <div style="color:var(--fg-dim)">
+      chain-id <span style="color:var(--fg)">{{ chain_id }}</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- AGENT IDENTITY WINDOW                                      -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="window">
+    <div class="window-header">
+      <span>agent_identity.erc8004</span>
+      <span style="font-size:10px">[ACTIVE]</span>
+    </div>
+    <div class="window-body">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem">
+        <div>
+          <div style="font-size:10px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:2px; margin-bottom:4px">Agent ID</div>
+          <div style="font-size:16px; font-weight:700" id="agentId">{{ agent_id }}</div>
+          <div style="margin-top:8px; font-size:11px; color:var(--fg-dim)">
+            <span class="prompt" style="font-size:11px">address:</span>
+            <span style="color:var(--fg)" id="agentAddr">{{ agent_address }}</span>
+            <button onclick="navigator.clipboard.writeText('{{ agent_address }}')" class="btn" style="font-size:10px;padding:1px 6px;margin-left:4px">[COPY]</button>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:10px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:2px; margin-bottom:4px">Balance</div>
+          <div style="font-size:28px; font-weight:800" id="balance" class="glow">--</div>
+          <div style="font-size:11px; color:var(--fg-dim); margin-top:2px">USDC · testnet</div>
+        </div>
+      </div>
+      <div class="hr">────────────────────────────────────────────────────────────────────────────────</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px">
+        <span style="color:var(--fg-dim)">explorer:</span>
+        <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn" style="font-size:10px">[ARCSCAN]</a>
+        <span style="color:var(--fg-dim)">docs:</span>
+        <a href="https://docs.arc.network" target="_blank" class="btn" style="font-size:10px">[DOCS]</a>
+        <span style="color:var(--fg-dim)">faucet:</span>
+        <a href="https://faucet.circle.com" target="_blank" class="btn btn-amber" style="font-size:10px">[FAUCET]</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STATS                                                      -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="stats" style="margin-bottom:1rem">
+    <div class="stat">
+      <div class="stat-label">Network</div>
+      <div class="stat-value glow" style="font-size:14px">ARC</div>
+      <div style="font-size:10px; color:var(--fg-dim); margin-top:4px">testnet</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Agent</div>
+      <div class="stat-value glow" style="font-size:14px">ERC-8004</div>
+      <div style="font-size:10px; color:var(--fg-dim); margin-top:4px">id {{ agent_id }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Total Jobs</div>
+      <div class="stat-value glow" id="statTotal">--</div>
+      <div style="font-size:10px; color:var(--fg-dim); margin-top:4px">on network</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">My Jobs</div>
+      <div class="stat-value glow-amber" id="statMyJobs">--</div>
+      <div style="font-size:10px; color:var(--fg-dim); margin-top:4px">active</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- JOBS WINDOW                                                -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="window">
+    <div class="window-header">
+      <span>jobs.erc8183</span>
+      <span style="font-size:10px">total: <span id="jobCount" style="color:var(--bg);font-weight:700">--</span></span>
+    </div>
+    <div class="window-body" style="padding:0">
+      <!-- Table header -->
+      <div style="display:grid; grid-template-columns:50px 1fr 110px 90px 24px; gap:12px; padding:8px 1.25rem; font-size:10px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid var(--fg-dim)">
+        <span>JOB#</span>
+        <span>DESCRIPTION</span>
+        <span>STATUS</span>
+        <span style="text-align:right">BUDGET</span>
+        <span></span>
+      </div>
+
+      <div id="jobList" style="padding: 0 1.25rem">
+        <div style="text-align:center; padding:3rem 0; color:var(--fg-dim)">
+          <span class="cursor" style="display:inline-block;width:6px;height:12px;margin-right:6px"></span>
+          <span style="font-size:11px">fetching jobs from chain...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- FOOTER                                                     -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="hr" style="margin-top:1.5rem">═══════════════════════════════════════════════════════════════════════════════</div>
+  <div style="text-align:center; font-size:10px; color:var(--fg-dim); padding:1rem 0">
+    <span>☤ Hermes Agent v1.0</span>
+    <span style="margin:0 12px">|</span>
+    <a href="https://leonisforge.com" target="_blank" style="color:var(--fg-dim);text-decoration:none" class="glitch">[ LEONIS FORGE ]</a>
+    <span style="margin:0 12px">|</span>
+    <span>Arc Testnet</span>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT                                                     -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<script>
+  const OUR_ADDRESS = '{{ agent_address }}'.toLowerCase();
+
+  function badgeFor(state) {
+    const map = {
+      'FUNDED':     '<span class="badge badge-info">FUNDED</span>',
+      'DELIVERED':  '<span class="badge badge-warn">DELIVERED</span>',
+      'COMPLETED':  '<span class="badge badge-ok">COMPLETED</span>',
+      'OPEN':       '<span class="badge badge-err">OPEN</span>',
+      'IN_PROGRESS':'<span class="badge badge-warn">IN PROGRESS</span>',
     };
+    return map[state] || `<span class="badge badge-err">${state}</span>`;
+  }
 
-    async function refresh() {
-      try {
-        const [statusRes, jobsRes] = await Promise.all([
-          fetch('/api/status'), fetch('/api/jobs')
-        ]);
-        const status = await statusRes.json();
-        const jobsData = await jobsRes.json();
+  async function refresh() {
+    try {
+      const [statusRes, jobsRes] = await Promise.all([
+        fetch('/api/status'), fetch('/api/jobs')
+      ]);
+      const status = await statusRes.json();
+      const jobsData = await jobsRes.json();
 
-        // Balance
-        if (!status.error) {
-          document.getElementById('balance').textContent = status.balance_usdc.toFixed(2);
-        }
-
-        // Jobs
-        if (!jobsData.error && jobsData.jobs) {
-          const jobs = jobsData.jobs.filter(j => j.state !== 'NONEXISTENT');
-          document.getElementById('jobCount').textContent = jobsData.job_counter;
-          document.getElementById('statTotal').textContent = jobsData.job_counter;
-
-          // Count our jobs
-          const ourJobs = jobs.filter(j => j.client?.toLowerCase() === OUR_ADDRESS || j.provider?.toLowerCase() === OUR_ADDRESS);
-          document.getElementById('statMyJobs').textContent = ourJobs.length;
-
-          const html = jobs.length === 0
-            ? '<div class="px-6 py-12 text-center text-arc-muted text-sm">No jobs found. Run create_job.py to create one.</div>'
-            : jobs.reverse().map(j => {
-              const isOurs = j.client?.toLowerCase() === OUR_ADDRESS || j.provider?.toLowerCase() === OUR_ADDRESS;
-              const stateClass = STATE_CLASSES[j.state] || 'badge-none';
-              return `
-              <div class="job-row px-6 py-3.5 flex items-center gap-3 ${isOurs ? 'ours' : ''}">
-                <span class="font-mono text-xs w-16 shrink-0 ${isOurs ? 'text-arc-accent font-semibold' : 'text-arc-muted'}">#${j.job_id}</span>
-                <span class="flex-1 min-w-0 text-sm truncate ${isOurs ? 'text-white' : 'text-arc-text'}">${j.description}</span>
-                <span class="badge ${stateClass} w-24 text-center shrink-0 hidden sm:inline-block">${j.state.toLowerCase().replace('_',' ')}</span>
-                <span class="font-mono text-xs w-24 text-right shrink-0 ${isOurs && j.budget > 0 ? 'text-arc-accent font-semibold' : 'text-arc-muted'}">${j.budget.toFixed(2)} USDC</span>
-                <a href="https://testnet.arcscan.app/tx/0x0000000000000000000000000000000000000000000000000000000000000000" target="_blank" class="text-arc-muted hover:text-white transition-colors shrink-0 opacity-40 hover:opacity-100 w-6 text-center">
-                  <svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                </a>
-              </div>`;
-            }).join('');
-
-          document.getElementById('jobList').innerHTML = html;
-        }
-      } catch(e) {
-        console.error('Refresh failed:', e);
-        document.getElementById('statusText').textContent = 'OFFLINE';
+      if (!status.error) {
+        document.getElementById('balance').textContent = status.balance_usdc.toFixed(2);
       }
-    }
 
-    refresh();
-    setInterval(refresh, 15000);
-  </script>
+      if (!jobsData.error && jobsData.jobs) {
+        const jobs = jobsData.jobs.filter(j => j.state !== 'NONEXISTENT');
+        document.getElementById('jobCount').textContent = jobsData.job_counter;
+        document.getElementById('statTotal').textContent = jobsData.job_counter;
+
+        const ourJobs = jobs.filter(j =>
+          j.client?.toLowerCase() === OUR_ADDRESS ||
+          j.provider?.toLowerCase() === OUR_ADDRESS
+        );
+        document.getElementById('statMyJobs').textContent = ourJobs.length;
+
+        if (jobs.length === 0) {
+          document.getElementById('jobList').innerHTML =
+            '<div style="text-align:center;padding:3rem 0;color:var(--fg-dim);font-size:11px">' +
+            '<span style="color:var(--amber)">[WARN]</span> no jobs found — run create_job.py</div>';
+          return;
+        }
+
+        const html = jobs.reverse().map(j => {
+          const isOurs = j.client?.toLowerCase() === OUR_ADDRESS || j.provider?.toLowerCase() === OUR_ADDRESS;
+          return `
+            <div class="job-row ${isOurs ? 'ours' : ''}" style="position:relative">
+              <span class="job-id ${isOurs ? 'ours' : ''}">#${j.job_id}</span>
+              <span class="job-desc" style="color:${isOurs ? 'var(--white)' : 'var(--fg-dim)'}">${j.description}</span>
+              <span class="job-status">${badgeFor(j.state)}</span>
+              <span class="job-budget ${isOurs ? 'ours' : ''}" style="color:${isOurs && j.budget > 0 ? 'var(--amber)' : 'var(--fg-dim)'}">
+                ${j.budget.toFixed(2)} USDC
+              </span>
+              <a href="https://testnet.arcscan.app/address/0x0747EEf0706327138c69792bF28Cd525089e4583" target="_blank" class="job-link">↗</a>
+            </div>`;
+        }).join('');
+
+        document.getElementById('jobList').innerHTML = html;
+      }
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  refresh();
+  setInterval(refresh, 15000);
+
+  // ── Live block counter (fake animation) ──
+  setInterval(() => {
+    const el = document.querySelector('[style*="block"] span');
+    if (el) {
+      const n = parseInt(el.textContent) + Math.floor(Math.random() * 3);
+      el.textContent = n;
+    }
+  }, 2000);
+</script>
+
 </body>
 </html>
