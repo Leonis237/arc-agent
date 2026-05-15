@@ -255,6 +255,138 @@ def api_ecosystem():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/scan", methods=["POST"])
+def api_scan():
+    """Instant token scan — Honeypot.is API + ONNX model inference."""
+    import pickle, urllib.request, numpy as np, onnxruntime as ort
+
+    try:
+        data = request.get_json(force=True)
+        address = data.get("address", "").strip()
+        chain_id = str(data.get("chain_id", "56"))
+
+        if not address.startswith("0x") or len(address) != 42:
+            return jsonify({"error": "invalid token address"}), 400
+
+        # Call Honeypot.is API
+        url = f"https://api.honeypot.is/v2/IsHoneypot?address={address}&chainID={chain_id}"
+        req = urllib.request.Request(url)
+        req.add_header("User-Agent", "Arc-Agent/1.0")
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            hp_data = json.loads(resp.read().decode())
+
+        if not hp_data or hp_data.get("simulationSuccess") is False:
+            return jsonify({"error": "token not indexed or simulation failed", "status": "not_indexed"}), 200
+
+        # Extract features
+        sim = hp_data.get("simulationResult", {})
+        contract = hp_data.get("contractCode", {})
+        ha = hp_data.get("holderAnalysis", {})
+        pair = hp_data.get("pair", {})
+        summary = hp_data.get("summary", {})
+
+        risk_level = float(summary.get("riskLevel", 0) or 0)
+        is_honeypot = float(hp_data.get("honeypotResult", {}).get("isHoneypot", False))
+        buy_tax = float(sim.get("buyTax", 0) or 0)
+        sell_tax = float(sim.get("sellTax", 0) or 0)
+        transfer_tax = float(sim.get("transferTax", 0) or 0)
+        is_open_source = float(contract.get("openSource", False))
+        is_proxy = float(contract.get("isProxy", False))
+        has_proxy_calls = float(contract.get("hasProxyCalls", False))
+        failed_sells = float(ha.get("failed", 0) or 0)
+        siphoned = float(ha.get("siphoned", 0) or 0)
+        avg_tax = float(ha.get("averageTax", 0) or 0)
+        highest_tax = float(ha.get("highestTax", 0) or 0)
+        flag_count = float(len(hp_data.get("flags", []) or []))
+        holder_count = float(ha.get("holders", 0) or 0)
+        snipers_failed = float(ha.get("snipersFailed", 0) or 0)
+        snipers_success = float(ha.get("snipersSuccess", 0) or 0)
+        fail_ratio = failed_sells / max(1.0, holder_count)
+        sniper_ratio = snipers_failed / max(1.0, snipers_failed + snipers_success)
+        age_days = 0.0
+        created = pair.get("createdAtTimestamp")
+        if created:
+            age_days = max(0.0, (time.time() - float(created)) / 86400)
+
+        features = np.array([
+            risk_level, is_honeypot, buy_tax, sell_tax, transfer_tax,
+            is_open_source, is_proxy, has_proxy_calls, failed_sells, siphoned,
+            avg_tax, highest_tax, flag_count, fail_ratio, sniper_ratio,
+            snipers_failed, snipers_success, holder_count, age_days,
+        ], dtype=np.float32)
+
+        # Preprocess: log transform
+        log_cols = [8, 9, 17]
+        x = features.copy().reshape(1, -1)
+        for idx in log_cols:
+            x[0, idx] = np.log1p(np.abs(x[0, idx]))
+
+        # Apply scaler
+        scaler_path = Path(__file__).parent / "scam_detector_v3_scaler.pkl"
+        if scaler_path.exists():
+            with open(scaler_path, "rb") as f:
+                scaler = pickle.load(f)
+            x = scaler.transform(x)
+
+        # ONNX inference
+        model_path = Path(__file__).parent / "scam_detector_v3.onnx"
+        session = ort.InferenceSession(str(model_path))
+        input_name = session.get_inputs()[0].name
+        proba = session.run(None, {input_name: x.astype(np.float32)})[0][0][0]
+        score = round(float(proba) * 100, 1)
+
+        # Verdict
+        if score >= 70:
+            verdict = "scam"
+            verdict_label = "🚨 LIKELY SCAM / RUGPULL"
+        elif score >= 40:
+            verdict = "suspicious"
+            verdict_label = "⚠️ SUSPICIOUS — DYOR"
+        else:
+            verdict = "safe"
+            verdict_label = "✅ LIKELY SAFE"
+
+        # Red flags
+        red_flags = []
+        if is_honeypot:
+            red_flags.append("Honeypot detected — buy OK, sell blocked")
+        if sell_tax > 20:
+            red_flags.append(f"High sell tax: {sell_tax:.0f}%")
+        if transfer_tax > 10:
+            red_flags.append(f"Transfer tax: {transfer_tax:.0f}%")
+        if is_proxy or has_proxy_calls:
+            red_flags.append("Proxy contract — owner can upgrade logic anytime")
+        if not is_open_source:
+            red_flags.append("Closed source — code not verified")
+        if siphoned > 0:
+            red_flags.append(f"Siphoned wallets detected: {int(siphoned)}")
+
+        token_name = hp_data.get("token", {}).get("name", "Unknown")
+        token_symbol = hp_data.get("token", {}).get("symbol", "???")
+
+        return jsonify({
+            "status": "success",
+            "address": address,
+            "chain": chain_id,
+            "token_name": token_name,
+            "token_symbol": token_symbol,
+            "score": score,
+            "verdict": verdict,
+            "verdict_label": verdict_label,
+            "sell_tax": round(sell_tax, 1),
+            "buy_tax": round(buy_tax, 1),
+            "is_open_source": bool(is_open_source),
+            "is_proxy": bool(is_proxy),
+            "is_honeypot": bool(is_honeypot),
+            "red_flags": red_flags,
+        })
+
+    except urllib.error.HTTPError as e:
+        return jsonify({"error": f"Honeypot.is API error: {e.code}"}), 502
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/api/jobs/create", methods=["POST"])
 def api_create_job():
     """Create + fund an ERC-8183 job on-chain (marketplace)."""
