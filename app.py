@@ -334,7 +334,7 @@ def api_scan():
         session = ort.InferenceSession(str(model_path))
         input_name = session.get_inputs()[0].name
         out = session.run(None, {input_name: x.astype(np.float32)})
-        proba = float(out[0][0][0])
+        proba = float(out[0][0])
         score = round(proba * 100, 1)
 
         # Verdict
