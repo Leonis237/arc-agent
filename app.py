@@ -257,9 +257,7 @@ def api_ecosystem():
 
 @app.route("/api/scan", methods=["POST"])
 def api_scan():
-    """Arc-native token scanner — on-chain checks on Arc testnet."""
-    import urllib.request, numpy as np, onnxruntime as ort, pickle
-    from web3 import Web3
+    """Arc-native token scanner — on-chain heuristic checks on Arc testnet."""
 
     try:
         data = request.get_json(force=True)
@@ -289,48 +287,26 @@ def api_scan():
         except Exception:
             token_symbol = "???"
 
-        # Heuristic risk scoring
+        # Heuristic risk scoring (Arc-native, no Honeypot.is dependency)
         red_flags = []
         score = 0
 
         if is_proxy:
-            score += 25
-            red_flags.append("Proxy contract — owner can upgrade logic anytime")
-        if bytecode_size < 1000:
             score += 10
-            red_flags.append(f"Unusually small bytecode ({bytecode_size} bytes)")
-        if bytecode_size > 50000:
-            score += 5
-            red_flags.append(f"Large bytecode ({bytecode_size} bytes) — complex logic")
+            red_flags.append("Proxy contract — owner can upgrade logic (common for major tokens)")
+        if bytecode_size < 200:
+            score += 30
+            red_flags.append(f"Suspiciously tiny bytecode ({bytecode_size} bytes) — likely a minimal scam token")
+        elif bytecode_size < 800:
+            score += 10
+            red_flags.append(f"Small bytecode ({bytecode_size} bytes) — simple contract")
 
-        # Try ONNX model with available features (remaining = 0)
-        model_path = Path(__file__).parent / "scam_detector_v3.onnx"
-        scaler_path = Path(__file__).parent / "scam_detector_v3_scaler.pkl"
-        onnx_score = None
-        if model_path.exists() and scaler_path.exists():
-            try:
-                features = np.zeros(19, dtype=np.float64)
-                features[5] = 0.0   # is_open_source (unknown on Arc)
-                features[6] = float(is_proxy)
-                features[7] = float(is_proxy)
-                features[18] = 0.0  # age_days
-
-                LOG_TRANSFORM_COLS = [8, 9, 17]
-                x = features.reshape(1, -1).astype(np.float64)
-                for idx in LOG_TRANSFORM_COLS:
-                    x[0, idx] = np.log1p(abs(float(x[0, idx])))
-
-                with open(scaler_path, "rb") as f:
-                    scaler = pickle.load(f)
-                x = scaler.transform(x).astype(np.float32)
-
-                session = ort.InferenceSession(str(model_path))
-                input_name = session.get_inputs()[0].name
-                out = session.run(None, {input_name: x})
-                onnx_score = round(float(out[0][0]) * 100, 1)
-                score = max(score, onnx_score)
-            except Exception:
-                pass  # fall back to heuristic
+        # Known trusted tokens on Arc testnet
+        TRUSTED = {
+            "0x3600000000000000000000000000000000000000",  # USDC
+        }
+        if address.lower() in {t.lower() for t in TRUSTED}:
+            score = min(score, 5)  # cap at 5% for trusted tokens
 
         score = min(score, 99)
         if score >= 70:
@@ -351,7 +327,6 @@ def api_scan():
             "bytecode_size": f"{bytecode_size:,} bytes",
             "is_verified": False,  # Arcscan API not available
             "is_proxy": is_proxy,
-            "onnx_score": onnx_score,
             "red_flags": red_flags,
         })
 
