@@ -14,14 +14,12 @@
   <style>
     /* ═══════════════════════════════════════════════════════════
        LEONIS SKETCH — Hand-drawn design system for Arc Agent
-       v2 — professional dashboard layout
        ═══════════════════════════════════════════════════════════ */
     :root {
       --paper:    #fdfbf7;
       --ink:      #2d2d2d;
       --red:      #ff4d4d;
       --blue:     #2d5da1;
-      --green:    #4a9c5d;
       --yellow:   #fff9c4;
       --muted:    #e5e0d8;
       --white:    #ffffff;
@@ -29,7 +27,6 @@
       --font-b:   'Patrick Hand', cursive;
       --wobbly:   255px 15px 225px 15px / 15px 225px 15px 255px;
       --wobbly-sm: 185px 25px 155px 25px / 25px 155px 25px 185px;
-      --wobbly-md: 155px 20px 145px 25px / 20px 155px 25px 145px;
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -47,84 +44,53 @@
 
     /* ── Container ── */
     .container {
-      max-width: 1200px;
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 0 1.5rem 3rem;
+      padding: 2rem 1.5rem 3rem;
     }
 
-    /* ── Hero Banner ── */
-    .hero {
-      background: var(--white);
-      border: 3px solid var(--ink);
-      border-radius: var(--wobbly);
-      box-shadow: 6px 6px 0 0 var(--ink);
-      margin: 2rem 0 1.5rem;
-      padding: 2rem 2rem 1.5rem;
+    /* ── Header ── */
+    .site-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
       position: relative;
-      overflow: hidden;
     }
-    .hero::before {
+    .site-header h1 {
+      font-family: var(--font-h);
+      font-size: 52px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: 2px;
+      line-height: 1.1;
+      display: inline-block;
+      position: relative;
+    }
+    .site-header h1::after {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 5px;
-      background: repeating-linear-gradient(90deg, var(--red) 0px, var(--red) 20px, var(--blue) 20px, var(--blue) 40px, var(--green) 40px, var(--green) 60px);
+      bottom: -4px;
+      left: 5%;
+      width: 90%;
+      height: 3px;
+      background: var(--ink);
+      border-radius: 1px;
+      /* wavy effect via multiple shadows */
+      box-shadow: 0 5px 0 -2px var(--ink), 0 10px 0 -4px var(--ink);
     }
-    .hero-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      position: relative;
-      z-index: 1;
-    }
-    .hero-brand {
-      flex: 1;
-      min-width: 200px;
-    }
-    .hero-brand h1 {
-      font-family: var(--font-h);
-      font-size: 48px;
-      font-weight: 700;
-      line-height: 1.1;
-      letter-spacing: 2px;
-    }
-    .hero-brand .subtitle {
-      font-size: 16px;
-      opacity: 0.5;
-      margin-top: 0.25rem;
-    }
-    .hero-badges {
-      display: flex;
-      gap: 8px;
+    .site-header .subtitle {
+      font-family: var(--font-b);
+      font-size: 19px;
+      color: var(--ink);
+      opacity: 0.6;
       margin-top: 0.75rem;
-      flex-wrap: wrap;
     }
-    .hero-stats {
+    .site-header .badge-row {
+      margin-top: 0.5rem;
       display: flex;
-      gap: 1.5rem;
-      align-items: center;
+      justify-content: center;
+      gap: 10px;
       flex-wrap: wrap;
     }
-    .hero-stat {
-      text-align: center;
-      min-width: 80px;
-    }
-    .hero-stat .val {
-      font-family: var(--font-h);
-      font-size: 36px;
-      font-weight: 700;
-      line-height: 1;
-    }
-    .hero-stat .lbl {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      opacity: 0.5;
-      margin-top: 4px;
-    }
-    .hero-stat.highlight .val { color: var(--red); }
 
     /* ── Status bar ── */
     .status-bar {
@@ -132,12 +98,7 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1.5rem;
-      padding: 0.5rem 1rem;
-      background: var(--white);
-      border: 2px solid var(--ink);
-      border-radius: var(--wobbly-sm);
-      box-shadow: 3px 3px 0 0 var(--ink);
-      font-size: 13px;
+      font-size: 14px;
       flex-wrap: wrap;
       gap: 8px;
     }
@@ -145,10 +106,10 @@
       display: inline-block;
       width: 10px;
       height: 10px;
-      background: var(--green);
+      background: var(--red);
       border: 2px solid var(--ink);
       border-radius: 50%;
-      margin-right: 6px;
+      margin-right: 4px;
       animation: pulse 2s ease-in-out infinite;
     }
     @keyframes pulse {
@@ -161,16 +122,15 @@
       display: inline-block;
       background: var(--white);
       border: 2px solid var(--ink);
-      padding: 3px 12px;
+      padding: 2px 10px;
       font-family: var(--font-b);
-      font-size: 11px;
+      font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 1px;
       border-radius: var(--wobbly-sm);
     }
     .tag-yellow { background: var(--yellow); }
     .tag-red    { background: var(--red); color: var(--white); border-color: var(--ink); }
-    .tag-green  { background: var(--green); color: var(--white); border-color: var(--ink); }
 
     /* ── Two-column grid ── */
     .main-grid {
@@ -181,8 +141,7 @@
     }
     @media (max-width: 900px) {
       .main-grid { grid-template-columns: 1fr; }
-      .hero-brand h1 { font-size: 32px; }
-      .hero-stat .val { font-size: 28px; }
+      .site-header h1 { font-size: 36px; }
     }
 
     /* ── Cards ── */
@@ -204,13 +163,14 @@
       border-bottom: 2px dashed var(--ink);
       padding: 10px 16px;
       font-family: var(--font-h);
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      /* tape decoration */
       position: relative;
     }
     .card-header::before {
@@ -233,13 +193,13 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
       margin-bottom: 12px;
     }
     .agent-id {
       font-family: var(--font-h);
-      font-size: 40px;
+      font-size: 36px;
       font-weight: 700;
       line-height: 1;
     }
@@ -248,7 +208,7 @@
     }
     .agent-balance .amount {
       font-family: var(--font-h);
-      font-size: 36px;
+      font-size: 32px;
       font-weight: 700;
       color: var(--ink);
     }
@@ -263,15 +223,15 @@
       opacity: 0.6;
     }
 
-    /* ── Buttons ── */
+    /* ── Button ── */
     .btn {
       display: inline-block;
       background: var(--white);
       color: var(--ink);
       border: 3px solid var(--ink);
-      padding: 6px 16px;
+      padding: 5px 14px;
       font-family: var(--font-b);
-      font-size: 13px;
+      font-size: 14px;
       cursor: pointer;
       text-decoration: none;
       text-transform: uppercase;
@@ -291,8 +251,7 @@
       transform: translate(3px, 3px);
     }
     .btn-blue:hover { background: var(--blue); }
-    .btn-green:hover { background: var(--green); }
-    .btn-sm { font-size: 11px; padding: 4px 10px; }
+    .btn-sm { font-size: 11px; padding: 3px 10px; }
     .btn-full { display: block; width: 100%; text-align: center; }
 
     /* ── Stats row ── */
@@ -307,27 +266,20 @@
       border: 3px solid var(--ink);
       border-radius: var(--wobbly-sm);
       box-shadow: 3px 3px 0 0 var(--ink);
-      padding: 14px 10px;
+      padding: 12px 10px;
       text-align: center;
-      transition: transform 0.1s;
     }
-    .stat-box:hover { transform: translate(-1px, -1px); }
     .stat-box .stat-label {
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 2px;
       opacity: 0.5;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
     .stat-box .stat-val {
       font-family: var(--font-h);
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
-    }
-    .stat-box .stat-sub {
-      font-size: 10px;
-      opacity: 0.4;
-      margin-top: 2px;
     }
     @media (max-width: 768px) {
       .stats-row { grid-template-columns: repeat(2, 1fr); }
@@ -336,58 +288,27 @@
     /* ── Job table ── */
     .job-row {
       display: grid;
-      grid-template-columns: 54px 1fr 90px 80px 24px;
+      grid-template-columns: 50px 1fr 100px 80px 24px;
       gap: 10px;
       align-items: center;
-      padding: 10px 0;
+      padding: 8px 0;
       border-bottom: 2px dashed var(--muted);
       font-size: 14px;
-      cursor: pointer;
-      transition: background 0.1s;
     }
     .job-row:last-child { border-bottom: none; }
-    .job-row:hover { background: rgba(255,249,196,0.5); }
-    .job-row.ours { background: rgba(255,249,196,0.35); }
-    .job-row.expanded { background: rgba(255,249,196,0.5); border-bottom: none; }
+    .job-row:hover { background: rgba(255,249,196,0.4); }
+    .job-row.ours { background: rgba(255,249,196,0.3); }
     .job-id { font-weight: 700; color: var(--ink); }
     .job-desc { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .job-budget { text-align: right; font-weight: 700; white-space: nowrap; }
     .job-link { color: var(--ink); opacity: 0.4; text-decoration: none; text-align: right; }
     .job-link:hover { opacity: 1; }
 
-    /* ── Expanded job detail ── */
-    .job-detail {
-      display: none;
-      padding: 12px 16px;
-      background: rgba(255,249,196,0.2);
-      border-bottom: 2px dashed var(--muted);
-      font-size: 12px;
-    }
-    .job-detail.open { display: block; }
-    .job-detail .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px 16px;
-    }
-    .job-detail .detail-full { grid-column: 1 / -1; }
-    .job-detail .detail-label {
-      opacity: 0.5;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .job-detail .detail-val {
-      font-weight: 700;
-      word-break: break-all;
-      font-size: 13px;
-      margin-top: 1px;
-    }
-
     /* ── Badges ── */
     .badge {
       display: inline-block;
-      padding: 2px 8px;
-      font-size: 10px;
+      padding: 1px 8px;
+      font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
       border: 2px solid var(--ink);
@@ -405,40 +326,32 @@
       color: var(--ink);
       border: 3px solid var(--ink);
       border-radius: var(--wobbly-sm);
-      padding: 8px 12px;
+      padding: 7px 10px;
       font-family: var(--font-b);
       font-size: 14px;
       outline: none;
       transition: border-color 0.1s;
-      margin-top: 4px;
+      margin-top: 3px;
     }
     .input:focus {
       border-color: var(--blue);
       box-shadow: 0 0 0 3px rgba(45,93,161,0.1);
     }
-    .input-sm { font-size: 12px; padding: 6px 8px; }
+    .input-sm { font-size: 12px; padding: 5px 8px; }
 
     /* ── Divider ── */
     .hr {
       border: none;
       border-top: 2px dashed var(--muted);
-      margin: 12px 0;
-    }
-    .section-divider {
-      margin: 0.5rem 0 1.5rem;
-      opacity: 0.2;
+      margin: 10px 0;
     }
 
     /* ── Footer ── */
     .footer {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 1.5rem;
-      padding: 2rem 0 1rem;
-      margin-top: 2rem;
-      border-top: 2px dashed var(--muted);
+      text-align: center;
       font-size: 13px;
-      opacity: 0.6;
+      opacity: 0.5;
+      padding: 1.5rem 0 0;
     }
     .footer a {
       color: var(--ink);
@@ -446,20 +359,11 @@
       border-bottom: 2px dashed var(--muted);
     }
     .footer a:hover { opacity: 1; border-color: var(--ink); }
-    .footer h4 {
-      font-family: var(--font-h);
-      font-size: 14px;
-      margin-bottom: 0.5rem;
-      opacity: 0.8;
-    }
-    @media (max-width: 768px) {
-      .footer { grid-template-columns: 1fr; }
-    }
 
     /* ── Ecosystem card special ── */
     .card-yellow .eco-stat {
       font-family: var(--font-h);
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 700;
       line-height: 1;
     }
@@ -470,43 +374,24 @@
 <div class="container">
 
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- HERO BANNER                                                  -->
+  <!-- HEADER                                                      -->
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <div class="hero">
-    <div class="hero-inner">
-      <div class="hero-brand">
-        <h1>ARC AGENT</h1>
-        <div class="subtitle">on-chain ai agent · arc testnet · circle L1</div>
-        <div class="hero-badges">
-          <span class="tag tag-yellow">chain {{ chain_id }}</span>
-          <span class="tag">ERC-8004</span>
-          <span class="tag">ERC-8183</span>
-          <span class="tag tag-green" style="font-size:10px">● LIVE</span>
-        </div>
-      </div>
-      <div class="hero-stats">
-        <div class="hero-stat highlight">
-          <div class="val" id="heroId">{{ agent_id }}</div>
-          <div class="lbl">Agent ID</div>
-        </div>
-        <div class="hero-stat">
-          <div class="val" id="heroBalance">--</div>
-          <div class="lbl">USDC Balance</div>
-        </div>
-        <div class="hero-stat">
-          <div class="val" id="heroJobs">--</div>
-          <div class="lbl">Network Jobs</div>
-        </div>
-      </div>
+  <header class="site-header">
+    <h1>ARC AGENT</h1>
+    <div class="subtitle">on-chain ai agent · arc testnet</div>
+    <div class="badge-row">
+      <span class="tag tag-yellow">chain {{ chain_id }}</span>
+      <span class="tag">ERC-8004</span>
+      <span class="tag">ERC-8183</span>
     </div>
-  </div>
+  </header>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
   <!-- STATUS BAR                                                  -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <div class="status-bar">
-    <span><span class="dot"></span> <strong>LIVE</strong> · rpc.testnet.arc.network · sub-second finality</span>
-    <span style="opacity:0.5">auto-refresh 15s</span>
+    <span><span class="dot"></span> <strong>LIVE</strong> · rpc.testnet.arc.network</span>
+    <span style="opacity:0.5">refresh 15s</span>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -521,21 +406,22 @@
       <div class="card">
         <div class="card-header">
           <span>agent_identity.erc8004</span>
-          <span class="tag tag-green" style="font-size:9px">active</span>
+          <span class="tag tag-yellow" style="font-size:10px">active</span>
         </div>
         <div class="card-body">
           <div class="agent-split">
             <div>
-              <div style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px">Wallet Address</div>
+              <div style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px">Agent ID</div>
+              <div class="agent-id" id="agentId">{{ agent_id }}</div>
               <div class="agent-addr">
                 <span id="agentAddr">{{ agent_address }}</span>
                 <button onclick="navigator.clipboard.writeText('{{ agent_address }}')" class="btn btn-sm" style="margin-left:6px">copy</button>
               </div>
             </div>
             <div class="agent-balance">
-              <div style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px">Testnet Balance</div>
+              <div style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px">Balance</div>
               <div class="amount" id="balance">--</div>
-              <div class="unit">USDC</div>
+              <div class="unit">USDC · testnet</div>
             </div>
           </div>
           <div class="hr"></div>
@@ -543,7 +429,6 @@
             <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn btn-sm">arcscan ↗</a>
             <a href="https://docs.arc.network" target="_blank" class="btn btn-sm">docs ↗</a>
             <a href="https://faucet.circle.com" target="_blank" class="btn btn-sm btn-blue">faucet ↗</a>
-            <a href="https://github.com/Leonis237/arc-agent" target="_blank" class="btn btn-sm">github ↗</a>
           </div>
         </div>
       </div>
@@ -553,22 +438,22 @@
         <div class="stat-box">
           <div class="stat-label">Network</div>
           <div class="stat-val">ARC</div>
-          <div class="stat-sub">testnet · L1</div>
+          <div style="font-size:10px;opacity:0.4">testnet</div>
         </div>
         <div class="stat-box">
           <div class="stat-label">Standard</div>
           <div class="stat-val">ERC-8004</div>
-          <div class="stat-sub">id #{{ agent_id }}</div>
+          <div style="font-size:10px;opacity:0.4">id {{ agent_id }}</div>
         </div>
         <div class="stat-box">
           <div class="stat-label">Total Jobs</div>
-          <div class="stat-val" id="statTotal" style="color:var(--blue)">--</div>
-          <div class="stat-sub">on network</div>
+          <div class="stat-val" id="statTotal">--</div>
+          <div style="font-size:10px;opacity:0.4">on network</div>
         </div>
         <div class="stat-box">
           <div class="stat-label">My Jobs</div>
           <div class="stat-val" id="statMyJobs" style="color:var(--red)">--</div>
-          <div class="stat-sub">active</div>
+          <div style="font-size:10px;opacity:0.4">active</div>
         </div>
       </div>
 
@@ -580,14 +465,12 @@
             <span onclick="filterJobs('all')" id="filterAll" style="cursor:pointer;font-weight:700;text-decoration:underline">ALL</span>
             <span style="opacity:0.3;margin:0 6px">|</span>
             <span onclick="filterJobs('open')" id="filterOpen" style="cursor:pointer">OPEN</span>
-            <span style="opacity:0.3;margin:0 6px">|</span>
-            <span onclick="filterJobs('mine')" id="filterMine" style="cursor:pointer">MINE</span>
             <span style="opacity:0.3;margin:0 6px">·</span>
             total: <span id="jobCount" style="font-weight:700">--</span>
           </span>
         </div>
         <div class="card-body" style="padding:0">
-          <div style="display:grid; grid-template-columns:54px 1fr 90px 80px 24px; gap:10px; padding:10px 16px; font-size:11px; opacity:0.5; text-transform:uppercase; letter-spacing:1px; border-bottom:2px dashed var(--muted)">
+          <div style="display:grid; grid-template-columns:50px 1fr 100px 80px 24px; gap:10px; padding:8px 16px; font-size:11px; opacity:0.5; text-transform:uppercase; letter-spacing:1px; border-bottom:2px dashed var(--muted)">
             <span>Job#</span>
             <span>Description</span>
             <span>Status</span>
@@ -596,7 +479,7 @@
           </div>
           <div id="jobList" style="padding: 0 16px">
             <div style="text-align:center; padding:2rem 0; opacity:0.4">
-              fetching jobs from blockchain...
+              fetching jobs from chain...
             </div>
           </div>
         </div>
@@ -611,9 +494,7 @@
       <div class="card" id="postJobSection">
         <div class="card-header">
           <span>post.job</span>
-          <span style="display:flex; gap:8px; align-items:center">
-            <span id="postJobToggle" onclick="togglePostJob()" style="cursor:pointer;font-size:12px">[ + new ]</span>
-          </span>
+          <span id="postJobToggle" onclick="togglePostJob()" style="cursor:pointer;font-size:12px">[ + new ]</span>
         </div>
         <div class="card-body" id="postJobBody" style="display:none; font-size:13px">
           <div style="margin-bottom:8px">
@@ -634,17 +515,8 @@
               <input type="number" id="jobExpire" value="24" min="1" max="720" class="input input-sm">
             </div>
           </div>
-          <button onclick="createJob()" class="btn btn-full" style="background:var(--red);color:var(--white)">create job + fund escrow</button>
+          <button onclick="createJob()" class="btn btn-full" style="background:var(--red);color:var(--white)">create job + fund</button>
           <div id="createResult" style="margin-top:8px; font-size:12px; min-height:20px"></div>
-        </div>
-        <!-- Quick Demo button — always visible -->
-        <div class="card-body" style="padding-top:0">
-          <button onclick="quickDemo()" class="btn btn-full" style="background:var(--yellow);color:var(--ink);font-weight:700;font-size:14px">
-            🔥 Try Demo — Scan PEPE Token Now
-          </button>
-          <div style="font-size:11px;opacity:0.5;text-align:center;margin-top:6px">
-            Creates a job → AI agent scans → result on-chain in ~5 min
-          </div>
         </div>
       </div>
 
@@ -652,37 +524,37 @@
       <div class="card">
         <div class="card-header">
           <span>network.info</span>
-          <span class="tag" style="font-size:9px">testnet</span>
+          <span class="tag" style="font-size:10px">testnet</span>
         </div>
         <div class="card-body" style="font-size:13px">
-          <div style="margin-bottom:8px"><span style="opacity:0.5">chain id</span><br><strong>{{ chain_id }}</strong></div>
-          <div style="margin-bottom:8px"><span style="opacity:0.5">rpc endpoint</span><br><span style="font-size:11px">rpc.testnet.arc.network</span></div>
-          <div style="margin-bottom:8px"><span style="opacity:0.5">gas token</span><br><strong>USDC</strong> (native)</div>
-          <div style="margin-bottom:8px"><span style="opacity:0.5">finality</span><br><strong>sub-second</strong></div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <div style="margin-bottom:6px"><span style="opacity:0.5">chain</span><br><strong>{{ chain_id }}</strong></div>
+          <div style="margin-bottom:6px"><span style="opacity:0.5">rpc</span><br><span style="font-size:11px">rpc.testnet.arc.network</span></div>
+          <div style="margin-bottom:6px"><span style="opacity:0.5">gas</span><br><strong>USDC</strong></div>
+          <div style="margin-bottom:6px"><span style="opacity:0.5">finality</span><br><strong>sub-second</strong></div>
+          <div style="margin-bottom:6px">
             <a href="https://testnet.arcscan.app" target="_blank" style="color:var(--blue);font-size:12px">arcscan ↗</a>
-            <span style="opacity:0.3">·</span>
+            <span style="opacity:0.3;margin:0 6px">·</span>
             <a href="https://faucet.circle.com" target="_blank" style="color:var(--red);font-size:12px">faucet ↗</a>
           </div>
         </div>
       </div>
 
-      <!-- Ecosystem Snapshot -->
+      <!-- Ecosystem Snapshot (post-it yellow, slightly rotated) -->
       <div class="card card-yellow" style="transform:rotate(-0.5deg)">
         <div class="card-header">
-          <span>ecosystem.snapshot</span>
+          <span>ecosystem</span>
           <span class="tag tag-red" style="font-size:9px">live</span>
         </div>
         <div class="card-body" style="font-size:13px">
-          <div style="margin-bottom:12px">
+          <div style="margin-bottom:10px">
             <span style="opacity:0.5;font-size:11px;text-transform:uppercase;letter-spacing:1px">registered agents</span><br>
             <span class="eco-stat" id="ecosystemAgents">--</span>
           </div>
-          <div style="margin-bottom:12px">
-            <span style="opacity:0.5;font-size:11px;text-transform:uppercase;letter-spacing:1px">total jobs created</span><br>
+          <div style="margin-bottom:10px">
+            <span style="opacity:0.5;font-size:11px;text-transform:uppercase;letter-spacing:1px">jobs created</span><br>
             <span class="eco-stat" id="ecosystemJobs">--</span>
           </div>
-          <div style="margin-bottom:12px">
+          <div style="margin-bottom:10px">
             <span style="opacity:0.5;font-size:11px">agent #{{ agent_id }}</span><br>
             <span style="color:var(--red);font-weight:700">● ACTIVE</span>
           </div>
@@ -697,16 +569,16 @@
           <span id="workerStatus" style="font-size:11px">idle</span>
         </div>
         <div class="card-body" style="font-size:13px">
-          <div style="margin-bottom:8px">
+          <div style="margin-bottom:6px">
             <span style="opacity:0.5">status</span><br>
             <span id="workerState">initializing...</span>
           </div>
-          <div style="margin-bottom:8px">
+          <div style="margin-bottom:6px">
             <span style="opacity:0.5">jobs processed</span><br>
             <strong id="workerJobs">0</strong>
           </div>
           <div>
-            <span style="opacity:0.5">total earnings</span><br>
+            <span style="opacity:0.5">earnings</span><br>
             <strong id="workerEarnings" style="color:var(--red)">0.00 USDC</strong>
           </div>
         </div>
@@ -717,7 +589,7 @@
         <div class="card-header"><span>quick.links</span></div>
         <div class="card-body" style="display:flex; flex-wrap:wrap; gap:6px">
           <a href="https://docs.arc.network" target="_blank" class="btn btn-sm">docs ↗</a>
-          <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn btn-sm">explorer ↗</a>
+          <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn btn-sm">arcscan ↗</a>
           <a href="https://github.com/Leonis237/arc-agent" target="_blank" class="btn btn-sm">github ↗</a>
           <a href="https://arcagents.pro" target="_blank" class="btn btn-sm btn-blue">leaderboard ↗</a>
         </div>
@@ -731,36 +603,17 @@
   <!-- FOOTER                                                      -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <div class="footer">
-    <div>
-      <h4>Arc Agent</h4>
-      <div style="font-size:12px">
-        On-chain AI agent on Arc by Circle.<br>
-        ERC-8004 identity + ERC-8183 jobs.<br>
-        USDC as gas · sub-second finality.
-      </div>
-    </div>
-    <div>
-      <h4>Resources</h4>
-      <div style="font-size:12px; line-height:2">
-        <a href="https://docs.arc.network" target="_blank">Arc Docs</a><br>
-        <a href="https://testnet.arcscan.app" target="_blank">Arcscan Explorer</a><br>
-        <a href="https://faucet.circle.com" target="_blank">Testnet Faucet</a><br>
-      </div>
-    </div>
-    <div>
-      <h4>Built by</h4>
-      <div style="font-size:12px">
-        <a href="https://leonisforge.com" target="_blank">☤ Leonis Forge</a><br>
-        <a href="https://github.com/Leonis237/arc-agent" target="_blank">Fork on GitHub</a><br>
-        <span style="opacity:0.5">built on Arc by Circle</span>
-      </div>
-    </div>
+    ☤ <a href="https://leonisforge.com" target="_blank">Leonis Forge</a>
+    <span style="margin:0 8px">·</span>
+    <a href="https://github.com/Leonis237/arc-agent" target="_blank">Fork on GitHub</a>
+    <span style="margin:0 8px">·</span>
+    <span>built on Arc by Circle</span>
   </div>
 
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- JAVASCRIPT                                                     -->
+<!-- JAVASCRIPT (unchanged logic, same data flow)                    -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <script>
   const OUR_ADDRESS = '{{ agent_address }}'.toLowerCase();
@@ -784,16 +637,9 @@
       const status = await statusRes.json();
       const jobsData = await jobsRes.json();
       const worker = await workerRes.json();
-      const eco = await ecoRes.json();
 
       if (!status.error) {
         document.getElementById('balance').textContent = status.balance_usdc.toFixed(2);
-        document.getElementById('heroBalance').textContent = status.balance_usdc.toFixed(2);
-      }
-
-      if (!eco.error) {
-        document.getElementById('ecosystemAgents').textContent = eco.total_agents.toLocaleString();
-        document.getElementById('ecosystemJobs').textContent = eco.total_jobs.toLocaleString();
       }
 
       if (!worker.error) {
@@ -805,21 +651,21 @@
         }
       }
 
+      const eco = await ecoRes.json();
+      if (!eco.error) {
+        document.getElementById('ecosystemAgents').textContent = eco.total_agents.toLocaleString();
+        document.getElementById('ecosystemJobs').textContent = eco.total_jobs.toLocaleString();
+      }
+
       if (!jobsData.error && jobsData.jobs) {
         let jobs = jobsData.jobs.filter(j => j.state !== 'NONEXISTENT');
         
         if (currentFilter === 'open') {
           jobs = jobs.filter(j => j.state === 'OPEN' || j.state === 'FUNDED');
-        } else if (currentFilter === 'mine') {
-          jobs = jobs.filter(j =>
-            j.client?.toLowerCase() === OUR_ADDRESS ||
-            j.provider?.toLowerCase() === OUR_ADDRESS
-          );
         }
         
         document.getElementById('jobCount').textContent = jobs.length;
         document.getElementById('statTotal').textContent = jobsData.job_counter;
-        document.getElementById('heroJobs').textContent = jobsData.job_counter;
 
         const ourJobs = jobs.filter(j =>
           j.client?.toLowerCase() === OUR_ADDRESS ||
@@ -836,47 +682,19 @@
 
         const html = jobs.reverse().map(j => {
           const isOurs = j.client?.toLowerCase() === OUR_ADDRESS || j.provider?.toLowerCase() === OUR_ADDRESS;
-          const jid = j.job_id;
-          const stateLabel = j.state || 'UNKNOWN';
           return `
-            <div class="job-row ${isOurs ? 'ours' : ''}" onclick="toggleJobDetail(${jid})" title="Click for details">
-              <span class="job-id">#${jid}</span>
+            <div class="job-row ${isOurs ? 'ours' : ''}">
+              <span class="job-id">#${j.job_id}</span>
               <span class="job-desc" style="opacity:${isOurs ? '1' : '0.6'}">${j.description}</span>
               <span>${badgeFor(j.state)}</span>
               <span class="job-budget" style="color:${isOurs && j.budget > 0 ? 'var(--red)' : 'var(--ink)'}">
                 ${j.budget.toFixed(2)} USDC
               </span>
-              <a href="https://testnet.arcscan.app/address/0x0747EEf0706327138c69792bF28Cd525089e4583" target="_blank" class="job-link" onclick="event.stopPropagation()">↗</a>
-            </div>
-            <div class="job-detail" id="detail-${jid}">
-              <div class="detail-grid">
-                <div><div class="detail-label">Full Description</div><div class="detail-val detail-full">${j.description}</div></div>
-                <div><div class="detail-label">State</div><div class="detail-val">${stateLabel}</div></div>
-                <div><div class="detail-label">Budget</div><div class="detail-val" style="color:${j.budget > 0 ? 'var(--red)' : 'var(--ink)'}">${j.budget.toFixed(2)} USDC</div></div>
-                <div><div class="detail-label">Client</div><div class="detail-val" style="font-size:10px">${j.client || '—'}</div></div>
-                <div><div class="detail-label">Provider</div><div class="detail-val" style="font-size:10px">${j.provider || '—'}</div></div>
-                <div><div class="detail-label">Evaluator</div><div class="detail-val" style="font-size:10px">${j.evaluator || '—'}</div></div>
-              </div>
+              <a href="https://testnet.arcscan.app/address/0x0747EEf0706327138c69792bF28Cd525089e4583" target="_blank" class="job-link">↗</a>
             </div>`;
         }).join('');
 
-        // Save expanded jobs before re-render
-        const expandedJobs = new Set();
-        document.querySelectorAll('.job-detail.open').forEach(d => {
-          expandedJobs.add(parseInt(d.id.replace('detail-', '')));
-        });
-
         document.getElementById('jobList').innerHTML = html;
-
-        // Restore expanded state
-        expandedJobs.forEach(jid => {
-          const detail = document.getElementById('detail-' + jid);
-          const row = detail?.previousElementSibling;
-          if (detail) {
-            detail.classList.add('open');
-            row?.classList.add('expanded');
-          }
-        });
       }
     } catch(e) {
       console.error(e);
@@ -899,24 +717,6 @@
     }
   }
 
-  // ── Expand job detail ──
-  function toggleJobDetail(jid) {
-    const detail = document.getElementById('detail-' + jid);
-    const row = detail?.previousElementSibling;
-    if (!detail) return;
-    
-    // Close all other open details
-    document.querySelectorAll('.job-detail.open').forEach(d => {
-      if (d.id !== 'detail-' + jid) {
-        d.classList.remove('open');
-        d.previousElementSibling?.classList.remove('expanded');
-      }
-    });
-    
-    detail.classList.toggle('open');
-    row?.classList.toggle('expanded');
-  }
-
   // ── Job filter ──
   let currentFilter = 'all';
   function filterJobs(filter) {
@@ -925,57 +725,7 @@
     document.getElementById('filterAll').style.textDecoration = filter === 'all' ? 'underline' : 'none';
     document.getElementById('filterOpen').style.fontWeight = filter === 'open' ? '700' : '400';
     document.getElementById('filterOpen').style.textDecoration = filter === 'open' ? 'underline' : 'none';
-    document.getElementById('filterMine').style.fontWeight = filter === 'mine' ? '700' : '400';
-    document.getElementById('filterMine').style.textDecoration = filter === 'mine' ? 'underline' : 'none';
     refresh();
-  }
-
-  async function quickDemo() {
-    // Auto-fill with PEPE token (BSC: 0xcf6bb5...) — well-known, good demo
-    document.getElementById('jobDesc').value = 'Token Scam Analysis: Scan PEPE token (0xcf6bb539Ac8e87D643A926f75fBeEcEDF1f6C5B0) on BSC. Check for honeypot, high tax, proxy, closed source. Return risk score and detailed report.';
-    document.getElementById('jobProvider').value = '{{ agent_address }}';
-    document.getElementById('jobBudget').value = '1.00';
-    document.getElementById('jobExpire').value = '24';
-    
-    // Open form if hidden
-    const body = document.getElementById('postJobBody');
-    const toggle = document.getElementById('postJobToggle');
-    if (body.style.display === 'none') {
-      body.style.display = 'block';
-      toggle.textContent = '[ — hide ]';
-    }
-    
-    // Submit the job
-    await createJobDemo();
-  }
-
-  async function createJobDemo() {
-    const res = document.getElementById('createResult');
-    res.innerHTML = '<span style=\"color:var(--blue)\">⏳ Creating job + funding escrow on Arc...</span>';
-    
-    try {
-      const r = await fetch('/api/jobs/create', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          description: document.getElementById('jobDesc').value,
-          provider: document.getElementById('jobProvider').value,
-          budget: parseFloat(document.getElementById('jobBudget').value),
-          expire_hours: parseInt(document.getElementById('jobExpire').value)
-        })
-      });
-      const data = await r.json();
-      if (data.success) {
-        res.innerHTML = `<span style=\"color:var(--green);font-weight:700\">✓ Demo job #${data.job_id} created!</span><br>
-          <span style=\"font-size:11px\">${data.state} · ${data.budget} USDC escrowed</span><br>
-          <span style=\"font-size:10px;opacity:0.5\">Worker picks up within ~5 min → result on-chain</span>`;
-        setTimeout(refresh, 3000);
-      } else {
-        res.innerHTML = `<span style=\"color:var(--red);font-weight:700\">✗ ${data.error}</span>`;
-      }
-    } catch(e) {
-      res.innerHTML = `<span style=\"color:var(--red)\">✗ ${e.message}</span>`;
-    }
   }
 
   async function createJob() {
@@ -1009,6 +759,12 @@
     btn.disabled = false;
     btn.style.opacity = '1';
   }
+
+  // ── Live block ticker (cosmetic) ──
+  setInterval(() => {
+    const el = document.querySelector('.status-bar strong');
+    // just keeps the pulse dot — block number is cosmetic
+  }, 3000);
 </script>
 
 </body>
