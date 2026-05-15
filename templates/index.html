@@ -517,6 +517,40 @@
     <!-- ── LEFT COLUMN ──────────────────────────────────────── -->
     <div>
 
+      <!-- ═══ ARC TOKEN SCANNER ═══ -->
+      <div class="card" style="border-color:var(--red);">
+        <div class="card-header" style="background:var(--red);color:var(--white);border-bottom:2px dashed var(--ink);">
+          <span>🔍 scan.token</span>
+          <span style="font-size:10px;opacity:0.8">arc · instant</span>
+        </div>
+        <div class="card-body">
+          <div style="margin-bottom:10px">
+            <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Token Address on Arc</label>
+            <div style="display:flex; gap:8px">
+              <input type="text" id="scanAddr" placeholder="0x... on Arc" class="input" style="flex:1">
+              <button onclick="scanToken()" class="btn" style="background:var(--red);color:var(--white);flex-shrink:0">Scan</button>
+            </div>
+          </div>
+          <div id="scanResult" style="display:none">
+            <div class="hr"></div>
+            <div id="scanVerdict" style="font-family:var(--font-h);font-size:22px;text-align:center;margin-bottom:8px"></div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+              <span style="opacity:0.5">Scam Probability</span>
+              <span id="scanScore" style="font-family:var(--font-h);font-weight:700"></span>
+            </div>
+            <div style="height:8px;background:var(--muted);border-radius:4px;overflow:hidden;border:1px solid var(--ink);margin-bottom:10px">
+              <div id="scanBar" style="height:100%;border-radius:4px;transition:width 0.5s;width:0%"></div>
+            </div>
+            <div id="scanInfo" style="font-size:12px;margin-bottom:8px"></div>
+            <div id="scanFlags" style="font-size:12px"></div>
+          </div>
+          <div id="scanLoading" style="display:none;text-align:center;padding:1rem 0">
+            <span style="opacity:0.6">🔍 Scanning Arc chain...</span>
+          </div>
+          <div id="scanError" style="display:none;color:var(--red);font-size:13px;text-align:center;padding:0.5rem 0"></div>
+        </div>
+      </div>
+
       <!-- Agent Identity -->
       <div class="card">
         <div class="card-header">
@@ -928,6 +962,71 @@
     document.getElementById('filterMine').style.fontWeight = filter === 'mine' ? '700' : '400';
     document.getElementById('filterMine').style.textDecoration = filter === 'mine' ? 'underline' : 'none';
     refresh();
+  }
+
+  // ── Arc Token Scanner ──
+  async function scanToken() {
+    const addr = document.getElementById('scanAddr').value.trim();
+    const resDiv = document.getElementById('scanResult');
+    const loadDiv = document.getElementById('scanLoading');
+    const errDiv = document.getElementById('scanError');
+
+    resDiv.style.display = 'none';
+    errDiv.style.display = 'none';
+
+    if (!addr.startsWith('0x') || addr.length !== 42) {
+      errDiv.textContent = 'Invalid token address (0x + 40 hex chars)';
+      errDiv.style.display = 'block';
+      return;
+    }
+
+    loadDiv.style.display = 'block';
+    try {
+      const r = await fetch('/api/scan', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({address: addr})
+      });
+      const data = await r.json();
+
+      if (data.error) {
+        errDiv.textContent = data.error;
+        errDiv.style.display = 'block';
+        return;
+      }
+
+      const verdictDiv = document.getElementById('scanVerdict');
+      verdictDiv.textContent = data.verdict_label;
+      const colors = {scam: 'var(--red)', suspicious: '#d4a017', safe: 'var(--green)'};
+      verdictDiv.style.color = colors[data.verdict] || 'var(--ink)';
+
+      document.getElementById('scanScore').textContent = data.score + '%';
+      const bar = document.getElementById('scanBar');
+      bar.style.width = data.score + '%';
+      bar.style.background = data.score >= 70 ? 'var(--red)' : (data.score >= 40 ? '#d4a017' : 'var(--green)');
+
+      document.getElementById('scanInfo').innerHTML = 
+        '<div><span style="opacity:0.5">Token</span><br><strong>' + data.token_name + ' (' + data.token_symbol + ')</strong></div>' +
+        (data.bytecode_size ? '<div><span style="opacity:0.5">Bytecode</span><br><strong>' + data.bytecode_size + '</strong></div>' : '') +
+        '<div><span style="opacity:0.5">Source</span><br><strong>' + (data.is_verified ? '✅ Verified on Arcscan' : '⚠️ Unverified') + '</strong></div>' +
+        '<div><span style="opacity:0.5">Proxy</span><br><strong>' + (data.is_proxy ? '⚠️ Yes' : '✅ No') + '</strong></div>';
+
+      const flagsDiv = document.getElementById('scanFlags');
+      if (data.red_flags.length > 0) {
+        flagsDiv.innerHTML = '<div style="margin-top:4px;padding:8px;background:rgba(255,77,77,0.08);border:2px dashed rgba(255,77,77,0.3);border-radius:8px">' +
+          '<strong style="color:var(--red)">🚩 Red Flags</strong><br>' +
+          data.red_flags.map(f => '<span style="font-size:11px">▸ ' + f + '</span>').join('<br>') + '</div>';
+      } else {
+        flagsDiv.innerHTML = '<div style="margin-top:4px;color:var(--green);font-size:12px">✅ No red flags detected</div>';
+      }
+
+      resDiv.style.display = 'block';
+    } catch(e) {
+      errDiv.textContent = 'Network error. Try again.';
+      errDiv.style.display = 'block';
+    } finally {
+      loadDiv.style.display = 'none';
+    }
   }
 
   async function quickDemo() {

@@ -255,6 +255,123 @@ def api_ecosystem():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/scan", methods=["POST"])
+def api_scan():
+    """Arc-native token scanner — on-chain checks on Arc testnet."""
+    import urllib.request, numpy as np, onnxruntime as ort, pickle
+    from web3 import Web3
+
+    try:
+        data = request.get_json(force=True)
+        address = data.get("address", "").strip()
+
+        if not address.startswith("0x") or len(address) != 42:
+            return jsonify({"error": "invalid token address"}), 400
+
+        checksum = w3.to_checksum_address(address)
+        code = w3.eth.get_code(checksum).hex()
+
+        if code == "0x" or len(code) < 10:
+            return jsonify({"error": "not a contract on Arc — check the address"}), 200
+
+        bytecode_size = len(code) // 2
+        is_proxy = _detect_proxy(code)
+
+        # Read token metadata via ERC-20
+        abi_token = json.loads('[{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"type":"function"}]')
+        contract = w3.eth.contract(address=checksum, abi=abi_token)
+        try:
+            token_name = contract.functions.name().call()
+        except Exception:
+            token_name = "Unknown"
+        try:
+            token_symbol = contract.functions.symbol().call()
+        except Exception:
+            token_symbol = "???"
+
+        # Heuristic risk scoring
+        red_flags = []
+        score = 0
+
+        if is_proxy:
+            score += 25
+            red_flags.append("Proxy contract — owner can upgrade logic anytime")
+        if bytecode_size < 1000:
+            score += 10
+            red_flags.append(f"Unusually small bytecode ({bytecode_size} bytes)")
+        if bytecode_size > 50000:
+            score += 5
+            red_flags.append(f"Large bytecode ({bytecode_size} bytes) — complex logic")
+
+        # Try ONNX model with available features (remaining = 0)
+        model_path = Path(__file__).parent / "scam_detector_v3.onnx"
+        scaler_path = Path(__file__).parent / "scam_detector_v3_scaler.pkl"
+        onnx_score = None
+        if model_path.exists() and scaler_path.exists():
+            try:
+                features = np.zeros(19, dtype=np.float64)
+                features[5] = 0.0   # is_open_source (unknown on Arc)
+                features[6] = float(is_proxy)
+                features[7] = float(is_proxy)
+                features[18] = 0.0  # age_days
+
+                LOG_TRANSFORM_COLS = [8, 9, 17]
+                x = features.reshape(1, -1).astype(np.float64)
+                for idx in LOG_TRANSFORM_COLS:
+                    x[0, idx] = np.log1p(abs(float(x[0, idx])))
+
+                with open(scaler_path, "rb") as f:
+                    scaler = pickle.load(f)
+                x = scaler.transform(x).astype(np.float32)
+
+                session = ort.InferenceSession(str(model_path))
+                input_name = session.get_inputs()[0].name
+                out = session.run(None, {input_name: x})
+                onnx_score = round(float(out[0][0]) * 100, 1)
+                score = max(score, onnx_score)
+            except Exception:
+                pass  # fall back to heuristic
+
+        score = min(score, 99)
+        if score >= 70:
+            verdict, verdict_label = "scam", "🚨 LIKELY SCAM / RUGPULL"
+        elif score >= 40:
+            verdict, verdict_label = "suspicious", "⚠️ SUSPICIOUS — DYOR"
+        else:
+            verdict, verdict_label = "safe", "✅ LIKELY SAFE"
+
+        return jsonify({
+            "status": "success",
+            "address": address,
+            "token_name": token_name,
+            "token_symbol": token_symbol,
+            "score": score,
+            "verdict": verdict,
+            "verdict_label": verdict_label,
+            "bytecode_size": f"{bytecode_size:,} bytes",
+            "is_verified": False,  # Arcscan API not available
+            "is_proxy": is_proxy,
+            "onnx_score": onnx_score,
+            "red_flags": red_flags,
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+def _detect_proxy(code_hex: str) -> bool:
+    """Heuristic proxy detection: delegatecall pattern or EIP-1967 slot."""
+    code_lower = code_hex.lower()
+    # delegatecall opcode (f4) in context
+    if "f4" in code_lower:
+        return True
+    # EIP-1967 implementation slot
+    eip1967 = "360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc"
+    if eip1967 in code_lower:
+        return True
+    return False
+
+
 @app.route("/api/jobs/create", methods=["POST"])
 def api_create_job():
     """Create + fund an ERC-8183 job on-chain (marketplace)."""
