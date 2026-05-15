@@ -580,7 +580,9 @@
       <div class="card" id="postJobSection">
         <div class="card-header">
           <span>post.job</span>
-          <span id="postJobToggle" onclick="togglePostJob()" style="cursor:pointer;font-size:12px">[ + new ]</span>
+          <span style="display:flex; gap:8px; align-items:center">
+            <span id="postJobToggle" onclick="togglePostJob()" style="cursor:pointer;font-size:12px">[ + new ]</span>
+          </span>
         </div>
         <div class="card-body" id="postJobBody" style="display:none; font-size:13px">
           <div style="margin-bottom:8px">
@@ -603,6 +605,15 @@
           </div>
           <button onclick="createJob()" class="btn btn-full" style="background:var(--red);color:var(--white)">create job + fund escrow</button>
           <div id="createResult" style="margin-top:8px; font-size:12px; min-height:20px"></div>
+        </div>
+        <!-- Quick Demo button — always visible -->
+        <div class="card-body" style="padding-top:0">
+          <button onclick="quickDemo()" class="btn btn-full" style="background:var(--yellow);color:var(--ink);font-weight:700;font-size:14px">
+            🔥 Try Demo — Scan PEPE Token Now
+          </button>
+          <div style="font-size:11px;opacity:0.5;text-align:center;margin-top:6px">
+            Creates a job → AI agent scans → result on-chain in ~5 min
+          </div>
         </div>
       </div>
 
@@ -840,6 +851,54 @@
     document.getElementById('filterMine').style.fontWeight = filter === 'mine' ? '700' : '400';
     document.getElementById('filterMine').style.textDecoration = filter === 'mine' ? 'underline' : 'none';
     refresh();
+  }
+
+  async function quickDemo() {
+    // Auto-fill with PEPE token (BSC: 0xcf6bb5...) — well-known, good demo
+    document.getElementById('jobDesc').value = 'Token Scam Analysis: Scan PEPE token (0xcf6bb539Ac8e87D643A926f75fBeEcEDF1f6C5B0) on BSC. Check for honeypot, high tax, proxy, closed source. Return risk score and detailed report.';
+    document.getElementById('jobProvider').value = '{{ agent_address }}';
+    document.getElementById('jobBudget').value = '1.00';
+    document.getElementById('jobExpire').value = '24';
+    
+    // Open form if hidden
+    const body = document.getElementById('postJobBody');
+    const toggle = document.getElementById('postJobToggle');
+    if (body.style.display === 'none') {
+      body.style.display = 'block';
+      toggle.textContent = '[ — hide ]';
+    }
+    
+    // Submit the job
+    await createJobDemo();
+  }
+
+  async function createJobDemo() {
+    const res = document.getElementById('createResult');
+    res.innerHTML = '<span style=\"color:var(--blue)\">⏳ Creating job + funding escrow on Arc...</span>';
+    
+    try {
+      const r = await fetch('/api/jobs/create', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          description: document.getElementById('jobDesc').value,
+          provider: document.getElementById('jobProvider').value,
+          budget: parseFloat(document.getElementById('jobBudget').value),
+          expire_hours: parseInt(document.getElementById('jobExpire').value)
+        })
+      });
+      const data = await r.json();
+      if (data.success) {
+        res.innerHTML = `<span style=\"color:var(--green);font-weight:700\">✓ Demo job #${data.job_id} created!</span><br>
+          <span style=\"font-size:11px\">${data.state} · ${data.budget} USDC escrowed</span><br>
+          <span style=\"font-size:10px;opacity:0.5\">Worker picks up within ~5 min → result on-chain</span>`;
+        setTimeout(refresh, 3000);
+      } else {
+        res.innerHTML = `<span style=\"color:var(--red);font-weight:700\">✗ ${data.error}</span>`;
+      }
+    } catch(e) {
+      res.innerHTML = `<span style=\"color:var(--red)\">✗ ${e.message}</span>`;
+    }
   }
 
   async function createJob() {
