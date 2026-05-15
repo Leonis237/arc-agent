@@ -342,15 +342,46 @@
       padding: 10px 0;
       border-bottom: 2px dashed var(--muted);
       font-size: 14px;
+      cursor: pointer;
+      transition: background 0.1s;
     }
     .job-row:last-child { border-bottom: none; }
-    .job-row:hover { background: rgba(255,249,196,0.4); }
+    .job-row:hover { background: rgba(255,249,196,0.5); }
     .job-row.ours { background: rgba(255,249,196,0.35); }
+    .job-row.expanded { background: rgba(255,249,196,0.5); border-bottom: none; }
     .job-id { font-weight: 700; color: var(--ink); }
     .job-desc { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .job-budget { text-align: right; font-weight: 700; white-space: nowrap; }
     .job-link { color: var(--ink); opacity: 0.4; text-decoration: none; text-align: right; }
     .job-link:hover { opacity: 1; }
+
+    /* ── Expanded job detail ── */
+    .job-detail {
+      display: none;
+      padding: 12px 16px;
+      background: rgba(255,249,196,0.2);
+      border-bottom: 2px dashed var(--muted);
+      font-size: 12px;
+    }
+    .job-detail.open { display: block; }
+    .job-detail .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 16px;
+    }
+    .job-detail .detail-full { grid-column: 1 / -1; }
+    .job-detail .detail-label {
+      opacity: 0.5;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .job-detail .detail-val {
+      font-weight: 700;
+      word-break: break-all;
+      font-size: 13px;
+      margin-top: 1px;
+    }
 
     /* ── Badges ── */
     .badge {
@@ -805,15 +836,27 @@
 
         const html = jobs.reverse().map(j => {
           const isOurs = j.client?.toLowerCase() === OUR_ADDRESS || j.provider?.toLowerCase() === OUR_ADDRESS;
+          const jid = j.job_id;
+          const stateLabel = j.state || 'UNKNOWN';
           return `
-            <div class="job-row ${isOurs ? 'ours' : ''}">
-              <span class="job-id">#${j.job_id}</span>
+            <div class="job-row ${isOurs ? 'ours' : ''}" onclick="toggleJobDetail(${jid})" title="Click for details">
+              <span class="job-id">#${jid}</span>
               <span class="job-desc" style="opacity:${isOurs ? '1' : '0.6'}">${j.description}</span>
               <span>${badgeFor(j.state)}</span>
               <span class="job-budget" style="color:${isOurs && j.budget > 0 ? 'var(--red)' : 'var(--ink)'}">
                 ${j.budget.toFixed(2)} USDC
               </span>
-              <a href="https://testnet.arcscan.app/address/0x0747EEf0706327138c69792bF28Cd525089e4583" target="_blank" class="job-link">↗</a>
+              <a href="https://testnet.arcscan.app/address/0x0747EEf0706327138c69792bF28Cd525089e4583" target="_blank" class="job-link" onclick="event.stopPropagation()">↗</a>
+            </div>
+            <div class="job-detail" id="detail-${jid}">
+              <div class="detail-grid">
+                <div><div class="detail-label">Full Description</div><div class="detail-val detail-full">${j.description}</div></div>
+                <div><div class="detail-label">State</div><div class="detail-val">${stateLabel}</div></div>
+                <div><div class="detail-label">Budget</div><div class="detail-val" style="color:${j.budget > 0 ? 'var(--red)' : 'var(--ink)'}">${j.budget.toFixed(2)} USDC</div></div>
+                <div><div class="detail-label">Client</div><div class="detail-val" style="font-size:10px">${j.client || '—'}</div></div>
+                <div><div class="detail-label">Provider</div><div class="detail-val" style="font-size:10px">${j.provider || '—'}</div></div>
+                <div><div class="detail-label">Evaluator</div><div class="detail-val" style="font-size:10px">${j.evaluator || '—'}</div></div>
+              </div>
             </div>`;
         }).join('');
 
@@ -838,6 +881,24 @@
       body.style.display = 'none';
       toggle.textContent = '[ + new ]';
     }
+  }
+
+  // ── Expand job detail ──
+  function toggleJobDetail(jid) {
+    const detail = document.getElementById('detail-' + jid);
+    const row = detail?.previousElementSibling;
+    if (!detail) return;
+    
+    // Close all other open details
+    document.querySelectorAll('.job-detail.open').forEach(d => {
+      if (d.id !== 'detail-' + jid) {
+        d.classList.remove('open');
+        d.previousElementSibling?.classList.remove('expanded');
+      }
+    });
+    
+    detail.classList.toggle('open');
+    row?.classList.toggle('expanded');
   }
 
   // ── Job filter ──
