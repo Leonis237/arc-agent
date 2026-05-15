@@ -549,6 +549,8 @@
             <span onclick="filterJobs('all')" id="filterAll" style="cursor:pointer;font-weight:700;text-decoration:underline">ALL</span>
             <span style="opacity:0.3;margin:0 6px">|</span>
             <span onclick="filterJobs('open')" id="filterOpen" style="cursor:pointer">OPEN</span>
+            <span style="opacity:0.3;margin:0 6px">|</span>
+            <span onclick="filterJobs('mine')" id="filterMine" style="cursor:pointer">MINE</span>
             <span style="opacity:0.3;margin:0 6px">·</span>
             total: <span id="jobCount" style="font-weight:700">--</span>
           </span>
@@ -766,6 +768,11 @@
         
         if (currentFilter === 'open') {
           jobs = jobs.filter(j => j.state === 'OPEN' || j.state === 'FUNDED');
+        } else if (currentFilter === 'mine') {
+          jobs = jobs.filter(j =>
+            j.client?.toLowerCase() === OUR_ADDRESS ||
+            j.provider?.toLowerCase() === OUR_ADDRESS
+          );
         }
         
         document.getElementById('jobCount').textContent = jobs.length;
@@ -830,6 +837,8 @@
     document.getElementById('filterAll').style.textDecoration = filter === 'all' ? 'underline' : 'none';
     document.getElementById('filterOpen').style.fontWeight = filter === 'open' ? '700' : '400';
     document.getElementById('filterOpen').style.textDecoration = filter === 'open' ? 'underline' : 'none';
+    document.getElementById('filterMine').style.fontWeight = filter === 'mine' ? '700' : '400';
+    document.getElementById('filterMine').style.textDecoration = filter === 'mine' ? 'underline' : 'none';
     refresh();
   }
 
