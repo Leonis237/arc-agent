@@ -249,7 +249,6 @@ def api_ecosystem():
     """Ecosystem snapshot: total agents, total jobs, agent status."""
     try:
         stats = get_ecosystem_stats()
-        stats["leaderboard_url"] = "https://arcagents.pro"
         return jsonify(stats)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
