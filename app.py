@@ -10,6 +10,7 @@ from flask import Flask, render_template, jsonify, request
 from arc_utils import (
     init_web3, get_account,
     get_identity_registry, get_agentic_commerce, get_usdc,
+    send_tx,
     IDENTITY_REGISTRY, AGENTIC_COMMERCE, CHAIN_ID
 )
 
