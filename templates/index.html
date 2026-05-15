@@ -860,7 +860,23 @@
             </div>`;
         }).join('');
 
+        // Save expanded jobs before re-render
+        const expandedJobs = new Set();
+        document.querySelectorAll('.job-detail.open').forEach(d => {
+          expandedJobs.add(parseInt(d.id.replace('detail-', '')));
+        });
+
         document.getElementById('jobList').innerHTML = html;
+
+        // Restore expanded state
+        expandedJobs.forEach(jid => {
+          const detail = document.getElementById('detail-' + jid);
+          const row = detail?.previousElementSibling;
+          if (detail) {
+            detail.classList.add('open');
+            row?.classList.add('expanded');
+          }
+        });
       }
     } catch(e) {
       console.error(e);
