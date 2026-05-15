@@ -14,8 +14,9 @@
 
 An on-chain AI agent deployed on **Arc** (Circle's L1) that:
 
-- 🔍 **Scans** jobs posted on the ERC-8183 marketplace
+- 🔍 **Scans** any Arc token address instantly via the live dashboard
 - 🧠 **Runs** an ONNX scam detection model on token addresses
+- 📤 **Picks up** ERC-8183 jobs from the marketplace autonomously
 - 📤 **Submits** results on-chain as verifiable deliverables
 - 💰 **Earns** USDC for completed work
 
@@ -24,16 +25,16 @@ An on-chain AI agent deployed on **Arc** (Circle's L1) that:
 ## Architecture
 
 ```
-┌──────────────────────────────────────┐
-│            Arc Testnet               │
-│  ┌──────────────┐  ┌──────────────┐  │
-│  │  ERC-8004    │  │  ERC-8183    │  │
-│  │  Identity    │  │  Job Market  │  │
-│  │  ID: 9138    │  │  12,500+ jobs│  │
-│  └──────┬───────┘  └──────┬───────┘  │
-│         │                 │          │
-│    Agent Card      Jobs + USDC       │
-└─────────┼─────────────────┼──────────┘
+┌──────────────────────────────────────────────────┐
+│                  Arc Testnet                     │
+│  ┌──────────────┐  ┌──────────────┐             │
+│  │  ERC-8004    │  │  ERC-8183    │             │
+│  │  Identity    │  │  Job Market  │             │
+│  │  ID: 9138    │  │  16,500+ jobs│             │
+│  └──────┬───────┘  └──────┬───────┘             │
+│         │                 │                     │
+│    Agent Card        Jobs + USDC                │
+└─────────┼─────────────────┼─────────────────────┘
           │                 │
     ┌─────▼─────────────────▼──────┐
     │        Agent Worker          │
@@ -44,7 +45,14 @@ An on-chain AI agent deployed on **Arc** (Circle's L1) that:
     │  └───────────────────────┘   │
     │        │                     │
     │    Flask Dashboard           │
-    │    (arc.leonisforge.com)     │
+    │    arc.leonisforge.com       │
+    │    ┌─────────────────────┐   │
+    │    │ 🔍 Instant Scanner  │   │
+    │    │ 🌐 Ecosystem Stats  │   │
+    │    │ 📋 Job Marketplace  │   │
+    │    │ 🤖 Worker Monitor   │   │
+    │    └─────────────────────┘   │
+    │    Leonis Sketch Design      │
     └──────────────────────────────┘
 ```
 
@@ -52,11 +60,13 @@ An on-chain AI agent deployed on **Arc** (Circle's L1) that:
 
 👉 **[arc.leonisforge.com](https://arc.leonisforge.com)**
 
-- Agent identity + wallet balance (live from chain)
-- Job list with real-time status badges
-- Worker stats (processed jobs, total earnings)
-- 15-second auto-refresh
-- Retro CRT terminal theme
+**Leonis Sketch design** — hand-drawn zine aesthetic with paper texture, wobbly borders, handwritten fonts (Kalam + Patrick Hand).
+- 🔍 **Instant token scanner** — paste any Arc address, get scam probability + red flags in <1s
+- 🪪 **Agent identity card** — ERC-8004 agent ID, wallet, live USDC balance
+- 🌐 **Ecosystem snapshot** (featured) — live count of registered agents + total jobs on Arc
+- 📋 **Job marketplace** — ALL | OPEN | MINE filters, click-to-expand detail, post.job form
+- 🤖 **Worker monitor** — agent status, jobs processed, total USDC earnings
+- ⚡ 15-second auto-refresh from on-chain data
 
 ## Project Structure
 
@@ -69,11 +79,10 @@ An on-chain AI agent deployed on **Arc** (Circle's L1) that:
 ├── complete_job.py     # Complete job + claim USDC payment
 ├── register_agent.py   # ERC-8004 agent registration
 ├── create_job.py       # ERC-8183 job creation + USDC funding
-├── templates/          # Dashboard HTML (retro CRT terminal theme)
+├── templates/          # Dashboard HTML (Leonis Sketch design)
 ├── requirements.txt    # flask, web3, onnxruntime, gunicorn, numpy
 ├── .env.example        # Template for local config
 └── render.yaml         # Render deployment config (Python + gunicorn)
-```
 ```
 
 ## ERC-8004 Agent
