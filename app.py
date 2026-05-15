@@ -313,27 +313,29 @@ def api_scan():
             is_open_source, is_proxy, has_proxy_calls, failed_sells, siphoned,
             avg_tax, highest_tax, flag_count, fail_ratio, sniper_ratio,
             snipers_failed, snipers_success, holder_count, age_days,
-        ], dtype=np.float32)
+        ], dtype=np.float64)
 
-        # Preprocess: log transform
-        log_cols = [8, 9, 17]
-        x = features.copy().reshape(1, -1)
-        for idx in log_cols:
-            x[0, idx] = np.log1p(np.abs(x[0, idx]))
+        # Preprocess: log transform on specific columns
+        LOG_TRANSFORM_COLS = [8, 9, 17]
+        x = features.reshape(1, -1).astype(np.float64)
+        for idx in LOG_TRANSFORM_COLS:
+            val = float(x[0, idx])
+            x[0, idx] = np.log1p(abs(val))
 
         # Apply scaler
         scaler_path = Path(__file__).parent / "scam_detector_v3_scaler.pkl"
         if scaler_path.exists():
             with open(scaler_path, "rb") as f:
                 scaler = pickle.load(f)
-            x = scaler.transform(x)
+            x = scaler.transform(x).astype(np.float32)
 
         # ONNX inference
         model_path = Path(__file__).parent / "scam_detector_v3.onnx"
         session = ort.InferenceSession(str(model_path))
         input_name = session.get_inputs()[0].name
-        proba = session.run(None, {input_name: x.astype(np.float32)})[0][0][0]
-        score = round(float(proba) * 100, 1)
+        out = session.run(None, {input_name: x.astype(np.float32)})
+        proba = float(out[0][0][0])
+        score = round(proba * 100, 1)
 
         # Verdict
         if score >= 70:
