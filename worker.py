@@ -5,7 +5,9 @@ Scans for ERC-8183 jobs matching our capabilities, executes them, and gets paid.
 
 Capabilities:
   - Token scam detection (ONNX model)
-  - More can be added by extending CAPABILITY_HANDLERS
+  - Wallet health analysis (approvals, delegation, source)
+  - Contract transparency audit (owner, supply, proxy, traps)
+  - Airdrop safety analysis (URL patterns, phishing, contract extraction)
 
 Run headlessly:  .venv/bin/python3 worker.py
 Cron mode:       .venv/bin/python3 worker.py --once   (single scan, exit)
@@ -49,6 +51,12 @@ CONTRACT_AUDIT_KEYWORDS = [
     "contract-audit", "audit-contract", "token-audit",
 ]
 
+AIRDROP_SAFETY_KEYWORDS = [
+    "airdrop", "safety", "check-airdrop", "phishing",
+    "drainer", "verify-link", "claim-link", "airdrop-link",
+    "safety-check", "link-safety", "url-check",
+]
+
 SCAN_DEPTH = 50  # how many recent jobs to scan per run
 
 
@@ -82,16 +90,19 @@ def matches_capability(description: str) -> bool:
     desc_lower = description.lower()
     return any(kw in desc_lower for kw in CAPABILITY_KEYWORDS) or \
            any(kw in desc_lower for kw in WALLET_HEALTH_KEYWORDS) or \
-           any(kw in desc_lower for kw in CONTRACT_AUDIT_KEYWORDS)
+           any(kw in desc_lower for kw in CONTRACT_AUDIT_KEYWORDS) or \
+           any(kw in desc_lower for kw in AIRDROP_SAFETY_KEYWORDS)
 
 
 def detect_job_type(description: str) -> str:
-    """Detect which capability to use: 'scam', 'wallet_health', or 'contract_audit'."""
+    """Detect which capability to use: 'scam', 'wallet_health', 'contract_audit', or 'airdrop_safety'."""
     desc_lower = description.lower()
     if any(kw in desc_lower for kw in WALLET_HEALTH_KEYWORDS):
         return "wallet_health"
     if any(kw in desc_lower for kw in CONTRACT_AUDIT_KEYWORDS):
         return "contract_audit"
+    if any(kw in desc_lower for kw in AIRDROP_SAFETY_KEYWORDS):
+        return "airdrop_safety"
     return "scam"
 
 
@@ -294,6 +305,78 @@ def process_contract_audit_job(w3, account, commerce, job: dict, state: dict) ->
     return True
 
 
+def run_airdrop_safety(w3, url: str) -> dict:
+    """Run airdrop safety analysis."""
+    from airdrop_safety import analyze_airdrop
+    return analyze_airdrop(url, w3)
+
+
+def process_airdrop_safety_job(w3, account, commerce, job: dict, state: dict) -> bool:
+    """Process an airdrop safety job: analyze link → submit → complete."""
+    job_id = job["job_id"]
+    print(f"\n{'='*60}")
+    print(f"🪂 Processing Airdrop Safety Job #{job_id} — {job['budget_usdc']:.2f} USDC")
+    print(f"   Desc: {job['description'][:80]}")
+
+    # Extract URL from description
+    url_match = re.search(r"https?://[^\s]+", job["description"])
+    if not url_match:
+        print("   ⚠️ No URL found in description — skipping")
+        return False
+
+    url = url_match.group(0).rstrip(".,;:!?\"'")
+    print(f"   URL: {url[:60]}...")
+
+    print("🔬 Running airdrop safety analysis...")
+    result = run_airdrop_safety(w3, url)
+    print(f"   Score: {result['score']}/100  |  Verdict: {result['verdict']}")
+
+    deliverable = json.dumps(result, sort_keys=True)
+    deliverable_bytes = deliverable.encode()
+    deliverable_hash = hashlib.sha256(deliverable_bytes).digest()
+
+    print("📤 Submitting deliverable onchain...")
+    try:
+        receipt = send_tx(w3, account,
+            commerce.functions.submit(job_id, deliverable_hash, b""))
+        tx_hash = receipt.transactionHash.hex()
+        print(f"   ✅ Submitted! TX: https://testnet.arcscan.app/tx/{tx_hash}")
+    except Exception as e:
+        print(f"   ❌ Submit failed: {e}")
+        return False
+
+    print("🔓 Completing job...")
+    try:
+        receipt = send_tx(w3, account,
+            commerce.functions.complete(job_id, deliverable_hash, b""))
+        tx_hash2 = receipt.transactionHash.hex()
+        print(f"   ✅ Completed! TX: https://testnet.arcscan.app/tx/{tx_hash2}")
+        final_job = commerce.functions.jobs(job_id).call()
+        final_state = JOB_STATES.get(final_job[7], f"UNKNOWN({final_job[7]})")
+        print(f"   Final state: {final_state}")
+    except Exception as e:
+        print(f"   ❌ Complete failed: {e}")
+        return False
+
+    result_path = WORKER_DIR / f"job_{job_id}_airdrop_safety.json"
+    result_path.write_text(json.dumps({
+        **result, "job_id": job_id,
+        "submit_tx": tx_hash, "complete_tx": tx_hash2,
+        "earnings_usdc": job["budget_usdc"],
+    }, indent=2))
+
+    state["processed_jobs"][str(job_id)] = {
+        "type": "airdrop_safety",
+        "result": result["verdict"],
+        "score": result["score"],
+        "earnings": job["budget_usdc"],
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+    }
+    state["total_earnings_usdc"] += job["budget_usdc"]
+    print(f"   💰 Earned: {job['budget_usdc']:.2f} USDC  |  Total: {state['total_earnings_usdc']:.2f} USDC")
+    return True
+
+
 def scan_jobs(w3, commerce) -> list[dict]:
     """Scan recent jobs for ones matching our capabilities."""
     try:
@@ -450,6 +533,8 @@ def main():
                 success = process_wallet_health_job(w3, account, commerce, job, state)
             elif job_type == "contract_audit":
                 success = process_contract_audit_job(w3, account, commerce, job, state)
+            elif job_type == "airdrop_safety":
+                success = process_airdrop_safety_job(w3, account, commerce, job, state)
             else:
                 success = process_job(w3, account, commerce, job, state)
 
