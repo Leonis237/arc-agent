@@ -14,8 +14,11 @@
 
 An on-chain AI agent deployed on **Arc** (Circle's L1) that:
 
-- 🔍 **Scans** any Arc token address instantly via the live dashboard
-- 🧠 **Runs** an ONNX scam detection model on token addresses
+- 🔍 **Scans** any Arc token address — instant scam detection via the dashboard
+- 🩺 **Audits** wallet health — token approvals, EIP-7702 delegation, source verification
+- 🔍 **Audits** contract transparency — owner privileges, supply concentration, proxy risk, liquidity traps
+- 🪂 **Checks** airdrop safety — phishing detection, brand impersonation, URL analysis + contract extraction
+- 🧠 **Runs** an ONNX scam detection model on token addresses autonomously
 - 📤 **Picks up** ERC-8183 jobs from the marketplace autonomously
 - 📤 **Submits** results on-chain as verifiable deliverables
 - 💰 **Earns** USDC for completed work
@@ -47,10 +50,13 @@ An on-chain AI agent deployed on **Arc** (Circle's L1) that:
     │    Flask Dashboard           │
     │    arc.leonisforge.com       │
     │    ┌─────────────────────┐   │
-    │    │ 🔍 Instant Scanner  │   │
-    │    │ 🌐 Ecosystem Stats  │   │
+    │    │ 🔍 SCAN.TOKEN       │   │
+    │    │ 🩺 WALLET.HEALTH    │   │
+    │    │ 🔍 CONTRACT.AUDIT   │   │
+    │    │ 🪂 AIRDROP.SAFETY   │   │
+    │    │ 🪪 Agent Identity   │   │
     │    │ 📋 Job Marketplace  │   │
-    │    │ 🤖 Worker Monitor   │   │
+    │    │ 🌐 Ecosystem Stats  │   │
     │    └─────────────────────┘   │
     │    Leonis Sketch Design      │
     └──────────────────────────────┘
@@ -61,7 +67,14 @@ An on-chain AI agent deployed on **Arc** (Circle's L1) that:
 👉 **[arc.leonisforge.com](https://arc.leonisforge.com)**
 
 **Leonis Sketch design** — hand-drawn zine aesthetic with paper texture, wobbly borders, handwritten fonts (Kalam + Patrick Hand).
-- 🔍 **Instant token scanner** — paste any Arc address, get scam probability + red flags in <1s
+
+**🛡️ Security Suite** — 4 on-chain safety tools:
+- 🔍 **SCAN.TOKEN** (red) — Instant Arc token scanner: scam probability + red flags via heuristic + ONNX
+- 🩺 **WALLET.HEALTH** (blue) — Wallet audit: token approvals, EIP-7702 delegation, source verification
+- 🔍 **CONTRACT.AUDIT** (gold) — Contract transparency: owner privileges, supply, proxy risk, liquidity traps
+- 🪂 **AIRDROP.SAFETY** (green) — Link safety: phishing detection, brand impersonation, URL analysis + contract extraction
+
+**Other dashboard sections:**
 - 🪪 **Agent identity card** — ERC-8004 agent ID, wallet, live USDC balance
 - 🌐 **Ecosystem snapshot** (featured) — live count of registered agents + total jobs on Arc
 - 📋 **Job marketplace** — ALL | OPEN | MINE filters, click-to-expand detail, post.job form
@@ -72,9 +85,12 @@ An on-chain AI agent deployed on **Arc** (Circle's L1) that:
 
 ```
 .
-├── app.py              # Flask dashboard + API endpoints
+├── app.py              # Flask dashboard + API endpoints (all 4 security tools)
 ├── arc_utils.py        # Web3 integration, contract ABIs, tx helpers
-├── worker.py           # Autonomous agent worker (scan → process → earn)
+├── worker.py           # Autonomous agent worker — 4 capabilities: scam + wallet + contract + airdrop
+├── wallet_health.py    # Wallet security audit: approvals, delegation, source
+├── contract_audit.py   # Contract transparency audit: owner, supply, proxy, traps
+├── airdrop_safety.py   # Airdrop link analysis: phishing, impersonation, contract extraction
 ├── process_job.py      # Single job: scam detection + submit deliverable
 ├── complete_job.py     # Complete job + claim USDC payment
 ├── register_agent.py   # ERC-8004 agent registration
@@ -93,7 +109,7 @@ An on-chain AI agent deployed on **Arc** (Circle's L1) that:
 | **Address** | `0xe43f191d3DBcCEBd94F960a42dEafdF8E57215BB` |
 | **Network** | Arc Testnet (chain 5042002) |
 | **Gas Token** | USDC |
-| **Capabilities** | Token scam detection, rugpull analysis |
+| **Capabilities** | Token scam detection, wallet health audit, contract transparency audit, airdrop safety analysis |
 
 [View on ArcScan →](https://testnet.arcscan.app/address/0xe43f191d3DBcCEBd94F960a42dEafdF8E57215BB)
 
@@ -103,8 +119,8 @@ An on-chain AI agent deployed on **Arc** (Circle's L1) that:
 
 1. **Client creates job** → `createJob(provider, evaluator, expiredAt, description, hook)`
 2. **Funds escrow** → `setBudget` + USDC `approve` + `fund`
-3. **Agent scans** → Worker detects FUNDED jobs matching capabilities
-4. **Agent executes** → Runs ONNX scam detector on target token
+3. **Agent scans** → Worker detects FUNDED jobs matching 4 capability types (scam, wallet health, contract audit, airdrop safety)
+4. **Agent executes** → Routes to correct pipeline: ONNX scam detector, wallet health analyzer, contract auditor, or airdrop safety checker
 5. **Agent submits** → `submit(jobId, deliverableHash)` — result on-chain
 6. **Agent completes** → `complete(jobId, deliverableHash)` — claims USDC payment
 
