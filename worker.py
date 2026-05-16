@@ -39,6 +39,11 @@ CAPABILITY_KEYWORDS = [
     "security", "audit", "honeypot", "verify", "check",
 ]
 
+WALLET_HEALTH_KEYWORDS = [
+    "wallet", "health", "audit-wallet", "ví",
+    "wallet-audit", "check-wallet", "scan-wallet",
+]
+
 SCAN_DEPTH = 50  # how many recent jobs to scan per run
 
 
@@ -70,7 +75,16 @@ def extract_token_address(description: str) -> str | None:
 def matches_capability(description: str) -> bool:
     """Check if job description matches our agent capabilities."""
     desc_lower = description.lower()
-    return any(kw in desc_lower for kw in CAPABILITY_KEYWORDS)
+    return any(kw in desc_lower for kw in CAPABILITY_KEYWORDS) or \
+           any(kw in desc_lower for kw in WALLET_HEALTH_KEYWORDS)
+
+
+def detect_job_type(description: str) -> str:
+    """Detect which capability to use: 'scam' or 'wallet_health'."""
+    desc_lower = description.lower()
+    if any(kw in desc_lower for kw in WALLET_HEALTH_KEYWORDS):
+        return "wallet_health"
+    return "scam"
 
 
 def run_scam_detector(token_address: str) -> dict:
@@ -116,6 +130,91 @@ def run_scam_detector(token_address: str) -> dict:
         result["status"] = "ERROR"
 
     return result
+
+
+def run_wallet_health(w3, wallet_address: str) -> dict:
+    """Run wallet health analysis."""
+    from wallet_health import analyze_wallet
+    return analyze_wallet(w3, wallet_address)
+
+
+def process_wallet_health_job(w3, account, commerce, job: dict, state: dict) -> bool:
+    """Process a wallet health job: analyze wallet → submit → complete."""
+    job_id = job["job_id"]
+    print(f"\n{'='*60}")
+    print(f"🩺 Processing Wallet Health Job #{job_id} — {job['budget_usdc']:.2f} USDC")
+    print(f"   Desc: {job['description'][:80]}")
+
+    # Extract wallet address
+    wallet = extract_token_address(job["description"])
+    if not wallet:
+        print("   ⚠️ No wallet address found in description — skipping")
+        return False
+
+    print(f"   Wallet: {wallet}")
+
+    # Run analysis
+    print("🔬 Running wallet health check...")
+    result = run_wallet_health(w3, wallet)
+    print(f"   Score: {result['score']}/100  |  Verdict: {result['verdict']}")
+
+    # Generate deliverable hash
+    deliverable = json.dumps(result, sort_keys=True)
+    deliverable_bytes = deliverable.encode()
+    deliverable_hash = hashlib.sha256(deliverable_bytes).digest()
+
+    # Submit
+    print("📤 Submitting deliverable onchain...")
+    try:
+        receipt = send_tx(
+            w3, account,
+            commerce.functions.submit(job_id, deliverable_hash, b"")
+        )
+        tx_hash = receipt.transactionHash.hex()
+        print(f"   ✅ Submitted! TX: https://testnet.arcscan.app/tx/{tx_hash}")
+    except Exception as e:
+        print(f"   ❌ Submit failed: {e}")
+        return False
+
+    # Complete
+    print("🔓 Completing job — claiming payment...")
+    try:
+        receipt = send_tx(
+            w3, account,
+            commerce.functions.complete(job_id, deliverable_hash, b"")
+        )
+        tx_hash2 = receipt.transactionHash.hex()
+        print(f"   ✅ Completed! TX: https://testnet.arcscan.app/tx/{tx_hash2}")
+
+        final_job = commerce.functions.jobs(job_id).call()
+        final_state = JOB_STATES.get(final_job[7], f"UNKNOWN({final_job[7]})")
+        print(f"   Final state: {final_state}")
+    except Exception as e:
+        print(f"   ❌ Complete failed: {e}")
+        return False
+
+    # Save result
+    result_path = WORKER_DIR / f"job_{job_id}_wallet_health.json"
+    result_path.write_text(json.dumps({
+        **result,
+        "job_id": job_id,
+        "submit_tx": tx_hash,
+        "complete_tx": tx_hash2,
+        "earnings_usdc": job["budget_usdc"],
+    }, indent=2))
+
+    # Update state
+    state["processed_jobs"][str(job_id)] = {
+        "type": "wallet_health",
+        "result": result["verdict"],
+        "score": result["score"],
+        "earnings": job["budget_usdc"],
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+    }
+    state["total_earnings_usdc"] += job["budget_usdc"]
+
+    print(f"   💰 Earned: {job['budget_usdc']:.2f} USDC  |  Total: {state['total_earnings_usdc']:.2f} USDC")
+    return True
 
 
 def scan_jobs(w3, commerce) -> list[dict]:
@@ -268,7 +367,13 @@ def main():
                 print(f"   ⏭️  Job #{job_id} is ours — skipping (self-client)")
                 continue
 
-            success = process_job(w3, account, commerce, job, state)
+            # Route to correct handler based on job type
+            job_type = detect_job_type(job["description"])
+            if job_type == "wallet_health":
+                success = process_wallet_health_job(w3, account, commerce, job, state)
+            else:
+                success = process_job(w3, account, commerce, job, state)
+
             if success:
                 processed += 1
             time.sleep(2)  # rate limit between transactions
