@@ -700,9 +700,9 @@
       </div>
 
       <!-- Agent Identity -->
-      <div class="card">
-        <div class="card-header">
-          <span>agent_identity.erc8004</span>
+      <div class="card" style="border-color:var(--ink); border-width:4px">
+        <div class="card-header" style="background:var(--ink);color:var(--white);border-bottom:2px dashed var(--ink);">
+          <span>🪪 agent_identity.erc8004</span>
           <span class="tag tag-green" style="font-size:9px">active</span>
         </div>
         <div class="card-body">
@@ -716,7 +716,7 @@
             </div>
             <div class="agent-balance">
               <div style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px">Testnet Balance</div>
-              <div class="amount" id="balance">--</div>
+              <div class="amount" id="balance" style="display:flex;align-items:center;gap:4px"><span style="font-size:24px;opacity:0.4">💵</span><span id="balanceVal">--</span></div>
               <div class="unit">USDC</div>
             </div>
           </div>
@@ -966,7 +966,7 @@
       const eco = await ecoRes.json();
 
       if (!status.error) {
-        document.getElementById('balance').textContent = status.balance_usdc.toFixed(2);
+        document.getElementById('balanceVal').textContent = status.balance_usdc.toFixed(2);
         document.getElementById('heroBalance').textContent = status.balance_usdc.toFixed(2);
       }
 
