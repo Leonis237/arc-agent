@@ -232,32 +232,71 @@ def _check_typosquatting(hostname: str) -> dict:
         "curve": "curve.fi",
     }
 
+    # Suspicious prefixes/suffixes commonly paired with brand names in phishing
+    SUSPICIOUS_AFFIXES = [
+        "claim", "free", "airdrop", "reward", "bonus",
+        "verify", "secure", "official", "giveaway", "migrate",
+        "restore", "connect", "sync", "wallet",
+    ]
+
     issues = []
+    total_penalty = 0
 
     # Build full hostname string
     host_str = ".".join(parts)
 
     # Check TLD impersonation: uniswap.xyz, uniswap.top, etc.
     for brand, official in official_domains.items():
-        official_base = official.split(".")[0]
         # Check if hostname is the official domain or a subdomain of it
         if host_str == official or host_str.endswith("." + official):
             continue  # It's the real thing or a subdomain
-        # Check if brand name appears as a domain component
+
+        # Check if brand name appears as an exact domain component
         if any(p == brand for p in parts):
             issues.append(f"{brand} impersonation (not {official})")
+            total_penalty = 25
+            break
+
+        # Check if brand name appears as substring within a domain part
+        # (e.g., "claim-uniswap.xyz" → "uniswap" inside "claim-uniswap")
+        # Only flag if paired with a suspicious affix (claim-, free-, -airdrop, etc.)
+        # to avoid false positives on legit community sites like myuniswapblog.com
+        for p in parts:
+            if brand in p and p != brand:
+                # Detect suspicious prefix/suffix around the brand
+                affix_found = []
+                for affix in SUSPICIOUS_AFFIXES:
+                    if p.startswith(affix + "-") or p.startswith(affix):
+                        affix_found.append(f"'{affix}-' prefix")
+                    if p.endswith("-" + affix) or p.endswith(affix):
+                        affix_found.append(f"'-{affix}' suffix")
+
+                if affix_found:
+                    issues.append(
+                        f"{brand} in '{p}' with {', '.join(affix_found[:2])} "
+                        f"(not {official})"
+                    )
+                    total_penalty = 20
+                    break
+                # No suspicious affix — skip (could be legit community site)
+                break
+        if total_penalty > 0:
             break
 
     # Check for homoglyphs / typosquatting via character patterns
-    for brand, typos in TYPO_PATTERNS:
-        for typo_variant in typos:
-            if typo_variant in hostname.lower():
-                issues.append(f"typosquatting: looks like '{brand}'")
+    if not issues:
+        for brand, typos in TYPO_PATTERNS:
+            for typo_variant in typos:
+                if typo_variant in hostname.lower():
+                    issues.append(f"typosquatting: looks like '{brand}'")
+                    total_penalty = 25
+                    break
+            if total_penalty > 0:
                 break
 
     if issues:
-        check["status"] = "FAIL"
-        check["penalty"] = 25
+        check["status"] = "FAIL" if total_penalty >= 20 else "WARN"
+        check["penalty"] = total_penalty
         check["detail"] = "🚨 " + "; ".join(issues) + "."
     else:
         check["detail"] = "No brand impersonation detected."
