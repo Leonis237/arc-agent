@@ -666,6 +666,39 @@
         </div>
       </div>
 
+      <!-- ═══ AIRDROP SAFETY ═══ -->
+      <div class="card" style="border-color:var(--green); border-width:4px">
+        <div class="card-header" style="background:var(--green);color:var(--white);border-bottom:2px dashed var(--ink);">
+          <span>🪂 airdrop.safety</span>
+          <span style="font-size:10px;opacity:0.8">link scan · phishing detection</span>
+        </div>
+        <div class="card-body">
+          <div style="margin-bottom:10px">
+            <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Airdrop Link to Check</label>
+            <div style="display:flex; gap:8px">
+              <input type="text" id="airdropUrl" placeholder="https://claim-uniswap.xyz/airdrop" class="input" style="flex:1">
+              <button onclick="checkAirdrop()" class="btn" style="background:var(--green);color:var(--white);flex-shrink:0">Scan</button>
+            </div>
+          </div>
+          <div id="airdropResult" style="display:none">
+            <div class="hr"></div>
+            <div id="airdropVerdict" style="font-family:var(--font-h);font-size:20px;text-align:center;margin-bottom:6px"></div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+              <span style="opacity:0.5">Safety Score</span>
+              <span id="airdropScore" style="font-family:var(--font-h);font-weight:700"></span>
+            </div>
+            <div style="height:8px;background:var(--muted);border-radius:4px;overflow:hidden;border:1px solid var(--ink);margin-bottom:10px">
+              <div id="airdropBar" style="height:100%;border-radius:4px;transition:width 0.5s;width:0%"></div>
+            </div>
+            <div id="airdropChecks" style="font-size:12px"></div>
+          </div>
+          <div id="airdropLoading" style="display:none;text-align:center;padding:1rem 0">
+            <span style="opacity:0.6">🪂 Scanning airdrop link...</span>
+          </div>
+          <div id="airdropError" style="display:none;color:var(--red);font-size:13px;text-align:center;padding:0.5rem 0"></div>
+        </div>
+      </div>
+
       <!-- Agent Identity -->
       <div class="card">
         <div class="card-header">
@@ -1357,6 +1390,82 @@
             (c.penalty > 0 ? '-' + c.penalty : 'OK') + '</span>' +
         '</div>'
       ).join('');
+
+      resDiv.style.display = 'block';
+    } catch(e) {
+      errDiv.textContent = 'Network error. Try again.';
+      errDiv.style.display = 'block';
+    } finally {
+      loadDiv.style.display = 'none';
+    }
+  }
+
+  // ── Airdrop Safety ──
+  async function checkAirdrop() {
+    const url = document.getElementById('airdropUrl').value.trim();
+    const resDiv = document.getElementById('airdropResult');
+    const loadDiv = document.getElementById('airdropLoading');
+    const errDiv = document.getElementById('airdropError');
+
+    resDiv.style.display = 'none';
+    errDiv.style.display = 'none';
+
+    if (!url) {
+      errDiv.textContent = 'Enter an airdrop link URL to scan';
+      errDiv.style.display = 'block';
+      return;
+    }
+
+    loadDiv.style.display = 'block';
+    try {
+      const r = await fetch('/api/airdrop/safety', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({url: url})
+      });
+      const data = await r.json();
+
+      if (data.error) {
+        errDiv.textContent = data.error;
+        errDiv.style.display = 'block';
+        return;
+      }
+
+      const verdictColors = {
+        SAFE: 'var(--green)',
+        LIKELY_SAFE: '#d4a017',
+        SUSPICIOUS: '#d4a017',
+        HIGH_RISK: 'var(--red)',
+        CONFIRMED_SCAM: 'var(--red)',
+        INVALID_URL: 'var(--ink)'
+      };
+      document.getElementById('airdropVerdict').textContent = '🪂 ' + data.verdict.replace(/_/g, ' ');
+      document.getElementById('airdropVerdict').style.color = verdictColors[data.verdict] || 'var(--ink)';
+
+      document.getElementById('airdropScore').textContent = data.score + '/100';
+      const bar = document.getElementById('airdropBar');
+      bar.style.width = data.score + '%';
+      bar.style.background = data.score >= 80 ? 'var(--green)' :
+        (data.score >= 40 ? '#d4a017' : 'var(--red)');
+
+      const icons = {PASS: '✅', WARN: '⚠️', FAIL: '🚨', INFO: 'ℹ️', UNKNOWN: '❓'};
+      document.getElementById('airdropChecks').innerHTML = data.checks.map(c =>
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--muted)">' +
+          '<div style="flex:1">' +
+            '<strong>' + (icons[c.status] || '❓') + ' ' + c.name + '</strong>' +
+            '<div style="font-size:11px;opacity:0.6;margin-top:2px">' + (c.detail || '') + '</div>' +
+          '</div>' +
+          '<span style="font-family:var(--font-h);font-size:14px;margin-left:8px;color:' +
+            (c.penalty > 0 ? 'var(--red)' : 'var(--green)') + '">' +
+            (c.penalty > 0 ? '-' + c.penalty : 'OK') + '</span>' +
+        '</div>'
+      ).join('');
+
+      if (data.extracted_contract) {
+        document.getElementById('airdropChecks').innerHTML += 
+          '<div style="margin-top:8px;font-size:11px;opacity:0.5">' +
+          '📎 Contract found → Arc audit: ' + data.extracted_contract + '</div>';
+      }
 
       resDiv.style.display = 'block';
     } catch(e) {

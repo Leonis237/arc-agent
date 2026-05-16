@@ -472,3 +472,25 @@ def api_contract_audit():
         return jsonify(report)
     except Exception as e:
         return jsonify({"error": f"Audit failed: {str(e)[:200]}"}), 500
+
+
+# ── Airdrop Safety ─────────────────────────────────────────────
+
+@app.route("/api/airdrop/safety", methods=["GET", "POST"])
+def api_airdrop_safety():
+    """Analyze airdrop claim link for phishing, drainers, and scams."""
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        url = data.get("url", "").strip()
+    else:
+        url = request.args.get("url", "").strip()
+
+    if not url:
+        return jsonify({"error": "URL required"}), 400
+
+    try:
+        from airdrop_safety import analyze_airdrop
+        report = analyze_airdrop(url, w3)
+        return jsonify(report)
+    except Exception as e:
+        return jsonify({"error": f"Analysis failed: {str(e)[:200]}"}), 500
