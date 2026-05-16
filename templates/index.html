@@ -600,6 +600,39 @@
         </div>
       </div>
 
+      <!-- ═══ WALLET HEALTH ═══ -->
+      <div class="card" style="border-color:var(--blue); border-width:4px">
+        <div class="card-header" style="background:var(--blue);color:var(--white);border-bottom:2px dashed var(--ink);">
+          <span>🩺 wallet.health</span>
+          <span style="font-size:10px;opacity:0.8">arc · approvals + delegation</span>
+        </div>
+        <div class="card-body">
+          <div style="margin-bottom:10px">
+            <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Wallet Address to Audit</label>
+            <div style="display:flex; gap:8px">
+              <input type="text" id="healthAddr" placeholder="0x... wallet" class="input" style="flex:1">
+              <button onclick="checkWalletHealth()" class="btn" style="background:var(--blue);color:var(--white);flex-shrink:0">Audit</button>
+            </div>
+          </div>
+          <div id="healthResult" style="display:none">
+            <div class="hr"></div>
+            <div id="healthVerdict" style="font-family:var(--font-h);font-size:20px;text-align:center;margin-bottom:6px"></div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+              <span style="opacity:0.5">Wallet Health Score</span>
+              <span id="healthScore" style="font-family:var(--font-h);font-weight:700"></span>
+            </div>
+            <div style="height:8px;background:var(--muted);border-radius:4px;overflow:hidden;border:1px solid var(--ink);margin-bottom:10px">
+              <div id="healthBar" style="height:100%;border-radius:4px;transition:width 0.5s;width:0%"></div>
+            </div>
+            <div id="healthChecks" style="font-size:12px"></div>
+          </div>
+          <div id="healthLoading" style="display:none;text-align:center;padding:1rem 0">
+            <span style="opacity:0.6">🔍 Analyzing wallet...</span>
+          </div>
+          <div id="healthError" style="display:none;color:var(--red);font-size:13px;text-align:center;padding:0.5rem 0"></div>
+        </div>
+      </div>
+
       <!-- Agent Identity -->
       <div class="card">
         <div class="card-header">
@@ -1153,6 +1186,78 @@
     }
     btn.disabled = false;
     btn.style.opacity = '1';
+  }
+
+  // ── Wallet Health Checker ──
+  async function checkWalletHealth() {
+    const addr = document.getElementById('healthAddr').value.trim();
+    const resDiv = document.getElementById('healthResult');
+    const loadDiv = document.getElementById('healthLoading');
+    const errDiv = document.getElementById('healthError');
+
+    resDiv.style.display = 'none';
+    errDiv.style.display = 'none';
+
+    if (!addr.startsWith('0x') || addr.length !== 42) {
+      errDiv.textContent = 'Invalid wallet address (0x + 40 hex chars)';
+      errDiv.style.display = 'block';
+      return;
+    }
+
+    loadDiv.style.display = 'block';
+    try {
+      const r = await fetch('/api/wallet/health', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({address: addr})
+      });
+      const data = await r.json();
+
+      if (data.error) {
+        errDiv.textContent = data.error;
+        errDiv.style.display = 'block';
+        return;
+      }
+
+      // Verdict
+      const verdictColors = {
+        HEALTHY: 'var(--green)',
+        NEEDS_REVIEW: '#d4a017',
+        AT_RISK: 'var(--red)',
+        CRITICAL: 'var(--red)'
+      };
+      const verdictDiv = document.getElementById('healthVerdict');
+      verdictDiv.textContent = '🩺 ' + data.verdict.replace('_', ' ');
+      verdictDiv.style.color = verdictColors[data.verdict] || 'var(--ink)';
+
+      // Score bar
+      document.getElementById('healthScore').textContent = data.score + '/100';
+      const bar = document.getElementById('healthBar');
+      bar.style.width = data.score + '%';
+      bar.style.background = data.score >= 80 ? 'var(--green)' :
+        (data.score >= 50 ? '#d4a017' : 'var(--red)');
+
+      // Checks breakdown
+      const icons = {PASS: '✅', WARN: '⚠️', FAIL: '🚨', UNKNOWN: '❓'};
+      document.getElementById('healthChecks').innerHTML = data.checks.map(c =>
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--muted)">' +
+          '<div style="flex:1">' +
+            '<strong>' + (icons[c.status] || '❓') + ' ' + c.name + '</strong>' +
+            '<div style="font-size:11px;opacity:0.6;margin-top:2px">' + (c.detail || '') + '</div>' +
+          '</div>' +
+          '<span style="font-family:var(--font-h);font-size:14px;margin-left:8px;color:' +
+            (c.penalty > 0 ? 'var(--red)' : 'var(--green)') + '">' +
+            (c.penalty > 0 ? '-' + c.penalty : 'OK') + '</span>' +
+        '</div>'
+      ).join('');
+
+      resDiv.style.display = 'block';
+    } catch(e) {
+      errDiv.textContent = 'Network error. Try again.';
+      errDiv.style.display = 'block';
+    } finally {
+      loadDiv.style.display = 'none';
+    }
   }
 </script>
 

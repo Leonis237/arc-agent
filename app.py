@@ -428,3 +428,25 @@ def api_create_job():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+# ── Wallet Health ─────────────────────────────────────────────
+
+@app.route("/api/wallet/health", methods=["GET", "POST"])
+def api_wallet_health():
+    """Analyze wallet health: approvals, delegation, source verification."""
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        address = data.get("address", "").strip()
+    else:
+        address = request.args.get("address", "").strip()
+
+    if not address or not address.startswith("0x") or len(address) != 42:
+        return jsonify({"error": "Valid 0x wallet address required"}), 400
+
+    try:
+        from wallet_health import analyze_wallet
+        report = analyze_wallet(w3, address)
+        return jsonify(report)
+    except Exception as e:
+        return jsonify({"error": f"Analysis failed: {str(e)[:200]}"}), 500
