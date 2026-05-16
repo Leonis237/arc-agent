@@ -450,3 +450,25 @@ def api_wallet_health():
         return jsonify(report)
     except Exception as e:
         return jsonify({"error": f"Analysis failed: {str(e)[:200]}"}), 500
+
+
+# ── Contract Audit ────────────────────────────────────────────
+
+@app.route("/api/contract/audit", methods=["GET", "POST"])
+def api_contract_audit():
+    """Audit contract transparency: owner privileges, supply, proxy, traps."""
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        address = data.get("address", "").strip()
+    else:
+        address = request.args.get("address", "").strip()
+
+    if not address or not address.startswith("0x") or len(address) != 42:
+        return jsonify({"error": "Valid 0x contract address required"}), 400
+
+    try:
+        from contract_audit import audit_contract
+        report = audit_contract(w3, address)
+        return jsonify(report)
+    except Exception as e:
+        return jsonify({"error": f"Audit failed: {str(e)[:200]}"}), 500

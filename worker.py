@@ -44,6 +44,11 @@ WALLET_HEALTH_KEYWORDS = [
     "wallet-audit", "check-wallet", "scan-wallet",
 ]
 
+CONTRACT_AUDIT_KEYWORDS = [
+    "audit", "transparency", "dd", "due-diligence",
+    "contract-audit", "audit-contract", "token-audit",
+]
+
 SCAN_DEPTH = 50  # how many recent jobs to scan per run
 
 
@@ -76,14 +81,17 @@ def matches_capability(description: str) -> bool:
     """Check if job description matches our agent capabilities."""
     desc_lower = description.lower()
     return any(kw in desc_lower for kw in CAPABILITY_KEYWORDS) or \
-           any(kw in desc_lower for kw in WALLET_HEALTH_KEYWORDS)
+           any(kw in desc_lower for kw in WALLET_HEALTH_KEYWORDS) or \
+           any(kw in desc_lower for kw in CONTRACT_AUDIT_KEYWORDS)
 
 
 def detect_job_type(description: str) -> str:
-    """Detect which capability to use: 'scam' or 'wallet_health'."""
+    """Detect which capability to use: 'scam', 'wallet_health', or 'contract_audit'."""
     desc_lower = description.lower()
     if any(kw in desc_lower for kw in WALLET_HEALTH_KEYWORDS):
         return "wallet_health"
+    if any(kw in desc_lower for kw in CONTRACT_AUDIT_KEYWORDS):
+        return "contract_audit"
     return "scam"
 
 
@@ -213,6 +221,75 @@ def process_wallet_health_job(w3, account, commerce, job: dict, state: dict) -> 
     }
     state["total_earnings_usdc"] += job["budget_usdc"]
 
+    print(f"   💰 Earned: {job['budget_usdc']:.2f} USDC  |  Total: {state['total_earnings_usdc']:.2f} USDC")
+    return True
+
+
+def run_contract_audit(w3, contract_address: str) -> dict:
+    """Run contract transparency audit."""
+    from contract_audit import audit_contract
+    return audit_contract(w3, contract_address)
+
+
+def process_contract_audit_job(w3, account, commerce, job: dict, state: dict) -> bool:
+    """Process a contract audit job: audit contract → submit → complete."""
+    job_id = job["job_id"]
+    print(f"\n{'='*60}")
+    print(f"🔍 Processing Contract Audit Job #{job_id} — {job['budget_usdc']:.2f} USDC")
+    print(f"   Desc: {job['description'][:80]}")
+
+    contract = extract_token_address(job["description"])
+    if not contract:
+        print("   ⚠️ No contract address found in description — skipping")
+        return False
+
+    print(f"   Contract: {contract}")
+    print("🔬 Running contract audit...")
+    result = run_contract_audit(w3, contract)
+    print(f"   Score: {result['score']}/100  |  Verdict: {result['verdict']}")
+
+    deliverable = json.dumps(result, sort_keys=True)
+    deliverable_bytes = deliverable.encode()
+    deliverable_hash = hashlib.sha256(deliverable_bytes).digest()
+
+    print("📤 Submitting deliverable onchain...")
+    try:
+        receipt = send_tx(w3, account,
+            commerce.functions.submit(job_id, deliverable_hash, b""))
+        tx_hash = receipt.transactionHash.hex()
+        print(f"   ✅ Submitted! TX: https://testnet.arcscan.app/tx/{tx_hash}")
+    except Exception as e:
+        print(f"   ❌ Submit failed: {e}")
+        return False
+
+    print("🔓 Completing job...")
+    try:
+        receipt = send_tx(w3, account,
+            commerce.functions.complete(job_id, deliverable_hash, b""))
+        tx_hash2 = receipt.transactionHash.hex()
+        print(f"   ✅ Completed! TX: https://testnet.arcscan.app/tx/{tx_hash2}")
+        final_job = commerce.functions.jobs(job_id).call()
+        final_state = JOB_STATES.get(final_job[7], f"UNKNOWN({final_job[7]})")
+        print(f"   Final state: {final_state}")
+    except Exception as e:
+        print(f"   ❌ Complete failed: {e}")
+        return False
+
+    result_path = WORKER_DIR / f"job_{job_id}_contract_audit.json"
+    result_path.write_text(json.dumps({
+        **result, "job_id": job_id,
+        "submit_tx": tx_hash, "complete_tx": tx_hash2,
+        "earnings_usdc": job["budget_usdc"],
+    }, indent=2))
+
+    state["processed_jobs"][str(job_id)] = {
+        "type": "contract_audit",
+        "result": result["verdict"],
+        "score": result["score"],
+        "earnings": job["budget_usdc"],
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+    }
+    state["total_earnings_usdc"] += job["budget_usdc"]
     print(f"   💰 Earned: {job['budget_usdc']:.2f} USDC  |  Total: {state['total_earnings_usdc']:.2f} USDC")
     return True
 
@@ -371,6 +448,8 @@ def main():
             job_type = detect_job_type(job["description"])
             if job_type == "wallet_health":
                 success = process_wallet_health_job(w3, account, commerce, job, state)
+            elif job_type == "contract_audit":
+                success = process_contract_audit_job(w3, account, commerce, job, state)
             else:
                 success = process_job(w3, account, commerce, job, state)
 
