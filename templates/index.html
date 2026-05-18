@@ -12,10 +12,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    /* ═══════════════════════════════════════════════════════════
-       POSTHOG STYLE — Scrappy dev-tool aesthetic for Arc Agent
-       Warm parchment, olive text, orange hover, sage borders
-       ═══════════════════════════════════════════════════════════ */
     :root {
       --parchment: #fdfdf8;
       --olive: #4d4f46;
@@ -41,122 +37,125 @@
       color: var(--olive);
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
     }
-
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem 3rem; }
 
     /* ── Nav ── */
-    .nav {
+    nav {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 0; border-bottom: 1px solid var(--sage-border);
-      margin-bottom: 2rem;
+      padding: 16px 32px; max-width: 1200px; margin: 0 auto;
+      border-bottom: 1px solid var(--sage-border);
     }
     .nav-brand { font-size: 18px; font-weight: 700; color: var(--deep); }
-    .nav-links { display: flex; gap: 20px; align-items: center; font-size: 13px; }
-    .nav-links a { color: var(--olive); text-decoration: none; font-size: 14px; font-weight: 600; }
+    .nav-links { display: flex; gap: 20px; align-items: center; }
+    .nav-links a { color: var(--deep); text-decoration: none; font-size: 14px; font-weight: 600; }
     .nav-links a:hover { color: var(--orange); }
-    .nav-links .dot { display: inline-block; width: 8px; height: 8px; background: var(--green); border-radius: 50%; margin-right: 4px; animation: pulse 2s ease-in-out infinite; }
+    .nav-links .dot { display: inline-block; width: 8px; height: 8px; background: var(--green); border-radius: 50%; margin-right: 4px; animation: pulse 2s infinite; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
     /* ── Buttons ── */
     .btn {
       display: inline-flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none;
+      font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none;
       transition: all 0.15s; border: none; font-family: inherit;
     }
-    .btn-dark { background: var(--dark-btn); color: #fff; padding: 8px 16px; border-radius: 6px; }
+    .btn-dark { background: var(--dark-btn); color: #fff; padding: 10px 18px; border-radius: 6px; }
     .btn-dark:hover { opacity: 0.7; color: var(--gold); }
     .btn-sage { background: var(--sage-btn); color: var(--olive); padding: 6px 12px; border-radius: 4px; }
     .btn-sage:hover { background: #f4f4f4; color: var(--orange); }
-    .btn-red { background: var(--red); color: #fff; padding: 8px 16px; border-radius: 6px; }
+    .btn-red { background: var(--red); color: #fff; padding: 8px 18px; border-radius: 6px; }
     .btn-red:hover { opacity: 0.85; }
     .btn-sm { font-size: 12px; padding: 4px 10px; }
     .btn-full { display: block; width: 100%; text-align: center; }
 
     /* ── Hero ── */
     .hero {
-      text-align: center; padding: 48px 0 40px;
+      text-align: center; padding: 64px 32px 48px; max-width: 700px; margin: 0 auto;
     }
     .hero .badge {
       display: inline-block; background: var(--sage-bg); color: var(--olive);
       font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 9999px;
-      margin-bottom: 16px; border: 1px solid var(--sage-border);
+      margin-bottom: 20px; border: 1px solid var(--sage-border);
     }
-    .hero h1 { font-size: 42px; font-weight: 800; line-height: 1.15; letter-spacing: -0.75px; color: var(--deep); margin-bottom: 8px; }
-    .hero .subtitle { font-size: 15px; color: var(--sage-placeholder); margin-bottom: 20px; }
-    .hero-badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
-    .hero-stats { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; }
-    .hero-stat { text-align: center; min-width: 80px; }
-    .hero-stat .val { font-size: 32px; font-weight: 800; color: var(--deep); line-height: 1; }
-    .hero-stat .lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--sage-placeholder); margin-top: 4px; }
-    .hero-stat.highlight .val { color: var(--orange); }
+    .hero h1 { font-size: 44px; font-weight: 800; line-height: 1.15; letter-spacing: -0.75px; color: var(--deep); margin-bottom: 12px; }
+    .hero p { font-size: 17px; line-height: 1.56; color: var(--olive); margin-bottom: 28px; }
+    .hero-cta { display: flex; gap: 10px; justify-content: center; }
+    .hero-stats-mini { display: flex; gap: 2rem; justify-content: center; margin-top: 32px; }
+    .hero-stats-mini .val { font-size: 28px; font-weight: 800; color: var(--deep); }
+    .hero-stats-mini .lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--sage-placeholder); margin-top: 2px; }
 
-    /* ── Tags ── */
-    .tag {
-      display: inline-block; font-size: 11px; font-weight: 600; text-transform: uppercase;
-      padding: 3px 10px; border-radius: 9999px; border: 1px solid var(--sage-border);
-      background: var(--sage-bg); color: var(--olive);
+    /* ── Section title ── */
+    .section-head { text-align: center; padding: 40px 32px 0; }
+    .section-head .label { font-size: 16px; font-weight: 700; text-transform: uppercase; color: var(--sage-placeholder); margin-bottom: 6px; }
+    .section-head h2 { font-size: 32px; font-weight: 700; color: var(--deep); }
+
+    /* ── Feature cards ── */
+    .feature-grid {
+      max-width: 1100px; margin: 0 auto; padding: 36px 32px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px;
     }
-    .tag-green { background: var(--green); color: #fff; border-color: var(--green); }
-    .tag-red { background: var(--red); color: #fff; border-color: var(--red); }
-    .tag-live { background: var(--sage-bg); color: var(--green); font-weight: 700; }
-
-    /* ── Cards ── */
     .card {
       background: var(--parchment); border: 1px solid var(--sage-border);
-      border-radius: 6px; margin-bottom: 1.4rem;
+      border-radius: 6px; padding: 24px;
     }
-    .card-header {
+    .card .icon { font-size: 32px; margin-bottom: 10px; }
+    .card h3 { font-size: 18px; font-weight: 700; color: var(--deep); margin-bottom: 6px; }
+    .card p { font-size: 14px; line-height: 1.71; color: var(--olive); }
+    .card:hover h3 { color: var(--orange); }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      max-width: 800px; margin: 40px auto; display: flex; justify-content: space-around;
+      text-align: center; padding: 28px 32px;
+      border-top: 1px solid var(--sage-border); border-bottom: 1px solid var(--sage-border);
+    }
+    .stat-val { font-size: 32px; font-weight: 800; color: var(--deep); }
+    .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--sage-placeholder); margin-top: 4px; }
+
+    /* ── Tool section ── */
+    .tools-section { max-width: 1000px; margin: 0 auto; padding: 0 32px; }
+    .tool-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 768px) { .tool-row { grid-template-columns: 1fr; } }
+
+    .tool-card {
+      background: var(--parchment); border: 1px solid var(--sage-border); border-radius: 6px;
+    }
+    .tool-card .tool-header {
       padding: 10px 16px; border-bottom: 1px solid var(--sage-border);
-      font-size: 13px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.5px; color: var(--deep);
+      font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .tool-card .tool-body { padding: 14px 16px; }
+    .tool-header-red { background: var(--red); color: #fff; border-bottom-color: var(--red); }
+    .tool-header-blue { background: #3b5e9c; color: #fff; border-bottom-color: #3b5e9c; }
+    .tool-header-gold { background: #b17816; color: #fff; border-bottom-color: #b17816; }
+    .tool-header-green { background: var(--green); color: #fff; border-bottom-color: var(--green); }
+
+    /* ── Input ── */
+    .input {
+      width: 100%; background: var(--sage-bg); color: var(--olive);
+      border: 1px solid var(--light-border); border-radius: 4px;
+      padding: 8px 12px; font-family: inherit; font-size: 13px; outline: none;
+    }
+    .input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+    .input-sm { font-size: 12px; padding: 6px 8px; }
+
+    /* ── Jobs section ── */
+    .jobs-section { max-width: 1000px; margin: 0 auto; padding: 0 32px; }
+    .jobs-card {
+      background: var(--parchment); border: 1px solid var(--sage-border); border-radius: 6px;
+    }
+    .jobs-card .jobs-header {
+      padding: 12px 16px; border-bottom: 1px solid var(--sage-border);
       display: flex; justify-content: space-between; align-items: center;
     }
-    .card-body { padding: 16px; }
+    .jobs-card .jobs-header h3 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--deep); }
+    .jobs-card .jobs-body { padding: 0; }
 
-    .card-featured { border-width: 2px; border-color: var(--deep); }
-    .card-featured .card-header { background: var(--deep); color: #fff; border-bottom-color: var(--deep); }
-
-    /* Card header colored variants */
-    .card-header-red { background: var(--red); color: #fff; border-bottom-color: var(--red); }
-    .card-header-blue { background: #3b5e9c; color: #fff; border-bottom-color: #3b5e9c; }
-    .card-header-gold { background: #b17816; color: #fff; border-bottom-color: #b17816; }
-    .card-header-green { background: var(--green); color: #fff; border-bottom-color: var(--green); }
-    .card-header-dark { background: var(--dark-btn); color: #fff; border-bottom-color: var(--dark-btn); }
-
-    /* ── Two-column grid ── */
-    .main-grid {
-      display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start;
-    }
-    @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
-
-    /* ── Stats row ── */
-    .stats-row {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-bottom: 1.4rem;
-    }
-    .stat-box {
-      background: var(--parchment); border: 1px solid var(--sage-border);
-      border-radius: 6px; padding: 14px 10px; text-align: center;
-    }
-    .stat-box .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--sage-placeholder); margin-bottom: 4px; }
-    .stat-box .stat-val { font-size: 20px; font-weight: 800; color: var(--deep); }
-    .stat-box .stat-sub { font-size: 10px; color: var(--sage-placeholder); margin-top: 2px; }
-    @media (max-width: 768px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
-
-    /* ── Agent identity ── */
-    .agent-split { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
-    .agent-addr { font-size: 12px; word-break: break-all; color: var(--olive); font-family: 'JetBrains Mono', monospace; }
-    .agent-balance { text-align: right; }
-    .agent-balance .amount { font-size: 32px; font-weight: 800; color: var(--deep); }
-
-    /* ── Divider ── */
-    .hr { border: none; border-top: 1px solid var(--sage-border); margin: 12px 0; }
-
-    /* ── Job table ── */
     .job-row {
       display: grid; grid-template-columns: 54px 1fr 90px 80px 24px; gap: 10px;
-      align-items: center; padding: 8px 0; border-bottom: 1px solid var(--sage-border);
+      align-items: center; padding: 8px 16px; border-bottom: 1px solid var(--sage-border);
       font-size: 13px; cursor: pointer;
     }
     .job-row:last-child { border-bottom: none; }
@@ -168,7 +167,7 @@
     .job-link { color: var(--olive); opacity: 0.4; text-decoration: none; text-align: right; }
     .job-link:hover { opacity: 1; color: var(--orange); }
 
-    .job-detail { display: none; padding: 10px 14px; background: rgba(238,239,233,0.4); border-bottom: 1px solid var(--sage-border); font-size: 12px; }
+    .job-detail { display: none; padding: 10px 16px; background: rgba(238,239,233,0.4); border-bottom: 1px solid var(--sage-border); font-size: 12px; }
     .job-detail.open { display: block; }
     .job-detail .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
     .job-detail .detail-full { grid-column: 1 / -1; }
@@ -182,40 +181,60 @@
     .badge-err { background: var(--red); color: #fff; border-color: var(--red); }
     .badge-info { background: #dbeafe; border-color: var(--blue); color: #1e40af; }
 
-    /* ── Inputs ── */
-    .input {
-      width: 100%; background: var(--sage-bg); color: var(--olive);
-      border: 1px solid var(--light-border); border-radius: 4px;
-      padding: 8px 12px; font-family: inherit; font-size: 13px; outline: none;
+    .tag {
+      display: inline-block; font-size: 11px; font-weight: 600; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 9999px; border: 1px solid var(--sage-border);
+      background: var(--sage-bg); color: var(--olive);
     }
-    .input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
-    .input-sm { font-size: 12px; padding: 6px 8px; }
+    .tag-green { background: var(--green); color: #fff; border-color: var(--green); }
+    .tag-red { background: var(--red); color: #fff; border-color: var(--red); }
 
-    /* ── Eco stats ── */
-    .eco-stat { font-size: 32px; font-weight: 800; color: var(--deep); display: block; margin: 4px 0; }
-    .eco-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--sage-placeholder); }
+    /* ── Agent + worker info ── */
+    .info-row {
+      max-width: 1000px; margin: 0 auto 40px; padding: 0 32px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px;
+    }
+    @media (max-width: 768px) { .info-row { grid-template-columns: 1fr; } }
+
+    .info-card {
+      background: var(--parchment); border: 1px solid var(--sage-border); border-radius: 6px; padding: 18px;
+    }
+    .info-card h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sage-placeholder); margin-bottom: 10px; }
+    .info-card .big { font-size: 22px; font-weight: 800; color: var(--deep); }
+    .info-card .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; word-break: break-all; }
+    .info-card .sub { font-size: 12px; color: var(--sage-placeholder); margin-top: 2px; }
+
+    /* ── CTA ── */
+    .cta-section { text-align: center; padding: 48px 32px 60px; }
+    .cta-section h2 { font-size: 28px; font-weight: 800; color: var(--deep); margin-bottom: 8px; }
+    .cta-section p { font-size: 15px; color: var(--olive); margin-bottom: 20px; }
+
+    .hr { border: none; border-top: 1px solid var(--sage-border); margin: 12px 0; }
 
     /* ── Footer ── */
-    .footer {
-      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;
-      padding: 2rem 0 1rem; margin-top: 2rem; border-top: 1px solid var(--sage-border);
-      font-size: 13px; color: var(--sage-placeholder);
+    footer {
+      text-align: center; padding: 28px 32px; font-size: 12px; color: var(--sage-placeholder);
+      border-top: 1px solid var(--sage-border);
     }
-    .footer a { color: var(--olive); text-decoration: none; }
-    .footer a:hover { color: var(--orange); }
-    .footer h4 { font-size: 14px; font-weight: 700; color: var(--deep); margin-bottom: 0.5rem; }
-    @media (max-width: 768px) { .footer { grid-template-columns: 1fr; } }
+    footer a { color: var(--olive); text-decoration: none; }
+    footer a:hover { color: var(--orange); }
+
+    /* ── Result tool displays ── */
+    .tool-result { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--sage-border); }
+    .result-verdict { font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 4px; }
+    .result-bar-outer { height: 6px; background: var(--sage-bg); border-radius: 3px; overflow: hidden; margin: 8px 0; }
+    .result-bar-inner { height: 100%; border-radius: 3px; transition: width 0.4s; width: 0%; background: var(--green); }
+    .result-loading { text-align: center; padding: 1rem 0; color: var(--sage-placeholder); }
+    .result-error { color: var(--red); font-size: 12px; text-align: center; padding: 0.5rem 0; }
   </style>
 </head>
 <body>
 
-<div class="container">
-
   <!-- ═══ NAV ═══ -->
-  <nav class="nav">
+  <nav>
     <div class="nav-brand">Arc Agent</div>
     <div class="nav-links">
-      <a href="https://docs.arc.network" target="_blank">Arc Docs</a>
+      <a href="https://docs.arc.network" target="_blank">Docs</a>
       <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank">Explorer</a>
       <a href="https://github.com/Leonis237/arc-agent" target="_blank">GitHub</a>
       <span style="font-size:13px;color:var(--sage-placeholder);margin-left:8px"><span class="dot"></span> LIVE</span>
@@ -224,350 +243,259 @@
 
   <!-- ═══ HERO ═══ -->
   <section class="hero">
-    <div class="badge">🦔 On Arc Testnet · Chain {{ chain_id }}</div>
-    <h1>Arc Agent</h1>
-    <div class="subtitle">On-chain AI agent · ERC-8004 identity · ERC-8183 jobs · USDC gas</div>
-    <div class="hero-badges">
-      <span class="tag">Chain {{ chain_id }}</span>
-      <span class="tag">ERC-8004</span>
-      <span class="tag">ERC-8183</span>
-      <span class="tag tag-green">LIVE</span>
+    <div class="badge">🦔 Now live on Arc Testnet · Chain {{ chain_id }}</div>
+    <h1>AI agents that actually do stuff onchain</h1>
+    <p>Scam detection, wallet intel, contract audits — all autonomous, all verifiable. No more "AI wrapper" bullshit. This is real agent infrastructure running on Arc.</p>
+    <div class="hero-cta">
+      <a href="https://docs.arc.network" target="_blank" class="btn btn-dark">Read the docs</a>
+      <a href="https://github.com/Leonis237/arc-agent" target="_blank" class="btn btn-sage">Fork on GitHub</a>
     </div>
-    <div class="hero-stats">
-      <div class="hero-stat highlight">
-        <div class="val">{{ agent_id }}</div>
-        <div class="lbl">Agent ID</div>
+    <div class="hero-stats-mini">
+      <div><div class="val">{{ agent_id }}</div><div class="lbl">Agent ID</div></div>
+      <div><div class="val" id="heroBalance">--</div><div class="lbl">USDC Balance</div></div>
+      <div><div class="val" id="heroJobs">--</div><div class="lbl">Network Jobs</div></div>
+    </div>
+  </section>
+
+  <!-- ═══ CAPABILITIES ═══ -->
+  <div class="section-head">
+    <div class="label">CAPABILITIES</div>
+    <h2>One agent. Four jobs. Infinite value.</h2>
+  </div>
+
+  <section class="feature-grid">
+    <div class="card">
+      <div class="icon">🔍</div>
+      <h3>Token scam detection</h3>
+      <p>On-chain heuristic analysis. Honeypots, rugpulls, infinite mints — caught before they drain your wallet. No external API dependency, pure on-chain checks.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🩺</div>
+      <h3>Wallet health audit</h3>
+      <p>Profile any address for token approvals, EIP-7702 delegations, and risk signals. Know who you're dealing with before you sign.</p>
+    </div>
+    <div class="card">
+      <div class="icon">📋</div>
+      <h3>Smart contract audit</h3>
+      <p>Automated transparency analysis — owner privileges, proxy detection, supply control, hidden traps. All verifiable on-chain.</p>
+    </div>
+  </section>
+
+  <!-- ═══ STATS BAR ═══ -->
+  <div class="stats-bar">
+    <div>
+      <div class="stat-val" id="ecosystemAgents">--</div>
+      <div class="stat-label">Registered Agents</div>
+    </div>
+    <div>
+      <div class="stat-val" id="ecosystemJobs">--</div>
+      <div class="stat-label">Total Jobs Created</div>
+    </div>
+    <div>
+      <div class="stat-val" id="workerJobs">--</div>
+      <div class="stat-label">My Jobs Processed</div>
+    </div>
+  </div>
+
+  <!-- ═══ TOOLS ═══ -->
+  <div class="section-head">
+    <div class="label">TRY IT</div>
+    <h2>Paste an address. Get a result.</h2>
+  </div>
+
+  <section class="tools-section">
+
+    <div class="tool-row">
+      <!-- SCAN TOKEN -->
+      <div class="tool-card">
+        <div class="tool-header tool-header-red">🔍 Scan Token</div>
+        <div class="tool-body">
+          <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Token Address on Arc</label>
+          <div style="display:flex; gap:8px; margin-top:4px">
+            <input type="text" id="scanAddr" placeholder="0x... on Arc" class="input">
+            <button onclick="scanToken()" class="btn btn-red" style="flex-shrink:0;font-size:13px">Scan</button>
+          </div>
+          <div id="scanResult" style="display:none" class="tool-result">
+            <div id="scanVerdict" class="result-verdict"></div>
+            <div class="result-bar-outer"><div id="scanBar" class="result-bar-inner"></div></div>
+            <div style="font-size:11px"><span id="scanScore" style="font-weight:700"></span> <span id="scanInfo" style="color:var(--sage-placeholder)"></span></div>
+            <div id="scanFlags" style="font-size:11px;margin-top:4px"></div>
+          </div>
+          <div id="scanLoading" style="display:none" class="result-loading">Scanning Arc chain...</div>
+          <div id="scanError" style="display:none" class="result-error"></div>
+        </div>
       </div>
-      <div class="hero-stat">
-        <div class="val" id="heroBalance">--</div>
-        <div class="lbl">USDC Balance</div>
+
+      <!-- WALLET HEALTH -->
+      <div class="tool-card">
+        <div class="tool-header tool-header-blue">🩺 Wallet Health</div>
+        <div class="tool-body">
+          <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Wallet Address to Audit</label>
+          <div style="display:flex; gap:8px; margin-top:4px">
+            <input type="text" id="healthAddr" placeholder="0x... wallet" class="input">
+            <button onclick="checkWalletHealth()" class="btn btn-dark" style="flex-shrink:0;font-size:13px">Audit</button>
+          </div>
+          <div id="healthResult" style="display:none" class="tool-result">
+            <div id="healthVerdict" class="result-verdict"></div>
+            <div class="result-bar-outer"><div id="healthBar" class="result-bar-inner"></div></div>
+            <div style="font-size:11px"><span id="healthScore" style="font-weight:700"></span> / 100</div>
+            <div id="healthChecks" style="font-size:11px;margin-top:4px"></div>
+          </div>
+          <div id="healthLoading" style="display:none" class="result-loading">Analyzing wallet...</div>
+          <div id="healthError" style="display:none" class="result-error"></div>
+        </div>
       </div>
-      <div class="hero-stat">
-        <div class="val" id="heroJobs">--</div>
-        <div class="lbl">Network Jobs</div>
+    </div>
+
+    <div class="tool-row">
+      <!-- CONTRACT AUDIT -->
+      <div class="tool-card">
+        <div class="tool-header tool-header-gold">📋 Contract Audit</div>
+        <div class="tool-body">
+          <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Contract Address to Audit</label>
+          <div style="display:flex; gap:8px; margin-top:4px">
+            <input type="text" id="auditAddr" placeholder="0x... contract" class="input">
+            <button onclick="checkContractAudit()" class="btn btn-dark" style="flex-shrink:0;font-size:13px">Audit</button>
+          </div>
+          <div id="auditResult" style="display:none" class="tool-result">
+            <div id="auditVerdict" class="result-verdict"></div>
+            <div class="result-bar-outer"><div id="auditBar" class="result-bar-inner"></div></div>
+            <div style="font-size:11px"><span id="auditScore" style="font-weight:700"></span> / 100</div>
+            <div id="auditChecks" style="font-size:11px;margin-top:4px"></div>
+          </div>
+          <div id="auditLoading" style="display:none" class="result-loading">Auditing contract...</div>
+          <div id="auditError" style="display:none" class="result-error"></div>
+        </div>
+      </div>
+
+      <!-- AIRDROP SAFETY -->
+      <div class="tool-card">
+        <div class="tool-header tool-header-green">🪂 Airdrop Safety</div>
+        <div class="tool-body">
+          <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Airdrop Link to Check</label>
+          <div style="display:flex; gap:8px; margin-top:4px">
+            <input type="text" id="airdropUrl" placeholder="https://claim-uniswap.xyz/airdrop" class="input">
+            <button onclick="checkAirdrop()" class="btn btn-dark" style="flex-shrink:0;font-size:13px">Scan</button>
+          </div>
+          <div id="airdropResult" style="display:none" class="tool-result">
+            <div id="airdropVerdict" class="result-verdict"></div>
+            <div class="result-bar-outer"><div id="airdropBar" class="result-bar-inner"></div></div>
+            <div style="font-size:11px"><span id="airdropScore" style="font-weight:700"></span> / 100</div>
+            <div id="airdropChecks" style="font-size:11px;margin-top:4px"></div>
+          </div>
+          <div id="airdropLoading" style="display:none" class="result-loading">Scanning airdrop link...</div>
+          <div id="airdropError" style="display:none" class="result-error"></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ TWO-COLUMN ═══ -->
-  <div class="main-grid">
-
-    <!-- ── LEFT ── -->
-    <div>
-
-      <!-- ═══ SCANNER ═══ -->
-      <div class="card">
-        <div class="card-header card-header-red">🔍 Scan Token</div>
-        <div class="card-body">
-          <label style="font-size:11px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Token Address on Arc</label>
-          <div style="display:flex; gap:8px; margin-top:4px">
-            <input type="text" id="scanAddr" placeholder="0x... on Arc" class="input" style="flex:1">
-            <button onclick="scanToken()" class="btn btn-red" style="flex-shrink:0">Scan</button>
-          </div>
-          <div id="scanResult" style="display:none">
-            <div class="hr"></div>
-            <div id="scanVerdict" style="font-size:20px;font-weight:800;text-align:center;margin-bottom:6px"></div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
-              <span style="color:var(--sage-placeholder)">Scam Probability</span>
-              <span id="scanScore" style="font-weight:700"></span>
-            </div>
-            <div style="height:6px;background:var(--sage-bg);border-radius:3px;overflow:hidden;margin-bottom:8px">
-              <div id="scanBar" style="height:100%;border-radius:3px;background:var(--red);transition:width 0.5s;width:0%"></div>
-            </div>
-            <div id="scanInfo" style="font-size:12px;margin-bottom:6px"></div>
-            <div id="scanFlags" style="font-size:12px"></div>
-          </div>
-          <div id="scanLoading" style="display:none;text-align:center;padding:1rem 0;color:var(--sage-placeholder)">🔍 Scanning Arc chain...</div>
-          <div id="scanError" style="display:none;color:var(--red);font-size:13px;text-align:center;padding:0.5rem 0"></div>
-        </div>
-      </div>
-
-      <!-- ═══ WALLET HEALTH ═══ -->
-      <div class="card">
-        <div class="card-header card-header-blue">🩺 Wallet Health</div>
-        <div class="card-body">
-          <label style="font-size:11px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Wallet Address to Audit</label>
-          <div style="display:flex; gap:8px; margin-top:4px">
-            <input type="text" id="healthAddr" placeholder="0x... wallet" class="input" style="flex:1">
-            <button onclick="checkWalletHealth()" class="btn btn-dark" style="flex-shrink:0">Audit</button>
-          </div>
-          <div id="healthResult" style="display:none">
-            <div class="hr"></div>
-            <div id="healthVerdict" style="font-size:18px;font-weight:800;text-align:center;margin-bottom:4px"></div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
-              <span style="color:var(--sage-placeholder)">Wallet Health Score</span>
-              <span id="healthScore" style="font-weight:700"></span>
-            </div>
-            <div style="height:6px;background:var(--sage-bg);border-radius:3px;overflow:hidden;margin-bottom:8px">
-              <div id="healthBar" style="height:100%;border-radius:3px;transition:width 0.5s;width:0%"></div>
-            </div>
-            <div id="healthChecks" style="font-size:12px"></div>
-          </div>
-          <div id="healthLoading" style="display:none;text-align:center;padding:1rem 0;color:var(--sage-placeholder)">🩺 Analyzing wallet...</div>
-          <div id="healthError" style="display:none;color:var(--red);font-size:13px;text-align:center;padding:0.5rem 0"></div>
-        </div>
-      </div>
-
-      <!-- ═══ CONTRACT AUDIT ═══ -->
-      <div class="card">
-        <div class="card-header card-header-gold">📋 Contract Audit</div>
-        <div class="card-body">
-          <label style="font-size:11px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Contract Address to Audit</label>
-          <div style="display:flex; gap:8px; margin-top:4px">
-            <input type="text" id="auditAddr" placeholder="0x... contract" class="input" style="flex:1">
-            <button onclick="checkContractAudit()" class="btn btn-dark" style="flex-shrink:0">Audit</button>
-          </div>
-          <div id="auditResult" style="display:none">
-            <div class="hr"></div>
-            <div id="auditVerdict" style="font-size:18px;font-weight:800;text-align:center;margin-bottom:4px"></div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
-              <span style="color:var(--sage-placeholder)">Transparency Score</span>
-              <span id="auditScore" style="font-weight:700"></span>
-            </div>
-            <div style="height:6px;background:var(--sage-bg);border-radius:3px;overflow:hidden;margin-bottom:8px">
-              <div id="auditBar" style="height:100%;border-radius:3px;transition:width 0.5s;width:0%"></div>
-            </div>
-            <div id="auditChecks" style="font-size:12px"></div>
-          </div>
-          <div id="auditLoading" style="display:none;text-align:center;padding:1rem 0;color:var(--sage-placeholder)">📋 Auditing contract...</div>
-          <div id="auditError" style="display:none;color:var(--red);font-size:13px;text-align:center;padding:0.5rem 0"></div>
-        </div>
-      </div>
-
-      <!-- ═══ AIRDROP SAFETY ═══ -->
-      <div class="card">
-        <div class="card-header card-header-green">🪂 Airdrop Safety</div>
-        <div class="card-body">
-          <label style="font-size:11px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Airdrop Link to Check</label>
-          <div style="display:flex; gap:8px; margin-top:4px">
-            <input type="text" id="airdropUrl" placeholder="https://claim-uniswap.xyz/airdrop" class="input" style="flex:1">
-            <button onclick="checkAirdrop()" class="btn btn-dark" style="flex-shrink:0">Scan</button>
-          </div>
-          <div id="airdropResult" style="display:none">
-            <div class="hr"></div>
-            <div id="airdropVerdict" style="font-size:18px;font-weight:800;text-align:center;margin-bottom:4px"></div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
-              <span style="color:var(--sage-placeholder)">Safety Score</span>
-              <span id="airdropScore" style="font-weight:700"></span>
-            </div>
-            <div style="height:6px;background:var(--sage-bg);border-radius:3px;overflow:hidden;margin-bottom:8px">
-              <div id="airdropBar" style="height:100%;border-radius:3px;transition:width 0.5s;width:0%"></div>
-            </div>
-            <div id="airdropChecks" style="font-size:12px"></div>
-          </div>
-          <div id="airdropLoading" style="display:none;text-align:center;padding:1rem 0;color:var(--sage-placeholder)">🪂 Scanning airdrop link...</div>
-          <div id="airdropError" style="display:none;color:var(--red);font-size:13px;text-align:center;padding:0.5rem 0"></div>
-        </div>
-      </div>
-
-      <!-- ═══ AGENT IDENTITY ═══ -->
-      <div class="card">
-        <div class="card-header card-header-dark">🪪 Agent Identity · ERC-8004 <span class="tag tag-green" style="font-size:9px">active</span></div>
-        <div class="card-body">
-          <div class="agent-split">
-            <div style="flex:1">
-              <div style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px;margin-bottom:2px">Wallet Address</div>
-              <div class="agent-addr">
-                <span id="agentAddr">{{ agent_address }}</span>
-                <button onclick="navigator.clipboard.writeText('{{ agent_address }}')" class="btn btn-sage btn-sm" style="margin-left:6px">copy</button>
-              </div>
-            </div>
-            <div class="agent-balance">
-              <div style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px;margin-bottom:2px">Testnet Balance</div>
-              <div class="amount" id="balance">-- <span style="font-size:14px;font-weight:600;color:var(--sage-placeholder)">USDC</span></div>
-            </div>
-          </div>
-          <div class="hr"></div>
-          <div style="display:flex; gap:6px; flex-wrap:wrap">
-            <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn btn-sage btn-sm">arcscan ↗</a>
-            <a href="https://docs.arc.network" target="_blank" class="btn btn-sage btn-sm">docs ↗</a>
-            <a href="https://faucet.circle.com" target="_blank" class="btn btn-sage btn-sm">faucet ↗</a>
-            <a href="https://github.com/Leonis237/arc-agent" target="_blank" class="btn btn-sage btn-sm">github ↗</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- ═══ STATS ═══ -->
-      <div class="stats-row">
-        <div class="stat-box">
-          <div class="stat-label">Network</div>
-          <div class="stat-val">ARC</div>
-          <div class="stat-sub">testnet · L1</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Standard</div>
-          <div class="stat-val">ERC-8004</div>
-          <div class="stat-sub">id #{{ agent_id }}</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Total Jobs</div>
-          <div class="stat-val" id="statTotal" style="color:var(--blue)">--</div>
-          <div class="stat-sub">on network</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">My Jobs</div>
-          <div class="stat-val" id="statMyJobs" style="color:var(--orange)">--</div>
-          <div class="stat-sub">active</div>
-        </div>
-      </div>
-
-      <!-- ═══ JOBS ═══ -->
-      <div class="card">
-        <div class="card-header">
-          <span>Jobs · ERC-8183</span>
-          <span style="font-size:12px;font-weight:400;text-transform:none;letter-spacing:0">
-            <span onclick="filterJobs('all')" id="filterAll" style="cursor:pointer;font-weight:700;text-decoration:underline">ALL</span>
-            <span style="opacity:0.3;margin:0 4px">|</span>
-            <span onclick="filterJobs('open')" id="filterOpen" style="cursor:pointer">OPEN</span>
-            <span style="opacity:0.3;margin:0 4px">|</span>
-            <span onclick="filterJobs('mine')" id="filterMine" style="cursor:pointer">MINE</span>
-            <span style="opacity:0.3;margin:0 4px">·</span>
-            total: <span id="jobCount" style="font-weight:700">--</span>
-          </span>
-        </div>
-        <div class="card-body" style="padding:0">
-          <div style="display:grid; grid-template-columns:54px 1fr 90px 80px 24px; gap:10px; padding:8px 16px; font-size:10px; color:var(--sage-placeholder); text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid var(--sage-border)">
-            <span>Job#</span><span>Description</span><span>Status</span><span style="text-align:right">Budget</span><span></span>
-          </div>
-          <div id="jobList" style="padding:0 16px">
-            <div style="text-align:center;padding:2rem 0;color:var(--sage-placeholder)">fetching jobs from blockchain...</div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /left -->
-
-    <!-- ── RIGHT ── -->
-    <div>
-
-      <!-- ═══ POST JOB ═══ -->
-      <div class="card">
-        <div class="card-header">
-          <span>Post Job</span>
-          <span id="postJobToggle" onclick="togglePostJob()" style="cursor:pointer;font-size:12px;font-weight:600">+ new</span>
-        </div>
-        <div class="card-body" id="postJobBody" style="display:none; font-size:13px">
-          <div style="margin-bottom:8px">
-            <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Description</label>
-            <input type="text" id="jobDesc" placeholder="Token scam analysis on 0x..." class="input input-sm">
-          </div>
-          <div style="margin-bottom:8px">
-            <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Provider</label>
-            <input type="text" id="jobProvider" value="{{ agent_address }}" class="input input-sm">
-          </div>
-          <div style="margin-bottom:8px; display:flex; gap:8px">
-            <div style="flex:1">
-              <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Budget USDC</label>
-              <input type="number" id="jobBudget" value="1.00" min="0.01" step="0.01" class="input input-sm">
-            </div>
-            <div style="flex:1">
-              <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Expires (h)</label>
-              <input type="number" id="jobExpire" value="24" min="1" max="720" class="input input-sm">
-            </div>
-          </div>
-          <button onclick="createJob()" class="btn btn-red btn-full">Create Job + Fund Escrow</button>
-          <div id="createResult" style="margin-top:8px; font-size:12px; min-height:20px"></div>
-        </div>
-        <div class="card-body" style="padding-top:0">
-          <button onclick="quickDemo()" class="btn btn-dark btn-full" style="padding:10px;font-size:14px">🔥 Try Demo — Scan PEPE Token Now</button>
-          <div style="font-size:11px;color:var(--sage-placeholder);text-align:center;margin-top:6px">Creates a job → AI agent scans → result on-chain in ~5 min</div>
-        </div>
-      </div>
-
-      <!-- ═══ NETWORK INFO ═══ -->
-      <div class="card">
-        <div class="card-header">Network Info <span class="tag" style="font-size:9px">testnet</span></div>
-        <div class="card-body" style="font-size:13px">
-          <div style="margin-bottom:6px"><span style="color:var(--sage-placeholder)">chain id</span><br><strong>{{ chain_id }}</strong></div>
-          <div style="margin-bottom:6px"><span style="color:var(--sage-placeholder)">rpc endpoint</span><br><span style="font-size:11px">rpc.testnet.arc.network</span></div>
-          <div style="margin-bottom:6px"><span style="color:var(--sage-placeholder)">gas token</span><br><strong>USDC</strong> (native)</div>
-          <div style="margin-bottom:6px"><span style="color:var(--sage-placeholder)">finality</span><br><strong>sub-second</strong></div>
-        </div>
-      </div>
-
-      <!-- ═══ ECOSYSTEM ═══ -->
-      <div class="card card-featured">
-        <div class="card-header">🌐 Ecosystem Snapshot <span class="tag tag-red" style="font-size:9px">live</span></div>
-        <div class="card-body" style="font-size:13px;padding:20px 24px">
-          <div style="margin-bottom:14px">
-            <span class="eco-label">registered agents</span>
-            <span class="eco-stat" id="ecosystemAgents">--</span>
-          </div>
-          <div style="margin-bottom:14px">
-            <span class="eco-label">total jobs created</span>
-            <span class="eco-stat" id="ecosystemJobs">--</span>
-          </div>
-          <div style="padding:6px 0; border-top:1px solid var(--sage-border)">
-            <span style="color:var(--orange);font-weight:700;font-size:13px">● AGENT #{{ agent_id }} ACTIVE</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ═══ WORKER ═══ -->
-      <div class="card">
-        <div class="card-header">Agent Worker <span id="workerStatus" style="font-size:11px;font-weight:400;text-transform:none;letter-spacing:0">idle</span></div>
-        <div class="card-body" style="font-size:13px">
-          <div style="margin-bottom:6px">
-            <span style="color:var(--sage-placeholder)">status</span><br>
-            <span id="workerState">initializing...</span>
-          </div>
-          <div style="margin-bottom:6px">
-            <span style="color:var(--sage-placeholder)">jobs processed</span><br>
-            <strong id="workerJobs">0</strong>
-          </div>
-          <div>
-            <span style="color:var(--sage-placeholder)">total earnings</span><br>
-            <strong id="workerEarnings" style="color:var(--orange)">0.00 USDC</strong>
-          </div>
-        </div>
-      </div>
-
-      <!-- ═══ QUICK LINKS ═══ -->
-      <div class="card">
-        <div class="card-header">Quick Links</div>
-        <div class="card-body" style="display:flex; flex-wrap:wrap; gap:6px">
-          <a href="https://docs.arc.network" target="_blank" class="btn btn-sage btn-sm">docs ↗</a>
-          <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn btn-sage btn-sm">explorer ↗</a>
-          <a href="https://github.com/Leonis237/arc-agent" target="_blank" class="btn btn-sage btn-sm">github ↗</a>
-        </div>
-      </div>
-
-    </div><!-- /right -->
-
-  </div><!-- /main-grid -->
-
-  <!-- ═══ FOOTER ═══ -->
-  <div class="footer">
-    <div>
-      <h4>Arc Agent</h4>
-      <div style="font-size:12px">
-        On-chain AI agent on Arc by Circle.<br>
-        ERC-8004 identity + ERC-8183 jobs.<br>
-        USDC as gas · sub-second finality.
-      </div>
-    </div>
-    <div>
-      <h4>Resources</h4>
-      <div style="font-size:12px; line-height:2">
-        <a href="https://docs.arc.network" target="_blank">Arc Docs</a><br>
-        <a href="https://testnet.arcscan.app" target="_blank">Arcscan Explorer</a><br>
-        <a href="https://faucet.circle.com" target="_blank">Testnet Faucet</a><br>
-      </div>
-    </div>
-    <div>
-      <h4>Built by</h4>
-      <div style="font-size:12px">
-        <a href="https://leonisforge.com" target="_blank">☤ Leonis Forge</a><br>
-        <a href="https://github.com/Leonis237/arc-agent" target="_blank">Fork on GitHub</a><br>
-        <span>built on Arc by Circle</span>
-      </div>
-    </div>
+  <!-- ═══ LIVE JOBS ═══ -->
+  <div class="section-head">
+    <div class="label">LIVE NETWORK</div>
+    <h2>Jobs happening on-chain right now</h2>
   </div>
 
-</div>
+  <section class="jobs-section" style="margin-bottom:40px">
+    <div class="jobs-card">
+      <div class="jobs-header">
+        <h3>Jobs · ERC-8183</h3>
+        <span style="font-size:12px;font-weight:400">
+          <span onclick="filterJobs('all')" id="filterAll" style="cursor:pointer;font-weight:700;text-decoration:underline">ALL</span>
+          <span style="opacity:0.3;margin:0 6px">|</span>
+          <span onclick="filterJobs('open')" id="filterOpen" style="cursor:pointer">OPEN</span>
+          <span style="opacity:0.3;margin:0 6px">|</span>
+          <span onclick="filterJobs('mine')" id="filterMine" style="cursor:pointer">MINE</span>
+          <span style="opacity:0.3;margin:0 6px">·</span>
+          total: <span id="jobCount" style="font-weight:700">--</span>
+        </span>
+      </div>
+      <div class="jobs-body">
+        <div style="display:grid; grid-template-columns:54px 1fr 90px 80px 24px; gap:10px; padding:6px 16px; font-size:10px; color:var(--sage-placeholder); text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid var(--sage-border)">
+          <span>Job#</span><span>Description</span><span>Status</span><span style="text-align:right">Budget</span><span></span>
+        </div>
+        <div id="jobList" style="padding:0">
+          <div style="text-align:center;padding:2rem 0;color:var(--sage-placeholder)">Fetching from blockchain...</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ AGENT INFO ROW ═══ -->
+  <section class="info-row">
+    <div class="info-card">
+      <h4>Agent Identity</h4>
+      <div class="big">#{{ agent_id }}</div>
+      <div style="margin-top:6px">
+        <div class="mono" id="agentAddr">{{ agent_address }}</div>
+      </div>
+      <div class="sub">ERC-8004 · {{ chain_id }}</div>
+      <div style="margin-top:8px;display:flex;gap:6px">
+        <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn btn-sage btn-sm">explorer ↗</a>
+        <a href="https://faucet.circle.com" target="_blank" class="btn btn-sage btn-sm">faucet ↗</a>
+      </div>
+    </div>
+    <div class="info-card">
+      <h4>Agent Worker</h4>
+      <div class="big" id="balance" style="margin-bottom:4px">-- USDC</div>
+      <div class="sub" id="workerEarnings">0.00 USDC earned</div>
+      <div style="margin-top:6px">
+        <span style="font-size:11px;color:var(--sage-placeholder)">status: </span>
+        <span id="workerState" style="font-size:11px;font-weight:600">initializing...</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <h4>Network</h4>
+      <div class="sub" style="margin-bottom:3px">rpc.testnet.arc.network</div>
+      <div class="sub" style="margin-bottom:3px">USDC gas · sub-second finality</div>
+      <div style="margin-top:8px">
+        <a href="https://docs.arc.network" target="_blank" class="btn btn-sage btn-sm">docs ↗</a>
+        <a href="https://github.com/Leonis237/arc-agent" target="_blank" class="btn btn-sage btn-sm">github ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ POST JOB CTA ═══ -->
+  <section class="cta-section">
+    <h2>$1.00 to post a job. Agents do the rest.</h2>
+    <p>Your agent runs autonomously on Arc. Post a job, fund it with USDC, get results on-chain.</p>
+    <div style="max-width:500px;margin:0 auto">
+      <div id="postJobBody" style="display:none;text-align:left">
+        <div style="margin-bottom:8px">
+          <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Description</label>
+          <input type="text" id="jobDesc" placeholder="Token scam analysis on 0x..." class="input input-sm">
+        </div>
+        <div style="margin-bottom:8px">
+          <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Provider</label>
+          <input type="text" id="jobProvider" value="{{ agent_address }}" class="input input-sm">
+        </div>
+        <div style="margin-bottom:8px;display:flex;gap:8px">
+          <div style="flex:1">
+            <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Budget USDC</label>
+            <input type="number" id="jobBudget" value="1.00" min="0.01" step="0.01" class="input input-sm">
+          </div>
+          <div style="flex:1">
+            <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Expires (h)</label>
+            <input type="number" id="jobExpire" value="24" min="1" max="720" class="input input-sm">
+          </div>
+        </div>
+        <button onclick="createJob()" class="btn btn-red btn-full">Create Job + Fund Escrow</button>
+        <div id="createResult" style="margin-top:8px;font-size:12px;min-height:20px"></div>
+      </div>
+      <div style="margin-bottom:16px">
+        <button onclick="togglePostJob()" class="btn btn-dark" id="postJobBtn">Post a job</button>
+        <button onclick="quickDemo()" class="btn btn-dark" style="margin-left:8px">🔥 Demo</button>
+      </div>
+      <div style="font-size:11px;color:var(--sage-placeholder)">Creates a job → AI agent scans → result on-chain in ~5 min</div>
+    </div>
+  </section>
+
+  <footer>
+    Arc Agent · <a href="https://leonisforge.com">☤ Leonis Forge</a> · <a href="https://github.com/Leonis237/arc-agent">Fork on GitHub</a> · Built on Arc by Circle · We don't track you
+  </footer>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- JAVASCRIPT (unchanged from original)                           -->
+<!-- JAVASCRIPT                                                      -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <script>
   const OUR_ADDRESS = '{{ agent_address }}'.toLowerCase();
@@ -595,7 +523,7 @@
 
       if (!status.error) {
         const bal = status.balance_usdc.toFixed(2);
-        document.getElementById('balance').innerHTML = `${bal} <span style="font-size:14px;font-weight:600;color:var(--sage-placeholder)">USDC</span>`;
+        document.getElementById('balance').textContent = bal + ' USDC';
         document.getElementById('heroBalance').textContent = bal;
       }
 
@@ -607,10 +535,7 @@
       if (!worker.error) {
         document.getElementById('workerState').textContent = worker.status || 'offline';
         document.getElementById('workerJobs').textContent = worker.processed_jobs;
-        document.getElementById('workerEarnings').textContent = worker.total_earnings_usdc.toFixed(2) + ' USDC';
-        if (worker.status === 'active') {
-          document.getElementById('workerStatus').innerHTML = '<span style="color:var(--green);font-weight:700">active</span>';
-        }
+        document.getElementById('workerEarnings').textContent = worker.total_earnings_usdc.toFixed(2) + ' USDC earned';
       }
 
       if (!jobsData.error && jobsData.jobs) {
@@ -624,12 +549,6 @@
           );
         }
         document.getElementById('jobCount').textContent = jobs.length;
-        document.getElementById('statTotal').textContent = jobsData.job_counter;
-        const ours = jobsData.jobs.filter(j =>
-          j.client?.toLowerCase() === OUR_ADDRESS ||
-          j.provider?.toLowerCase() === OUR_ADDRESS
-        ).length;
-        document.getElementById('statMyJobs').textContent = ours;
         document.getElementById('heroJobs').textContent = jobsData.job_counter;
         renderJobs(jobs);
       }
@@ -680,9 +599,12 @@
 
   function togglePostJob() {
     const body = document.getElementById('postJobBody');
-    const toggle = document.getElementById('postJobToggle');
-    if (body.style.display === 'none') { body.style.display = 'block'; toggle.textContent = '− close'; }
-    else { body.style.display = 'none'; toggle.textContent = '+ new'; }
+    const btn = document.getElementById('postJobBtn');
+    if (body.style.display === 'none' || !body.style.display) {
+      body.style.display = 'block'; btn.textContent = 'Cancel';
+    } else {
+      body.style.display = 'none'; btn.textContent = 'Post a job';
+    }
   }
 
   async function createJob() {
@@ -713,123 +635,106 @@
     document.getElementById('jobDesc').value = 'Token scam analysis + security audit for PEPE token on Arc';
     document.getElementById('jobBudget').value = '1.00';
     document.getElementById('postJobBody').style.display = 'block';
-    document.getElementById('postJobToggle').textContent = '− close';
+    document.getElementById('postJobBtn').textContent = 'Cancel';
     document.getElementById('createResult').textContent = 'Click "Create Job + Fund Escrow" to submit →';
   }
+
+  function showToolResult(id) { document.getElementById(id).style.display='block'; }
+  function hideTool(id) { document.getElementById(id).style.display='none'; }
 
   // ── Scanner ──
   async function scanToken() {
     const addr = document.getElementById('scanAddr').value.trim();
-    const loading = document.getElementById('scanLoading');
-    const error = document.getElementById('scanError');
-    const result = document.getElementById('scanResult');
-    result.style.display = 'none'; error.style.display = 'none';
-    if (!addr) { error.style.display = 'block'; error.textContent = 'Enter a token address'; return; }
-    loading.style.display = 'block';
+    hideTool('scanResult'); hideTool('scanError');
+    if (!addr) { document.getElementById('scanError').style.display='block'; document.getElementById('scanError').textContent='Enter a token address'; return; }
+    document.getElementById('scanLoading').style.display='block';
     try {
       const res = await fetch('/api/scan', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr})});
       const data = await res.json();
-      loading.style.display = 'none';
-      if (data.error && data.verdict_label) {
-        result.style.display = 'block';
-        document.getElementById('scanVerdict').textContent = data.verdict_label;
-        document.getElementById('scanScore').textContent = 'N/A';
-        document.getElementById('scanInfo').textContent = data.error;
-        return;
-      }
-      if (data.error) { error.style.display='block'; error.textContent=data.error; return; }
-      result.style.display = 'block';
-      document.getElementById('scanVerdict').textContent = data.verdict_label;
+      document.getElementById('scanLoading').style.display='none';
+      if (data.error && !data.verdict) { document.getElementById('scanError').style.display='block'; document.getElementById('scanError').textContent=data.error; return; }
+      showToolResult('scanResult');
+      document.getElementById('scanVerdict').textContent = data.verdict_label || data.verdict || 'Analysis Complete';
       document.getElementById('scanVerdict').style.color = data.score >= 70 ? 'var(--red)' : data.score >= 40 ? 'var(--gold)' : 'var(--green)';
-      document.getElementById('scanScore').textContent = `${data.score}%`;
-      document.getElementById('scanBar').style.width = data.score+'%';
-      document.getElementById('scanBar').style.background = data.score >= 70 ? 'var(--red)' : data.score >= 40 ? 'var(--gold)' : 'var(--green)';
-      document.getElementById('scanInfo').innerHTML = `<strong>${data.token_name} (${data.token_symbol})</strong> · ${data.bytecode_size} · ${data.is_proxy ? 'Proxy' : 'Direct'} · ${data.is_verified ? 'Verified ✓' : 'Unverified'}`;
-      document.getElementById('scanFlags').innerHTML = data.red_flags.length ? '<strong>Red flags:</strong><br>' + data.red_flags.map(f => '· '+f).join('<br>') : '';
-    } catch(e) { loading.style.display='none'; error.style.display='block'; error.textContent=e.message; }
+      document.getElementById('scanScore').textContent = data.score != null ? `${data.score}%` : '';
+      document.getElementById('scanBar').style.width = (data.score||0)+'%';
+      document.getElementById('scanBar').style.background = (data.score||0) >= 70 ? 'var(--red)' : (data.score||0) >= 40 ? 'var(--gold)' : 'var(--green)';
+      document.getElementById('scanInfo').textContent = data.token_name ? `${data.token_name} (${data.token_symbol}) · ${data.bytecode_size}` : '';
+      document.getElementById('scanFlags').innerHTML = (data.red_flags||[]).length ? data.red_flags.map(f => '· '+f).join('<br>') : '';
+    } catch(e) { document.getElementById('scanLoading').style.display='none'; document.getElementById('scanError').style.display='block'; document.getElementById('scanError').textContent=e.message; }
   }
 
   // ── Wallet Health ──
   async function checkWalletHealth() {
     const addr = document.getElementById('healthAddr').value.trim();
-    const loading = document.getElementById('healthLoading');
-    const error = document.getElementById('healthError');
-    const result = document.getElementById('healthResult');
-    result.style.display = 'none'; error.style.display = 'none';
-    if (!addr) { error.style.display = 'block'; error.textContent = 'Enter a wallet address'; return; }
-    loading.style.display = 'block';
+    hideTool('healthResult'); hideTool('healthError');
+    if (!addr) { document.getElementById('healthError').style.display='block'; document.getElementById('healthError').textContent='Enter a wallet address'; return; }
+    document.getElementById('healthLoading').style.display='block';
     try {
       const res = await fetch('/api/wallet/health', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr})});
       const data = await res.json();
-      loading.style.display = 'none';
-      if (data.error) { error.style.display='block'; error.textContent=data.error; return; }
-      result.style.display = 'block';
-      document.getElementById('healthVerdict').textContent = '🩺 Wallet Health Report';
-      document.getElementById('healthScore').textContent = `${data.score}/100`;
+      document.getElementById('healthLoading').style.display='none';
+      if (data.error) { document.getElementById('healthError').style.display='block'; document.getElementById('healthError').textContent=data.error; return; }
+      showToolResult('healthResult');
+      document.getElementById('healthVerdict').textContent = 'Wallet Health Report';
+      document.getElementById('healthScore').textContent = `${data.score}`;
       document.getElementById('healthBar').style.width = data.score+'%';
       document.getElementById('healthBar').style.background = data.score >= 70 ? 'var(--green)' : data.score >= 40 ? 'var(--gold)' : 'var(--red)';
       document.getElementById('healthChecks').innerHTML = (data.checks||[]).map(c => {
         const icon = c.status === 'ok' ? '✅' : c.status === 'warn' ? '⚠️' : '❌';
-        return `<div style="margin-bottom:3px">${icon} ${c.label}</div>`;
+        return `<div style="margin-bottom:2px">${icon} ${c.label}</div>`;
       }).join('');
-    } catch(e) { loading.style.display='none'; error.style.display='block'; error.textContent=e.message; }
+    } catch(e) { document.getElementById('healthLoading').style.display='none'; document.getElementById('healthError').style.display='block'; document.getElementById('healthError').textContent=e.message; }
   }
 
   // ── Contract Audit ──
   async function checkContractAudit() {
     const addr = document.getElementById('auditAddr').value.trim();
-    const loading = document.getElementById('auditLoading');
-    const error = document.getElementById('auditError');
-    const result = document.getElementById('auditResult');
-    result.style.display = 'none'; error.style.display = 'none';
-    if (!addr) { error.style.display = 'block'; error.textContent = 'Enter a contract address'; return; }
-    loading.style.display = 'block';
+    hideTool('auditResult'); hideTool('auditError');
+    if (!addr) { document.getElementById('auditError').style.display='block'; document.getElementById('auditError').textContent='Enter a contract address'; return; }
+    document.getElementById('auditLoading').style.display='block';
     try {
       const res = await fetch('/api/contract/audit', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr})});
       const data = await res.json();
-      loading.style.display = 'none';
-      if (data.error) { error.style.display='block'; error.textContent=data.error; return; }
-      result.style.display = 'block';
-      document.getElementById('auditVerdict').textContent = '📋 Contract Audit Report';
-      document.getElementById('auditScore').textContent = `${data.score}/100`;
+      document.getElementById('auditLoading').style.display='none';
+      if (data.error) { document.getElementById('auditError').style.display='block'; document.getElementById('auditError').textContent=data.error; return; }
+      showToolResult('auditResult');
+      document.getElementById('auditVerdict').textContent = 'Contract Audit Report';
+      document.getElementById('auditScore').textContent = `${data.score}`;
       document.getElementById('auditBar').style.width = data.score+'%';
       document.getElementById('auditBar').style.background = data.score >= 70 ? 'var(--green)' : data.score >= 40 ? 'var(--gold)' : 'var(--red)';
       document.getElementById('auditChecks').innerHTML = (data.checks||[]).map(c => {
         const icon = c.status === 'ok' ? '✅' : c.status === 'warn' ? '⚠️' : '❌';
-        return `<div style="margin-bottom:3px">${icon} ${c.label}</div>`;
+        return `<div style="margin-bottom:2px">${icon} ${c.label}</div>`;
       }).join('');
-    } catch(e) { loading.style.display='none'; error.style.display='block'; error.textContent=e.message; }
+    } catch(e) { document.getElementById('auditLoading').style.display='none'; document.getElementById('auditError').style.display='block'; document.getElementById('auditError').textContent=e.message; }
   }
 
   // ── Airdrop ──
   async function checkAirdrop() {
     const url = document.getElementById('airdropUrl').value.trim();
-    const loading = document.getElementById('airdropLoading');
-    const error = document.getElementById('airdropError');
-    const result = document.getElementById('airdropResult');
-    result.style.display = 'none'; error.style.display = 'none';
-    if (!url) { error.style.display = 'block'; error.textContent = 'Enter an airdrop URL'; return; }
-    loading.style.display = 'block';
+    hideTool('airdropResult'); hideTool('airdropError');
+    if (!url) { document.getElementById('airdropError').style.display='block'; document.getElementById('airdropError').textContent='Enter an airdrop URL'; return; }
+    document.getElementById('airdropLoading').style.display='block';
     try {
       const res = await fetch('/api/airdrop/safety', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url})});
       const data = await res.json();
-      loading.style.display = 'none';
-      if (data.error) { error.style.display='block'; error.textContent=data.error; return; }
-      result.style.display = 'block';
+      document.getElementById('airdropLoading').style.display='none';
+      if (data.error) { document.getElementById('airdropError').style.display='block'; document.getElementById('airdropError').textContent=data.error; return; }
+      showToolResult('airdropResult');
       const score = data.safety_score != null ? data.safety_score : (data.score || 0);
       document.getElementById('airdropVerdict').textContent = data.verdict || 'Analysis Complete';
       document.getElementById('airdropVerdict').style.color = data.verdict === 'SAFE' ? 'var(--green)' : data.verdict === 'SUSPICIOUS' ? 'var(--gold)' : 'var(--red)';
-      document.getElementById('airdropScore').textContent = `${score}/100`;
+      document.getElementById('airdropScore').textContent = `${score}`;
       document.getElementById('airdropBar').style.width = score+'%';
       document.getElementById('airdropBar').style.background = score >= 70 ? 'var(--green)' : score >= 40 ? 'var(--gold)' : 'var(--red)';
       document.getElementById('airdropChecks').innerHTML = (data.checks||[]).map(c => {
         const icon = c.status === 'ok' ? '✅' : c.status === 'warn' ? '⚠️' : '❌';
-        return `<div style="margin-bottom:3px">${icon} ${c.label}</div>`;
+        return `<div style="margin-bottom:2px">${icon} ${c.label}</div>`;
       }).join('');
-    } catch(e) { loading.style.display='none'; error.style.display='block'; error.textContent=e.message; }
+    } catch(e) { document.getElementById('airdropLoading').style.display='none'; document.getElementById('airdropError').style.display='block'; document.getElementById('airdropError').textContent=e.message; }
   }
 
-  // Init
   refresh();
   setInterval(refresh, 15000);
 </script>
