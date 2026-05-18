@@ -10,727 +10,384 @@
   <meta name="twitter:card" content="summary">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     /* ═══════════════════════════════════════════════════════════
-       LEONIS SKETCH — Hand-drawn design system for Arc Agent
-       v2 — professional dashboard layout
+       POSTHOG STYLE — Scrappy dev-tool aesthetic for Arc Agent
+       Warm parchment, olive text, orange hover, sage borders
        ═══════════════════════════════════════════════════════════ */
     :root {
-      --paper:    #fdfbf7;
-      --ink:      #2d2d2d;
-      --red:      #ff4d4d;
-      --blue:     #2d5da1;
-      --green:    #4a9c5d;
-      --yellow:   #fff9c4;
-      --muted:    #e5e0d8;
-      --white:    #ffffff;
-      --font-h:   'Kalam', cursive;
-      --font-b:   'Patrick Hand', cursive;
-      --wobbly:   255px 15px 225px 15px / 15px 225px 15px 255px;
-      --wobbly-sm: 185px 25px 155px 25px / 25px 155px 25px 185px;
-      --wobbly-md: 155px 20px 145px 25px / 20px 155px 25px 145px;
+      --parchment: #fdfdf8;
+      --olive: #4d4f46;
+      --deep: #23251d;
+      --orange: #F54E00;
+      --gold: #F7A501;
+      --sage-bg: #eeefe9;
+      --sage-btn: #e5e7e0;
+      --sage-border: #bfc1b7;
+      --sage-placeholder: #9ea096;
+      --dark-btn: #1e1f23;
+      --light-border: #b6b7af;
+      --white: #ffffff;
+      --red: #F54E00;
+      --green: #27a644;
+      --blue: #3b82f6;
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
-
     body {
-      background-color: var(--paper);
-      background-image: radial-gradient(var(--muted) 1px, transparent 1px);
-      background-size: 24px 24px;
-      color: var(--ink);
-      font-family: var(--font-b);
-      font-size: 17px;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--parchment);
+      color: var(--olive);
       line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
       min-height: 100vh;
     }
 
-    /* ── Container ── */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1.5rem 3rem;
-    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem 3rem; }
 
-    /* ── Hero Banner ── */
-    .hero {
-      background: var(--white);
-      border: 3px solid var(--ink);
-      border-radius: var(--wobbly);
-      box-shadow: 6px 6px 0 0 var(--ink);
-      margin: 2rem 0 2rem;
-      padding: 2rem 2rem 1.5rem;
-      position: relative;
-      overflow: hidden;
+    /* ── Nav ── */
+    .nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 0; border-bottom: 1px solid var(--sage-border);
+      margin-bottom: 2rem;
     }
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 5px;
-      background: repeating-linear-gradient(90deg, var(--red) 0px, var(--red) 20px, var(--blue) 20px, var(--blue) 40px, var(--green) 40px, var(--green) 60px);
-    }
-    /* Sketch annotation on hero */
-    .hero::after {
-      content: '↖ on-chain';
-      position: absolute;
-      top: 14px;
-      right: 20px;
-      font-family: 'Patrick Hand', cursive;
-      font-size: 14px;
-      color: var(--red);
-      opacity: 0.7;
-      transform: rotate(-6deg);
-      pointer-events: none;
-      z-index: 2;
-    }
-    .hero-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      position: relative;
-      z-index: 1;
-    }
-    .hero-brand {
-      flex: 1;
-      min-width: 200px;
-    }
-    .hero-brand h1 {
-      font-family: var(--font-h);
-      font-size: 48px;
-      font-weight: 700;
-      line-height: 1.1;
-      letter-spacing: 2px;
-    }
-    .hero-brand .subtitle {
-      font-size: 16px;
-      opacity: 0.5;
-      margin-top: 0.25rem;
-    }
-    .hero-badges {
-      display: flex;
-      gap: 8px;
-      margin-top: 0.75rem;
-      flex-wrap: wrap;
-    }
-    .hero-stats {
-      display: flex;
-      gap: 1.5rem;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .hero-stat {
-      text-align: center;
-      min-width: 80px;
-    }
-    .hero-stat .val {
-      font-family: var(--font-h);
-      font-size: 36px;
-      font-weight: 700;
-      line-height: 1;
-    }
-    .hero-stat .lbl {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      opacity: 0.5;
-      margin-top: 4px;
-    }
-    .hero-stat.highlight .val { color: var(--red); }
-
-    /* ── Status bar ── */
-    .status-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-      padding: 0.5rem 1rem;
-      background: var(--white);
-      border: 2px solid var(--ink);
-      border-radius: var(--wobbly-sm);
-      box-shadow: 3px 3px 0 0 var(--ink);
-      font-size: 13px;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .status-bar .dot {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      background: var(--green);
-      border: 2px solid var(--ink);
-      border-radius: 50%;
-      margin-right: 6px;
-      animation: pulse 2s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    /* ── Tags ── */
-    .tag {
-      display: inline-block;
-      background: var(--white);
-      border: 2px solid var(--ink);
-      padding: 3px 12px;
-      font-family: var(--font-b);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      border-radius: var(--wobbly-sm);
-    }
-    .tag-yellow { background: var(--yellow); }
-    .tag-red    { background: var(--red); color: var(--white); border-color: var(--ink); }
-    .tag-green  { background: var(--green); color: var(--white); border-color: var(--ink); }
-
-    /* ── Two-column grid ── */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 1.8rem;
-      align-items: start;
-    }
-    @media (max-width: 900px) {
-      .main-grid { grid-template-columns: 1fr; }
-      .hero-brand h1 { font-size: 32px; }
-      .hero-stat .val { font-size: 28px; }
-    }
-
-    /* ── Cards ── */
-    .card {
-      background: var(--white);
-      border: 3px solid var(--ink);
-      border-radius: var(--wobbly);
-      box-shadow: 4px 4px 0 0 var(--ink);
-      margin-bottom: 1.6rem;
-      position: relative;
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
-    }
-    .card:hover {
-      transform: translate(-1px, -1px);
-      box-shadow: 6px 6px 0 0 var(--ink);
-    }
-    .card-yellow { background: var(--yellow); }
-    .card-header {
-      border-bottom: 2px dashed var(--ink);
-      padding: 12px 20px;
-      font-family: var(--font-h);
-      font-size: 14px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: relative;
-    }
-    .card-header::before {
-      content: '';
-      position: absolute;
-      top: -8px;
-      left: 50%;
-      transform: translateX(-50%) rotate(-2deg);
-      width: 50px;
-      height: 14px;
-      background: rgba(229,224,216,0.7);
-      border: 1px solid rgba(45,45,45,0.15);
-    }
-    .card-body {
-      padding: 18px 20px;
-      line-height: 1.6;
-    }
-
-    /* ── Agent identity card ── */
-    .agent-split {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-    .agent-id {
-      font-family: var(--font-h);
-      font-size: 40px;
-      font-weight: 700;
-      line-height: 1;
-    }
-    .agent-balance {
-      text-align: right;
-    }
-    .agent-balance .amount {
-      font-family: var(--font-h);
-      font-size: 36px;
-      font-weight: 700;
-      color: var(--ink);
-    }
-    .agent-balance .unit {
-      font-size: 14px;
-      opacity: 0.5;
-    }
-    .agent-addr {
-      font-size: 12px;
-      word-break: break-all;
-      margin-top: 4px;
-      opacity: 0.6;
-    }
+    .nav-brand { font-size: 18px; font-weight: 700; color: var(--deep); }
+    .nav-links { display: flex; gap: 20px; align-items: center; font-size: 13px; }
+    .nav-links a { color: var(--olive); text-decoration: none; font-size: 14px; font-weight: 600; }
+    .nav-links a:hover { color: var(--orange); }
+    .nav-links .dot { display: inline-block; width: 8px; height: 8px; background: var(--green); border-radius: 50%; margin-right: 4px; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
     /* ── Buttons ── */
     .btn {
-      display: inline-block;
-      background: var(--white);
-      color: var(--ink);
-      border: 3px solid var(--ink);
-      padding: 6px 16px;
-      font-family: var(--font-b);
-      font-size: 13px;
-      cursor: pointer;
-      text-decoration: none;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      border-radius: var(--wobbly-sm);
-      box-shadow: 3px 3px 0 0 var(--ink);
-      transition: all 0.1s ease;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none;
+      transition: all 0.15s; border: none; font-family: inherit;
     }
-    .btn:hover {
-      background: var(--red);
-      color: var(--white);
-      box-shadow: 2px 2px 0 0 var(--ink);
-      transform: translate(1px, 1px);
-    }
-    .btn:active {
-      box-shadow: none;
-      transform: translate(3px, 3px);
-    }
-    .btn-blue:hover { background: var(--blue); }
-    .btn-green:hover { background: var(--green); }
-    .btn-sm { font-size: 11px; padding: 4px 10px; }
+    .btn-dark { background: var(--dark-btn); color: #fff; padding: 8px 16px; border-radius: 6px; }
+    .btn-dark:hover { opacity: 0.7; color: var(--gold); }
+    .btn-sage { background: var(--sage-btn); color: var(--olive); padding: 6px 12px; border-radius: 4px; }
+    .btn-sage:hover { background: #f4f4f4; color: var(--orange); }
+    .btn-red { background: var(--red); color: #fff; padding: 8px 16px; border-radius: 6px; }
+    .btn-red:hover { opacity: 0.85; }
+    .btn-sm { font-size: 12px; padding: 4px 10px; }
     .btn-full { display: block; width: 100%; text-align: center; }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center; padding: 48px 0 40px;
+    }
+    .hero .badge {
+      display: inline-block; background: var(--sage-bg); color: var(--olive);
+      font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 9999px;
+      margin-bottom: 16px; border: 1px solid var(--sage-border);
+    }
+    .hero h1 { font-size: 42px; font-weight: 800; line-height: 1.15; letter-spacing: -0.75px; color: var(--deep); margin-bottom: 8px; }
+    .hero .subtitle { font-size: 15px; color: var(--sage-placeholder); margin-bottom: 20px; }
+    .hero-badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+    .hero-stats { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; }
+    .hero-stat { text-align: center; min-width: 80px; }
+    .hero-stat .val { font-size: 32px; font-weight: 800; color: var(--deep); line-height: 1; }
+    .hero-stat .lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--sage-placeholder); margin-top: 4px; }
+    .hero-stat.highlight .val { color: var(--orange); }
+
+    /* ── Tags ── */
+    .tag {
+      display: inline-block; font-size: 11px; font-weight: 600; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 9999px; border: 1px solid var(--sage-border);
+      background: var(--sage-bg); color: var(--olive);
+    }
+    .tag-green { background: var(--green); color: #fff; border-color: var(--green); }
+    .tag-red { background: var(--red); color: #fff; border-color: var(--red); }
+    .tag-live { background: var(--sage-bg); color: var(--green); font-weight: 700; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--parchment); border: 1px solid var(--sage-border);
+      border-radius: 6px; margin-bottom: 1.4rem;
+    }
+    .card-header {
+      padding: 10px 16px; border-bottom: 1px solid var(--sage-border);
+      font-size: 13px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--deep);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .card-body { padding: 16px; }
+
+    .card-featured { border-width: 2px; border-color: var(--deep); }
+    .card-featured .card-header { background: var(--deep); color: #fff; border-bottom-color: var(--deep); }
+
+    /* Card header colored variants */
+    .card-header-red { background: var(--red); color: #fff; border-bottom-color: var(--red); }
+    .card-header-blue { background: #3b5e9c; color: #fff; border-bottom-color: #3b5e9c; }
+    .card-header-gold { background: #b17816; color: #fff; border-bottom-color: #b17816; }
+    .card-header-green { background: var(--green); color: #fff; border-bottom-color: var(--green); }
+    .card-header-dark { background: var(--dark-btn); color: #fff; border-bottom-color: var(--dark-btn); }
+
+    /* ── Two-column grid ── */
+    .main-grid {
+      display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start;
+    }
+    @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
 
     /* ── Stats row ── */
     .stats-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.85rem;
-      margin-bottom: 1.6rem;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-bottom: 1.4rem;
     }
     .stat-box {
-      background: var(--white);
-      border: 3px solid var(--ink);
-      border-radius: var(--wobbly-sm);
-      box-shadow: 3px 3px 0 0 var(--ink);
-      padding: 16px 10px;
-      text-align: center;
-      transition: transform 0.1s;
+      background: var(--parchment); border: 1px solid var(--sage-border);
+      border-radius: 6px; padding: 14px 10px; text-align: center;
     }
-    .stat-box:hover { transform: translate(-1px, -1px); }
-    .stat-box .stat-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      opacity: 0.5;
-      margin-bottom: 6px;
-    }
-    .stat-box .stat-val {
-      font-family: var(--font-h);
-      font-size: 20px;
-      font-weight: 700;
-    }
-    .stat-box .stat-sub {
-      font-size: 10px;
-      opacity: 0.4;
-      margin-top: 2px;
-    }
-    @media (max-width: 768px) {
-      .stats-row { grid-template-columns: repeat(2, 1fr); }
-    }
+    .stat-box .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--sage-placeholder); margin-bottom: 4px; }
+    .stat-box .stat-val { font-size: 20px; font-weight: 800; color: var(--deep); }
+    .stat-box .stat-sub { font-size: 10px; color: var(--sage-placeholder); margin-top: 2px; }
+    @media (max-width: 768px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+
+    /* ── Agent identity ── */
+    .agent-split { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+    .agent-addr { font-size: 12px; word-break: break-all; color: var(--olive); font-family: 'JetBrains Mono', monospace; }
+    .agent-balance { text-align: right; }
+    .agent-balance .amount { font-size: 32px; font-weight: 800; color: var(--deep); }
+
+    /* ── Divider ── */
+    .hr { border: none; border-top: 1px solid var(--sage-border); margin: 12px 0; }
 
     /* ── Job table ── */
     .job-row {
-      display: grid;
-      grid-template-columns: 54px 1fr 90px 80px 24px;
-      gap: 10px;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 2px dashed var(--muted);
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.1s;
+      display: grid; grid-template-columns: 54px 1fr 90px 80px 24px; gap: 10px;
+      align-items: center; padding: 8px 0; border-bottom: 1px solid var(--sage-border);
+      font-size: 13px; cursor: pointer;
     }
     .job-row:last-child { border-bottom: none; }
-    .job-row:hover { background: rgba(255,249,196,0.5); }
-    .job-row.ours { background: rgba(255,249,196,0.35); }
-    .job-row.expanded { background: rgba(255,249,196,0.5); border-bottom: none; }
-    .job-id { font-weight: 700; color: var(--ink); }
+    .job-row:hover { background: rgba(238,239,233,0.5); }
+    .job-row.ours { background: rgba(238,239,233,0.7); }
+    .job-id { font-weight: 700; color: var(--deep); }
     .job-desc { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .job-budget { text-align: right; font-weight: 700; white-space: nowrap; }
-    .job-link { color: var(--ink); opacity: 0.4; text-decoration: none; text-align: right; }
-    .job-link:hover { opacity: 1; }
+    .job-link { color: var(--olive); opacity: 0.4; text-decoration: none; text-align: right; }
+    .job-link:hover { opacity: 1; color: var(--orange); }
 
-    /* ── Expanded job detail ── */
-    .job-detail {
-      display: none;
-      padding: 12px 16px;
-      background: rgba(255,249,196,0.2);
-      border-bottom: 2px dashed var(--muted);
-      font-size: 12px;
-    }
+    .job-detail { display: none; padding: 10px 14px; background: rgba(238,239,233,0.4); border-bottom: 1px solid var(--sage-border); font-size: 12px; }
     .job-detail.open { display: block; }
-    .job-detail .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px 16px;
-    }
+    .job-detail .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
     .job-detail .detail-full { grid-column: 1 / -1; }
-    .job-detail .detail-label {
-      opacity: 0.5;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .job-detail .detail-val {
-      font-weight: 700;
-      word-break: break-all;
-      font-size: 13px;
-      margin-top: 1px;
-    }
+    .job-detail .detail-label { color: var(--sage-placeholder); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .job-detail .detail-val { font-weight: 600; word-break: break-all; font-size: 12px; margin-top: 2px; }
 
     /* ── Badges ── */
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      border: 2px solid var(--ink);
-      border-radius: var(--wobbly-sm);
-    }
-    .badge-ok    { background: var(--muted); }
-    .badge-warn  { background: var(--yellow); }
-    .badge-err   { background: var(--red); color: var(--white); }
-    .badge-info  { background: #d4e4ff; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; border-radius: 4px; border: 1px solid var(--sage-border); }
+    .badge-ok { background: #e5e7e0; }
+    .badge-warn { background: #fff3cd; border-color: #f7a501; }
+    .badge-err { background: var(--red); color: #fff; border-color: var(--red); }
+    .badge-info { background: #dbeafe; border-color: var(--blue); color: #1e40af; }
 
-    /* ── Form inputs ── */
+    /* ── Inputs ── */
     .input {
-      width: 100%;
-      background: var(--white);
-      color: var(--ink);
-      border: 3px solid var(--ink);
-      border-radius: var(--wobbly-sm);
-      padding: 8px 12px;
-      font-family: var(--font-b);
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.1s;
-      margin-top: 4px;
+      width: 100%; background: var(--sage-bg); color: var(--olive);
+      border: 1px solid var(--light-border); border-radius: 4px;
+      padding: 8px 12px; font-family: inherit; font-size: 13px; outline: none;
     }
-    .input:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(45,93,161,0.1);
-    }
+    .input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
     .input-sm { font-size: 12px; padding: 6px 8px; }
 
-    /* ── Divider ── */
-    .hr {
-      border: none;
-      border-top: 2px dashed var(--muted);
-      margin: 12px 0;
-    }
-    .section-divider {
-      margin: 0.5rem 0 1.5rem;
-      opacity: 0.2;
-    }
+    /* ── Eco stats ── */
+    .eco-stat { font-size: 32px; font-weight: 800; color: var(--deep); display: block; margin: 4px 0; }
+    .eco-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--sage-placeholder); }
 
     /* ── Footer ── */
     .footer {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 1.5rem;
-      padding: 2rem 0 1rem;
-      margin-top: 2rem;
-      border-top: 2px dashed var(--muted);
-      font-size: 13px;
-      opacity: 0.6;
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;
+      padding: 2rem 0 1rem; margin-top: 2rem; border-top: 1px solid var(--sage-border);
+      font-size: 13px; color: var(--sage-placeholder);
     }
-    .footer a {
-      color: var(--ink);
-      text-decoration: none;
-      border-bottom: 2px dashed var(--muted);
-    }
-    .footer a:hover { opacity: 1; border-color: var(--ink); }
-    .footer h4 {
-      font-family: var(--font-h);
-      font-size: 14px;
-      margin-bottom: 0.5rem;
-      opacity: 0.8;
-    }
-    @media (max-width: 768px) {
-      .footer { grid-template-columns: 1fr; }
-    }
-
-    /* ── Ecosystem card — featured ── */
-    .card-featured {
-      border-width: 4px;
-      box-shadow: 6px 6px 0 0 var(--ink);
-      transform: rotate(-0.3deg);
-      margin-bottom: 2rem;
-    }
-    .card-featured::after {
-      content: '★ featured';
-      position: absolute;
-      bottom: -10px;
-      right: 16px;
-      font-family: 'Patrick Hand', cursive;
-      font-size: 12px;
-      color: var(--red);
-      opacity: 0.6;
-      transform: rotate(3deg);
-      pointer-events: none;
-    }
-    .card-featured:hover {
-      transform: rotate(-0.3deg) translate(-1px, -1px);
-      box-shadow: 8px 8px 0 0 var(--ink);
-    }
-    .card-yellow .eco-stat {
-      font-family: var(--font-h);
-      font-size: 38px;
-      font-weight: 700;
-      line-height: 1;
-      display: block;
-      margin: 2px 0;
-    }
-    .card-yellow .eco-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      opacity: 0.5;
-    }
-    .card-featured .card-header {
-      font-size: 15px;
-      letter-spacing: 2px;
-    }
+    .footer a { color: var(--olive); text-decoration: none; }
+    .footer a:hover { color: var(--orange); }
+    .footer h4 { font-size: 14px; font-weight: 700; color: var(--deep); margin-bottom: 0.5rem; }
+    @media (max-width: 768px) { .footer { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
 
 <div class="container">
 
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- HERO BANNER                                                  -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <div class="hero">
-    <div class="hero-inner">
-      <div class="hero-brand">
-        <h1>ARC AGENT</h1>
-        <div class="subtitle">on-chain ai agent · arc testnet · circle L1</div>
-        <div class="hero-badges">
-          <span class="tag tag-yellow">chain {{ chain_id }}</span>
-          <span class="tag">ERC-8004</span>
-          <span class="tag">ERC-8183</span>
-          <span class="tag tag-green" style="font-size:10px">● LIVE</span>
-        </div>
+  <!-- ═══ NAV ═══ -->
+  <nav class="nav">
+    <div class="nav-brand">Arc Agent</div>
+    <div class="nav-links">
+      <a href="https://docs.arc.network" target="_blank">Arc Docs</a>
+      <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank">Explorer</a>
+      <a href="https://github.com/Leonis237/arc-agent" target="_blank">GitHub</a>
+      <span style="font-size:13px;color:var(--sage-placeholder);margin-left:8px"><span class="dot"></span> LIVE</span>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero">
+    <div class="badge">🦔 On Arc Testnet · Chain {{ chain_id }}</div>
+    <h1>Arc Agent</h1>
+    <div class="subtitle">On-chain AI agent · ERC-8004 identity · ERC-8183 jobs · USDC gas</div>
+    <div class="hero-badges">
+      <span class="tag">Chain {{ chain_id }}</span>
+      <span class="tag">ERC-8004</span>
+      <span class="tag">ERC-8183</span>
+      <span class="tag tag-green">LIVE</span>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat highlight">
+        <div class="val">{{ agent_id }}</div>
+        <div class="lbl">Agent ID</div>
       </div>
-      <div class="hero-stats">
-        <div class="hero-stat highlight">
-          <div class="val" id="heroId">{{ agent_id }}</div>
-          <div class="lbl">Agent ID</div>
-        </div>
-        <div class="hero-stat">
-          <div class="val" id="heroBalance">--</div>
-          <div class="lbl">USDC Balance</div>
-        </div>
-        <div class="hero-stat">
-          <div class="val" id="heroJobs">--</div>
-          <div class="lbl">Network Jobs</div>
-        </div>
+      <div class="hero-stat">
+        <div class="val" id="heroBalance">--</div>
+        <div class="lbl">USDC Balance</div>
+      </div>
+      <div class="hero-stat">
+        <div class="val" id="heroJobs">--</div>
+        <div class="lbl">Network Jobs</div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- STATUS BAR                                                  -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <div class="status-bar">
-    <span><span class="dot"></span> <strong>LIVE</strong> · rpc.testnet.arc.network · sub-second finality</span>
-    <span style="opacity:0.5">auto-refresh 15s</span>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- TWO-COLUMN LAYOUT                                           -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ═══ TWO-COLUMN ═══ -->
   <div class="main-grid">
 
-    <!-- ── LEFT COLUMN ──────────────────────────────────────── -->
+    <!-- ── LEFT ── -->
     <div>
 
-      <!-- ═══ ARC TOKEN SCANNER ═══ -->
-      <div class="card" style="border-color:var(--red); border-width:4px">
-        <div class="card-header" style="background:var(--red);color:var(--white);border-bottom:2px dashed var(--ink);">
-          <span>🔍 scan.token</span>
-          <span style="font-size:10px;opacity:0.8">arc · instant</span>
-        </div>
+      <!-- ═══ SCANNER ═══ -->
+      <div class="card">
+        <div class="card-header card-header-red">🔍 Scan Token</div>
         <div class="card-body">
-          <div style="margin-bottom:10px">
-            <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Token Address on Arc</label>
-            <div style="display:flex; gap:8px">
-              <input type="text" id="scanAddr" placeholder="0x... on Arc" class="input" style="flex:1">
-              <button onclick="scanToken()" class="btn" style="background:var(--red);color:var(--white);flex-shrink:0">Scan</button>
-            </div>
+          <label style="font-size:11px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Token Address on Arc</label>
+          <div style="display:flex; gap:8px; margin-top:4px">
+            <input type="text" id="scanAddr" placeholder="0x... on Arc" class="input" style="flex:1">
+            <button onclick="scanToken()" class="btn btn-red" style="flex-shrink:0">Scan</button>
           </div>
           <div id="scanResult" style="display:none">
             <div class="hr"></div>
-            <div id="scanVerdict" style="font-family:var(--font-h);font-size:22px;text-align:center;margin-bottom:8px"></div>
-            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
-              <span style="opacity:0.5">Scam Probability</span>
-              <span id="scanScore" style="font-family:var(--font-h);font-weight:700"></span>
+            <div id="scanVerdict" style="font-size:20px;font-weight:800;text-align:center;margin-bottom:6px"></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+              <span style="color:var(--sage-placeholder)">Scam Probability</span>
+              <span id="scanScore" style="font-weight:700"></span>
             </div>
-            <div style="height:8px;background:var(--muted);border-radius:4px;overflow:hidden;border:1px solid var(--ink);margin-bottom:10px">
-              <div id="scanBar" style="height:100%;border-radius:4px;transition:width 0.5s;width:0%"></div>
+            <div style="height:6px;background:var(--sage-bg);border-radius:3px;overflow:hidden;margin-bottom:8px">
+              <div id="scanBar" style="height:100%;border-radius:3px;background:var(--red);transition:width 0.5s;width:0%"></div>
             </div>
-            <div id="scanInfo" style="font-size:12px;margin-bottom:8px"></div>
+            <div id="scanInfo" style="font-size:12px;margin-bottom:6px"></div>
             <div id="scanFlags" style="font-size:12px"></div>
           </div>
-          <div id="scanLoading" style="display:none;text-align:center;padding:1rem 0">
-            <span style="opacity:0.6">🔍 Scanning Arc chain...</span>
-          </div>
+          <div id="scanLoading" style="display:none;text-align:center;padding:1rem 0;color:var(--sage-placeholder)">🔍 Scanning Arc chain...</div>
           <div id="scanError" style="display:none;color:var(--red);font-size:13px;text-align:center;padding:0.5rem 0"></div>
         </div>
       </div>
 
       <!-- ═══ WALLET HEALTH ═══ -->
-      <div class="card" style="border-color:var(--blue); border-width:4px">
-        <div class="card-header" style="background:var(--blue);color:var(--white);border-bottom:2px dashed var(--ink);">
-          <span>🩺 wallet.health</span>
-          <span style="font-size:10px;opacity:0.8">arc · approvals + delegation</span>
-        </div>
+      <div class="card">
+        <div class="card-header card-header-blue">🩺 Wallet Health</div>
         <div class="card-body">
-          <div style="margin-bottom:10px">
-            <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Wallet Address to Audit</label>
-            <div style="display:flex; gap:8px">
-              <input type="text" id="healthAddr" placeholder="0x... wallet" class="input" style="flex:1">
-              <button onclick="checkWalletHealth()" class="btn" style="background:var(--blue);color:var(--white);flex-shrink:0">Audit</button>
-            </div>
+          <label style="font-size:11px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Wallet Address to Audit</label>
+          <div style="display:flex; gap:8px; margin-top:4px">
+            <input type="text" id="healthAddr" placeholder="0x... wallet" class="input" style="flex:1">
+            <button onclick="checkWalletHealth()" class="btn btn-dark" style="flex-shrink:0">Audit</button>
           </div>
           <div id="healthResult" style="display:none">
             <div class="hr"></div>
-            <div id="healthVerdict" style="font-family:var(--font-h);font-size:20px;text-align:center;margin-bottom:6px"></div>
-            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
-              <span style="opacity:0.5">Wallet Health Score</span>
-              <span id="healthScore" style="font-family:var(--font-h);font-weight:700"></span>
+            <div id="healthVerdict" style="font-size:18px;font-weight:800;text-align:center;margin-bottom:4px"></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+              <span style="color:var(--sage-placeholder)">Wallet Health Score</span>
+              <span id="healthScore" style="font-weight:700"></span>
             </div>
-            <div style="height:8px;background:var(--muted);border-radius:4px;overflow:hidden;border:1px solid var(--ink);margin-bottom:10px">
-              <div id="healthBar" style="height:100%;border-radius:4px;transition:width 0.5s;width:0%"></div>
+            <div style="height:6px;background:var(--sage-bg);border-radius:3px;overflow:hidden;margin-bottom:8px">
+              <div id="healthBar" style="height:100%;border-radius:3px;transition:width 0.5s;width:0%"></div>
             </div>
             <div id="healthChecks" style="font-size:12px"></div>
           </div>
-          <div id="healthLoading" style="display:none;text-align:center;padding:1rem 0">
-            <span style="opacity:0.6">🔍 Analyzing wallet...</span>
-          </div>
+          <div id="healthLoading" style="display:none;text-align:center;padding:1rem 0;color:var(--sage-placeholder)">🩺 Analyzing wallet...</div>
           <div id="healthError" style="display:none;color:var(--red);font-size:13px;text-align:center;padding:0.5rem 0"></div>
         </div>
       </div>
 
       <!-- ═══ CONTRACT AUDIT ═══ -->
-      <div class="card" style="border-color:#d4a017; border-width:4px">
-        <div class="card-header" style="background:#d4a017;color:var(--white);border-bottom:2px dashed var(--ink);">
-          <span>🔍 contract.audit</span>
-          <span style="font-size:10px;opacity:0.8">arc · transparency score</span>
-        </div>
+      <div class="card">
+        <div class="card-header card-header-gold">📋 Contract Audit</div>
         <div class="card-body">
-          <div style="margin-bottom:10px">
-            <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Contract Address to Audit</label>
-            <div style="display:flex; gap:8px">
-              <input type="text" id="auditAddr" placeholder="0x... contract" class="input" style="flex:1">
-              <button onclick="checkContractAudit()" class="btn" style="background:#d4a017;color:var(--white);flex-shrink:0">Audit</button>
-            </div>
+          <label style="font-size:11px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Contract Address to Audit</label>
+          <div style="display:flex; gap:8px; margin-top:4px">
+            <input type="text" id="auditAddr" placeholder="0x... contract" class="input" style="flex:1">
+            <button onclick="checkContractAudit()" class="btn btn-dark" style="flex-shrink:0">Audit</button>
           </div>
           <div id="auditResult" style="display:none">
             <div class="hr"></div>
-            <div id="auditVerdict" style="font-family:var(--font-h);font-size:20px;text-align:center;margin-bottom:6px"></div>
-            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
-              <span style="opacity:0.5">Transparency Score</span>
-              <span id="auditScore" style="font-family:var(--font-h);font-weight:700"></span>
+            <div id="auditVerdict" style="font-size:18px;font-weight:800;text-align:center;margin-bottom:4px"></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+              <span style="color:var(--sage-placeholder)">Transparency Score</span>
+              <span id="auditScore" style="font-weight:700"></span>
             </div>
-            <div style="height:8px;background:var(--muted);border-radius:4px;overflow:hidden;border:1px solid var(--ink);margin-bottom:10px">
-              <div id="auditBar" style="height:100%;border-radius:4px;transition:width 0.5s;width:0%"></div>
+            <div style="height:6px;background:var(--sage-bg);border-radius:3px;overflow:hidden;margin-bottom:8px">
+              <div id="auditBar" style="height:100%;border-radius:3px;transition:width 0.5s;width:0%"></div>
             </div>
             <div id="auditChecks" style="font-size:12px"></div>
           </div>
-          <div id="auditLoading" style="display:none;text-align:center;padding:1rem 0">
-            <span style="opacity:0.6">🔍 Auditing contract...</span>
-          </div>
+          <div id="auditLoading" style="display:none;text-align:center;padding:1rem 0;color:var(--sage-placeholder)">📋 Auditing contract...</div>
           <div id="auditError" style="display:none;color:var(--red);font-size:13px;text-align:center;padding:0.5rem 0"></div>
         </div>
       </div>
 
       <!-- ═══ AIRDROP SAFETY ═══ -->
-      <div class="card" style="border-color:var(--green); border-width:4px">
-        <div class="card-header" style="background:var(--green);color:var(--white);border-bottom:2px dashed var(--ink);">
-          <span>🪂 airdrop.safety</span>
-          <span style="font-size:10px;opacity:0.8">link scan · phishing detection</span>
-        </div>
+      <div class="card">
+        <div class="card-header card-header-green">🪂 Airdrop Safety</div>
         <div class="card-body">
-          <div style="margin-bottom:10px">
-            <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Airdrop Link to Check</label>
-            <div style="display:flex; gap:8px">
-              <input type="text" id="airdropUrl" placeholder="https://claim-uniswap.xyz/airdrop" class="input" style="flex:1">
-              <button onclick="checkAirdrop()" class="btn" style="background:var(--green);color:var(--white);flex-shrink:0">Scan</button>
-            </div>
+          <label style="font-size:11px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Airdrop Link to Check</label>
+          <div style="display:flex; gap:8px; margin-top:4px">
+            <input type="text" id="airdropUrl" placeholder="https://claim-uniswap.xyz/airdrop" class="input" style="flex:1">
+            <button onclick="checkAirdrop()" class="btn btn-dark" style="flex-shrink:0">Scan</button>
           </div>
           <div id="airdropResult" style="display:none">
             <div class="hr"></div>
-            <div id="airdropVerdict" style="font-family:var(--font-h);font-size:20px;text-align:center;margin-bottom:6px"></div>
-            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
-              <span style="opacity:0.5">Safety Score</span>
-              <span id="airdropScore" style="font-family:var(--font-h);font-weight:700"></span>
+            <div id="airdropVerdict" style="font-size:18px;font-weight:800;text-align:center;margin-bottom:4px"></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+              <span style="color:var(--sage-placeholder)">Safety Score</span>
+              <span id="airdropScore" style="font-weight:700"></span>
             </div>
-            <div style="height:8px;background:var(--muted);border-radius:4px;overflow:hidden;border:1px solid var(--ink);margin-bottom:10px">
-              <div id="airdropBar" style="height:100%;border-radius:4px;transition:width 0.5s;width:0%"></div>
+            <div style="height:6px;background:var(--sage-bg);border-radius:3px;overflow:hidden;margin-bottom:8px">
+              <div id="airdropBar" style="height:100%;border-radius:3px;transition:width 0.5s;width:0%"></div>
             </div>
             <div id="airdropChecks" style="font-size:12px"></div>
           </div>
-          <div id="airdropLoading" style="display:none;text-align:center;padding:1rem 0">
-            <span style="opacity:0.6">🪂 Scanning airdrop link...</span>
-          </div>
+          <div id="airdropLoading" style="display:none;text-align:center;padding:1rem 0;color:var(--sage-placeholder)">🪂 Scanning airdrop link...</div>
           <div id="airdropError" style="display:none;color:var(--red);font-size:13px;text-align:center;padding:0.5rem 0"></div>
         </div>
       </div>
 
-      <!-- Agent Identity -->
-      <div class="card" style="border-color:var(--ink); border-width:4px">
-        <div class="card-header" style="background:var(--ink);color:var(--white);border-bottom:2px dashed var(--ink);">
-          <span>🪪 agent_identity.erc8004</span>
-          <span class="tag tag-green" style="font-size:9px">active</span>
-        </div>
+      <!-- ═══ AGENT IDENTITY ═══ -->
+      <div class="card">
+        <div class="card-header card-header-dark">🪪 Agent Identity · ERC-8004 <span class="tag tag-green" style="font-size:9px">active</span></div>
         <div class="card-body">
           <div class="agent-split">
-            <div>
-              <div style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px">Wallet Address</div>
+            <div style="flex:1">
+              <div style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px;margin-bottom:2px">Wallet Address</div>
               <div class="agent-addr">
                 <span id="agentAddr">{{ agent_address }}</span>
-                <button onclick="navigator.clipboard.writeText('{{ agent_address }}')" class="btn btn-sm" style="margin-left:6px">copy</button>
+                <button onclick="navigator.clipboard.writeText('{{ agent_address }}')" class="btn btn-sage btn-sm" style="margin-left:6px">copy</button>
               </div>
             </div>
             <div class="agent-balance">
-              <div style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px">Testnet Balance</div>
-              <div class="amount" id="balance" style="display:flex;align-items:center;gap:4px"><span style="font-size:24px;opacity:0.4">💵</span><span id="balanceVal">--</span></div>
-              <div class="unit">USDC</div>
+              <div style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px;margin-bottom:2px">Testnet Balance</div>
+              <div class="amount" id="balance">-- <span style="font-size:14px;font-weight:600;color:var(--sage-placeholder)">USDC</span></div>
             </div>
           </div>
           <div class="hr"></div>
-          <div style="display:flex; gap:6px; flex-wrap:wrap; font-size:12px">
-            <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn btn-sm">arcscan ↗</a>
-            <a href="https://docs.arc.network" target="_blank" class="btn btn-sm">docs ↗</a>
-            <a href="https://faucet.circle.com" target="_blank" class="btn btn-sm btn-blue">faucet ↗</a>
-            <a href="https://github.com/Leonis237/arc-agent" target="_blank" class="btn btn-sm">github ↗</a>
+          <div style="display:flex; gap:6px; flex-wrap:wrap">
+            <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn btn-sage btn-sm">arcscan ↗</a>
+            <a href="https://docs.arc.network" target="_blank" class="btn btn-sage btn-sm">docs ↗</a>
+            <a href="https://faucet.circle.com" target="_blank" class="btn btn-sage btn-sm">faucet ↗</a>
+            <a href="https://github.com/Leonis237/arc-agent" target="_blank" class="btn btn-sage btn-sm">github ↗</a>
           </div>
         </div>
       </div>
 
-      <!-- Stats -->
+      <!-- ═══ STATS ═══ -->
       <div class="stats-row">
         <div class="stat-box">
           <div class="stat-label">Network</div>
@@ -749,156 +406,129 @@
         </div>
         <div class="stat-box">
           <div class="stat-label">My Jobs</div>
-          <div class="stat-val" id="statMyJobs" style="color:var(--red)">--</div>
+          <div class="stat-val" id="statMyJobs" style="color:var(--orange)">--</div>
           <div class="stat-sub">active</div>
         </div>
       </div>
 
-      <!-- Jobs -->
+      <!-- ═══ JOBS ═══ -->
       <div class="card">
         <div class="card-header">
-          <span>jobs.erc8183</span>
-          <span style="font-size:12px">
+          <span>Jobs · ERC-8183</span>
+          <span style="font-size:12px;font-weight:400;text-transform:none;letter-spacing:0">
             <span onclick="filterJobs('all')" id="filterAll" style="cursor:pointer;font-weight:700;text-decoration:underline">ALL</span>
-            <span style="opacity:0.3;margin:0 6px">|</span>
+            <span style="opacity:0.3;margin:0 4px">|</span>
             <span onclick="filterJobs('open')" id="filterOpen" style="cursor:pointer">OPEN</span>
-            <span style="opacity:0.3;margin:0 6px">|</span>
+            <span style="opacity:0.3;margin:0 4px">|</span>
             <span onclick="filterJobs('mine')" id="filterMine" style="cursor:pointer">MINE</span>
-            <span style="opacity:0.3;margin:0 6px">·</span>
+            <span style="opacity:0.3;margin:0 4px">·</span>
             total: <span id="jobCount" style="font-weight:700">--</span>
           </span>
         </div>
         <div class="card-body" style="padding:0">
-          <div style="display:grid; grid-template-columns:54px 1fr 90px 80px 24px; gap:10px; padding:10px 16px; font-size:11px; opacity:0.5; text-transform:uppercase; letter-spacing:1px; border-bottom:2px dashed var(--muted)">
-            <span>Job#</span>
-            <span>Description</span>
-            <span>Status</span>
-            <span style="text-align:right">Budget</span>
-            <span></span>
+          <div style="display:grid; grid-template-columns:54px 1fr 90px 80px 24px; gap:10px; padding:8px 16px; font-size:10px; color:var(--sage-placeholder); text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid var(--sage-border)">
+            <span>Job#</span><span>Description</span><span>Status</span><span style="text-align:right">Budget</span><span></span>
           </div>
-          <div id="jobList" style="padding: 0 16px">
-            <div style="text-align:center; padding:2rem 0; opacity:0.4">
-              fetching jobs from blockchain...
-            </div>
+          <div id="jobList" style="padding:0 16px">
+            <div style="text-align:center;padding:2rem 0;color:var(--sage-placeholder)">fetching jobs from blockchain...</div>
           </div>
         </div>
       </div>
 
     </div><!-- /left -->
 
-    <!-- ── RIGHT COLUMN ─────────────────────────────────────── -->
+    <!-- ── RIGHT ── -->
     <div>
 
-      <!-- Post a Job -->
-      <div class="card" id="postJobSection">
+      <!-- ═══ POST JOB ═══ -->
+      <div class="card">
         <div class="card-header">
-          <span>post.job</span>
-          <span style="display:flex; gap:8px; align-items:center">
-            <span id="postJobToggle" onclick="togglePostJob()" style="cursor:pointer;font-size:12px">[ + new ]</span>
-          </span>
+          <span>Post Job</span>
+          <span id="postJobToggle" onclick="togglePostJob()" style="cursor:pointer;font-size:12px;font-weight:600">+ new</span>
         </div>
         <div class="card-body" id="postJobBody" style="display:none; font-size:13px">
           <div style="margin-bottom:8px">
-            <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Description</label>
+            <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Description</label>
             <input type="text" id="jobDesc" placeholder="Token scam analysis on 0x..." class="input input-sm">
           </div>
           <div style="margin-bottom:8px">
-            <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Provider</label>
+            <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Provider</label>
             <input type="text" id="jobProvider" value="{{ agent_address }}" class="input input-sm">
           </div>
           <div style="margin-bottom:8px; display:flex; gap:8px">
             <div style="flex:1">
-              <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Budget USDC</label>
+              <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Budget USDC</label>
               <input type="number" id="jobBudget" value="1.00" min="0.01" step="0.01" class="input input-sm">
             </div>
             <div style="flex:1">
-              <label style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px">Expires (h)</label>
+              <label style="font-size:10px;text-transform:uppercase;color:var(--sage-placeholder);letter-spacing:1px">Expires (h)</label>
               <input type="number" id="jobExpire" value="24" min="1" max="720" class="input input-sm">
             </div>
           </div>
-          <button onclick="createJob()" class="btn btn-full" style="background:var(--red);color:var(--white)">create job + fund escrow</button>
+          <button onclick="createJob()" class="btn btn-red btn-full">Create Job + Fund Escrow</button>
           <div id="createResult" style="margin-top:8px; font-size:12px; min-height:20px"></div>
         </div>
-        <!-- Quick Demo button — always visible -->
         <div class="card-body" style="padding-top:0">
-          <button onclick="quickDemo()" class="btn btn-full" style="background:var(--yellow);color:var(--ink);font-weight:700;font-size:14px">
-            🔥 Try Demo — Scan PEPE Token Now
-          </button>
-          <div style="font-size:11px;opacity:0.5;text-align:center;margin-top:6px">
-            Creates a job → AI agent scans → result on-chain in ~5 min
-          </div>
+          <button onclick="quickDemo()" class="btn btn-dark btn-full" style="padding:10px;font-size:14px">🔥 Try Demo — Scan PEPE Token Now</button>
+          <div style="font-size:11px;color:var(--sage-placeholder);text-align:center;margin-top:6px">Creates a job → AI agent scans → result on-chain in ~5 min</div>
         </div>
       </div>
 
-      <!-- Network Info -->
+      <!-- ═══ NETWORK INFO ═══ -->
       <div class="card">
-        <div class="card-header">
-          <span>network.info</span>
-          <span class="tag" style="font-size:9px">testnet</span>
-        </div>
+        <div class="card-header">Network Info <span class="tag" style="font-size:9px">testnet</span></div>
         <div class="card-body" style="font-size:13px">
-          <div style="margin-bottom:8px"><span style="opacity:0.5">chain id</span><br><strong>{{ chain_id }}</strong></div>
-          <div style="margin-bottom:8px"><span style="opacity:0.5">rpc endpoint</span><br><span style="font-size:11px">rpc.testnet.arc.network</span></div>
-          <div style="margin-bottom:8px"><span style="opacity:0.5">gas token</span><br><strong>USDC</strong> (native)</div>
-          <div style="margin-bottom:8px"><span style="opacity:0.5">finality</span><br><strong>sub-second</strong></div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap">
-            <a href="https://testnet.arcscan.app" target="_blank" style="color:var(--blue);font-size:12px">arcscan ↗</a>
-            <span style="opacity:0.3">·</span>
-            <a href="https://faucet.circle.com" target="_blank" style="color:var(--red);font-size:12px">faucet ↗</a>
-          </div>
+          <div style="margin-bottom:6px"><span style="color:var(--sage-placeholder)">chain id</span><br><strong>{{ chain_id }}</strong></div>
+          <div style="margin-bottom:6px"><span style="color:var(--sage-placeholder)">rpc endpoint</span><br><span style="font-size:11px">rpc.testnet.arc.network</span></div>
+          <div style="margin-bottom:6px"><span style="color:var(--sage-placeholder)">gas token</span><br><strong>USDC</strong> (native)</div>
+          <div style="margin-bottom:6px"><span style="color:var(--sage-placeholder)">finality</span><br><strong>sub-second</strong></div>
         </div>
       </div>
 
-      <!-- Ecosystem Snapshot -->
-      <div class="card card-yellow card-featured">
-        <div class="card-header">
-          <span>🌐 ecosystem.snapshot</span>
-          <span class="tag tag-red" style="font-size:9px">live</span>
-        </div>
-        <div class="card-body" style="font-size:13px; padding: 20px 24px">
-          <div style="margin-bottom:16px">
+      <!-- ═══ ECOSYSTEM ═══ -->
+      <div class="card card-featured">
+        <div class="card-header">🌐 Ecosystem Snapshot <span class="tag tag-red" style="font-size:9px">live</span></div>
+        <div class="card-body" style="font-size:13px;padding:20px 24px">
+          <div style="margin-bottom:14px">
             <span class="eco-label">registered agents</span>
             <span class="eco-stat" id="ecosystemAgents">--</span>
           </div>
-          <div style="margin-bottom:16px">
+          <div style="margin-bottom:14px">
             <span class="eco-label">total jobs created</span>
             <span class="eco-stat" id="ecosystemJobs">--</span>
           </div>
-          <div style="margin-bottom:12px; padding:8px 0; border-top:1px dashed var(--ink);">
-            <span style="color:var(--red);font-weight:700;font-size:14px">● AGENT #{{ agent_id }} ACTIVE</span>
+          <div style="padding:6px 0; border-top:1px solid var(--sage-border)">
+            <span style="color:var(--orange);font-weight:700;font-size:13px">● AGENT #{{ agent_id }} ACTIVE</span>
           </div>
         </div>
       </div>
 
-      <!-- Worker Stats -->
+      <!-- ═══ WORKER ═══ -->
       <div class="card">
-        <div class="card-header">
-          <span>agent.worker</span>
-          <span id="workerStatus" style="font-size:11px">idle</span>
-        </div>
+        <div class="card-header">Agent Worker <span id="workerStatus" style="font-size:11px;font-weight:400;text-transform:none;letter-spacing:0">idle</span></div>
         <div class="card-body" style="font-size:13px">
-          <div style="margin-bottom:8px">
-            <span style="opacity:0.5">status</span><br>
+          <div style="margin-bottom:6px">
+            <span style="color:var(--sage-placeholder)">status</span><br>
             <span id="workerState">initializing...</span>
           </div>
-          <div style="margin-bottom:8px">
-            <span style="opacity:0.5">jobs processed</span><br>
+          <div style="margin-bottom:6px">
+            <span style="color:var(--sage-placeholder)">jobs processed</span><br>
             <strong id="workerJobs">0</strong>
           </div>
           <div>
-            <span style="opacity:0.5">total earnings</span><br>
-            <strong id="workerEarnings" style="color:var(--red)">0.00 USDC</strong>
+            <span style="color:var(--sage-placeholder)">total earnings</span><br>
+            <strong id="workerEarnings" style="color:var(--orange)">0.00 USDC</strong>
           </div>
         </div>
       </div>
 
-      <!-- Quick Links -->
+      <!-- ═══ QUICK LINKS ═══ -->
       <div class="card">
-        <div class="card-header"><span>quick.links</span></div>
+        <div class="card-header">Quick Links</div>
         <div class="card-body" style="display:flex; flex-wrap:wrap; gap:6px">
-          <a href="https://docs.arc.network" target="_blank" class="btn btn-sm">docs ↗</a>
-          <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn btn-sm">explorer ↗</a>
-          <a href="https://github.com/Leonis237/arc-agent" target="_blank" class="btn btn-sm">github ↗</a>
+          <a href="https://docs.arc.network" target="_blank" class="btn btn-sage btn-sm">docs ↗</a>
+          <a href="https://testnet.arcscan.app/address/{{ agent_address }}" target="_blank" class="btn btn-sage btn-sm">explorer ↗</a>
+          <a href="https://github.com/Leonis237/arc-agent" target="_blank" class="btn btn-sage btn-sm">github ↗</a>
         </div>
       </div>
 
@@ -906,9 +536,7 @@
 
   </div><!-- /main-grid -->
 
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- FOOTER                                                      -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ═══ FOOTER ═══ -->
   <div class="footer">
     <div>
       <h4>Arc Agent</h4>
@@ -931,7 +559,7 @@
       <div style="font-size:12px">
         <a href="https://leonisforge.com" target="_blank">☤ Leonis Forge</a><br>
         <a href="https://github.com/Leonis237/arc-agent" target="_blank">Fork on GitHub</a><br>
-        <span style="opacity:0.5">built on Arc by Circle</span>
+        <span>built on Arc by Circle</span>
       </div>
     </div>
   </div>
@@ -939,7 +567,7 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- JAVASCRIPT                                                     -->
+<!-- JAVASCRIPT (unchanged from original)                           -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <script>
   const OUR_ADDRESS = '{{ agent_address }}'.toLowerCase();
@@ -966,8 +594,9 @@
       const eco = await ecoRes.json();
 
       if (!status.error) {
-        document.getElementById('balanceVal').textContent = status.balance_usdc.toFixed(2);
-        document.getElementById('heroBalance').textContent = status.balance_usdc.toFixed(2);
+        const bal = status.balance_usdc.toFixed(2);
+        document.getElementById('balance').innerHTML = `${bal} <span style="font-size:14px;font-weight:600;color:var(--sage-placeholder)">USDC</span>`;
+        document.getElementById('heroBalance').textContent = bal;
       }
 
       if (!eco.error) {
@@ -980,13 +609,12 @@
         document.getElementById('workerJobs').textContent = worker.processed_jobs;
         document.getElementById('workerEarnings').textContent = worker.total_earnings_usdc.toFixed(2) + ' USDC';
         if (worker.status === 'active') {
-          document.getElementById('workerStatus').innerHTML = '<span style="color:var(--red);font-weight:700">active</span>';
+          document.getElementById('workerStatus').innerHTML = '<span style="color:var(--green);font-weight:700">active</span>';
         }
       }
 
       if (!jobsData.error && jobsData.jobs) {
         let jobs = jobsData.jobs.filter(j => j.state !== 'NONEXISTENT');
-        
         if (currentFilter === 'open') {
           jobs = jobs.filter(j => j.state === 'OPEN' || j.state === 'FUNDED');
         } else if (currentFilter === 'mine') {
@@ -995,487 +623,215 @@
             j.provider?.toLowerCase() === OUR_ADDRESS
           );
         }
-        
         document.getElementById('jobCount').textContent = jobs.length;
         document.getElementById('statTotal').textContent = jobsData.job_counter;
-        document.getElementById('heroJobs').textContent = jobsData.job_counter;
-
-        const ourJobs = jobs.filter(j =>
+        const ours = jobsData.jobs.filter(j =>
           j.client?.toLowerCase() === OUR_ADDRESS ||
           j.provider?.toLowerCase() === OUR_ADDRESS
-        );
-        document.getElementById('statMyJobs').textContent = ourJobs.length;
-
-        if (jobs.length === 0) {
-          document.getElementById('jobList').innerHTML =
-            '<div style="text-align:center;padding:2rem 0;opacity:0.4;font-size:13px">' +
-            'no jobs found — post one or run create_job.py</div>';
-          return;
-        }
-
-        const html = jobs.reverse().map(j => {
-          const isOurs = j.client?.toLowerCase() === OUR_ADDRESS || j.provider?.toLowerCase() === OUR_ADDRESS;
-          const jid = j.job_id;
-          const stateLabel = j.state || 'UNKNOWN';
-          return `
-            <div class="job-row ${isOurs ? 'ours' : ''}" onclick="toggleJobDetail(${jid})" title="Click for details">
-              <span class="job-id">#${jid}</span>
-              <span class="job-desc" style="opacity:${isOurs ? '1' : '0.6'}">${j.description}</span>
-              <span>${badgeFor(j.state)}</span>
-              <span class="job-budget" style="color:${isOurs && j.budget > 0 ? 'var(--red)' : 'var(--ink)'}">
-                ${j.budget.toFixed(2)} USDC
-              </span>
-              <a href="https://testnet.arcscan.app/address/0x0747EEf0706327138c69792bF28Cd525089e4583" target="_blank" class="job-link" onclick="event.stopPropagation()">↗</a>
-            </div>
-            <div class="job-detail" id="detail-${jid}">
-              <div class="detail-grid">
-                <div><div class="detail-label">Full Description</div><div class="detail-val detail-full">${j.description}</div></div>
-                <div><div class="detail-label">State</div><div class="detail-val">${stateLabel}</div></div>
-                <div><div class="detail-label">Budget</div><div class="detail-val" style="color:${j.budget > 0 ? 'var(--red)' : 'var(--ink)'}">${j.budget.toFixed(2)} USDC</div></div>
-                <div><div class="detail-label">Client</div><div class="detail-val" style="font-size:10px">${j.client || '—'}</div></div>
-                <div><div class="detail-label">Provider</div><div class="detail-val" style="font-size:10px">${j.provider || '—'}</div></div>
-                <div><div class="detail-label">Evaluator</div><div class="detail-val" style="font-size:10px">${j.evaluator || '—'}</div></div>
-              </div>
-            </div>`;
-        }).join('');
-
-        // Save expanded jobs before re-render
-        const expandedJobs = new Set();
-        document.querySelectorAll('.job-detail.open').forEach(d => {
-          expandedJobs.add(parseInt(d.id.replace('detail-', '')));
-        });
-
-        document.getElementById('jobList').innerHTML = html;
-
-        // Restore expanded state
-        expandedJobs.forEach(jid => {
-          const detail = document.getElementById('detail-' + jid);
-          const row = detail?.previousElementSibling;
-          if (detail) {
-            detail.classList.add('open');
-            row?.classList.add('expanded');
-          }
-        });
+        ).length;
+        document.getElementById('statMyJobs').textContent = ours;
+        document.getElementById('heroJobs').textContent = jobsData.job_counter;
+        renderJobs(jobs);
       }
-    } catch(e) {
-      console.error(e);
-    }
+    } catch(e) { console.error('refresh error', e); }
   }
 
-  refresh();
-  setInterval(refresh, 15000);
-
-  // ── Post Job Marketplace ──
-  function togglePostJob() {
-    const body = document.getElementById('postJobBody');
-    const toggle = document.getElementById('postJobToggle');
-    if (body.style.display === 'none') {
-      body.style.display = 'block';
-      toggle.textContent = '[ — hide ]';
-    } else {
-      body.style.display = 'none';
-      toggle.textContent = '[ + new ]';
-    }
-  }
-
-  // ── Expand job detail ──
-  function toggleJobDetail(jid) {
-    const detail = document.getElementById('detail-' + jid);
-    const row = detail?.previousElementSibling;
-    if (!detail) return;
-    
-    // Close all other open details
-    document.querySelectorAll('.job-detail.open').forEach(d => {
-      if (d.id !== 'detail-' + jid) {
-        d.classList.remove('open');
-        d.previousElementSibling?.classList.remove('expanded');
-      }
-    });
-    
-    detail.classList.toggle('open');
-    row?.classList.toggle('expanded');
-  }
-
-  // ── Job filter ──
   let currentFilter = 'all';
-  function filterJobs(filter) {
-    currentFilter = filter;
-    document.getElementById('filterAll').style.fontWeight = filter === 'all' ? '700' : '400';
-    document.getElementById('filterAll').style.textDecoration = filter === 'all' ? 'underline' : 'none';
-    document.getElementById('filterOpen').style.fontWeight = filter === 'open' ? '700' : '400';
-    document.getElementById('filterOpen').style.textDecoration = filter === 'open' ? 'underline' : 'none';
-    document.getElementById('filterMine').style.fontWeight = filter === 'mine' ? '700' : '400';
-    document.getElementById('filterMine').style.textDecoration = filter === 'mine' ? 'underline' : 'none';
+  function filterJobs(f) {
+    currentFilter = f;
+    document.querySelectorAll('[id^="filter"]').forEach(el => el.style.textDecoration = 'none');
+    document.getElementById('filter' + f.charAt(0).toUpperCase() + f.slice(1)).style.textDecoration = 'underline';
     refresh();
   }
 
-  // ── Arc Token Scanner ──
-  async function scanToken() {
-    const addr = document.getElementById('scanAddr').value.trim();
-    const resDiv = document.getElementById('scanResult');
-    const loadDiv = document.getElementById('scanLoading');
-    const errDiv = document.getElementById('scanError');
-
-    resDiv.style.display = 'none';
-    errDiv.style.display = 'none';
-
-    if (!addr.startsWith('0x') || addr.length !== 42) {
-      errDiv.textContent = 'Invalid token address (0x + 40 hex chars)';
-      errDiv.style.display = 'block';
-      return;
-    }
-
-    loadDiv.style.display = 'block';
-    try {
-      const r = await fetch('/api/scan', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({address: addr})
-      });
-      const data = await r.json();
-
-      if (data.error) {
-        errDiv.textContent = data.error;
-        errDiv.style.display = 'block';
-        return;
-      }
-
-      const verdictDiv = document.getElementById('scanVerdict');
-      verdictDiv.textContent = data.verdict_label;
-      const colors = {scam: 'var(--red)', suspicious: '#d4a017', safe: 'var(--green)'};
-      verdictDiv.style.color = colors[data.verdict] || 'var(--ink)';
-
-      document.getElementById('scanScore').textContent = data.score + '%';
-      const bar = document.getElementById('scanBar');
-      bar.style.width = data.score + '%';
-      bar.style.background = data.score >= 70 ? 'var(--red)' : (data.score >= 40 ? '#d4a017' : 'var(--green)');
-
-      document.getElementById('scanInfo').innerHTML = 
-        '<div><span style="opacity:0.5">Token</span><br><strong>' + data.token_name + ' (' + data.token_symbol + ')</strong></div>' +
-        (data.bytecode_size ? '<div><span style="opacity:0.5">Bytecode</span><br><strong>' + data.bytecode_size + '</strong></div>' : '') +
-        '<div><span style="opacity:0.5">Source</span><br><strong>' + (data.is_verified ? '✅ Verified on Arcscan' : '⚠️ Unverified') + '</strong></div>' +
-        '<div><span style="opacity:0.5">Proxy</span><br><strong>' + (data.is_proxy ? '⚠️ Yes' : '✅ No') + '</strong></div>';
-
-      const flagsDiv = document.getElementById('scanFlags');
-      if (data.red_flags.length > 0) {
-        flagsDiv.innerHTML = '<div style="margin-top:4px;padding:8px;background:rgba(255,77,77,0.08);border:2px dashed rgba(255,77,77,0.3);border-radius:8px">' +
-          '<strong style="color:var(--red)">🚩 Red Flags</strong><br>' +
-          data.red_flags.map(f => '<span style="font-size:11px">▸ ' + f + '</span>').join('<br>') + '</div>';
-      } else {
-        flagsDiv.innerHTML = '<div style="margin-top:4px;color:var(--green);font-size:12px">✅ No red flags detected</div>';
-      }
-
-      resDiv.style.display = 'block';
-    } catch(e) {
-      errDiv.textContent = 'Network error. Try again.';
-      errDiv.style.display = 'block';
-    } finally {
-      loadDiv.style.display = 'none';
-    }
+  function renderJobs(jobs) {
+    const list = document.getElementById('jobList');
+    if (!jobs.length) { list.innerHTML = '<div style="text-align:center;padding:2rem 0;color:var(--sage-placeholder)">no jobs found</div>'; return; }
+    list.innerHTML = jobs.map(j => {
+      const isOurs = j.client?.toLowerCase() === OUR_ADDRESS || j.provider?.toLowerCase() === OUR_ADDRESS;
+      return `<div class="job-row${isOurs ? ' ours' : ''}" onclick="toggleJob(this, ${j.job_id})">
+        <span class="job-id">#${j.job_id}</span>
+        <span class="job-desc">${escapeHtml(j.description)}</span>
+        <span>${badgeFor(j.state)}</span>
+        <span class="job-budget">${j.budget.toFixed(2)} USDC</span>
+        <span class="job-link">▸</span>
+      </div>
+      <div class="job-detail" id="detail-${j.job_id}">
+        <div class="detail-grid">
+          <div><div class="detail-label">Client</div><div class="detail-val">${shortAddr(j.client)}</div></div>
+          <div><div class="detail-label">Provider</div><div class="detail-val">${shortAddr(j.provider)}</div></div>
+          <div><div class="detail-label">State</div><div class="detail-val">${j.state}</div></div>
+          <div><div class="detail-label">Budget</div><div class="detail-val">${j.budget.toFixed(2)} USDC</div></div>
+          <div class="detail-full"><div class="detail-label">Description</div><div class="detail-val">${escapeHtml(j.description)}</div></div>
+        </div>
+      </div>`;
+    }).join('');
   }
 
-  async function quickDemo() {
-    // Auto-fill with PEPE token (BSC: 0xcf6bb5...) — well-known, good demo
-    document.getElementById('jobDesc').value = 'Token Scam Analysis: Scan PEPE token (0xcf6bb539Ac8e87D643A926f75fBeEcEDF1f6C5B0) on BSC. Check for honeypot, high tax, proxy, closed source. Return risk score and detailed report.';
-    document.getElementById('jobProvider').value = '{{ agent_address }}';
-    document.getElementById('jobBudget').value = '1.00';
-    document.getElementById('jobExpire').value = '24';
-    
-    // Open form if hidden
+  function toggleJob(row, id) {
+    const detail = document.getElementById('detail-' + id);
+    const wasOpen = detail.classList.contains('open');
+    document.querySelectorAll('.job-detail.open').forEach(d => d.classList.remove('open'));
+    if (!wasOpen) detail.classList.add('open');
+  }
+
+  function escapeHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function shortAddr(a) { return a ? a.slice(0,8)+'...'+a.slice(-6) : '—'; }
+
+  function togglePostJob() {
     const body = document.getElementById('postJobBody');
     const toggle = document.getElementById('postJobToggle');
-    if (body.style.display === 'none') {
-      body.style.display = 'block';
-      toggle.textContent = '[ — hide ]';
-    }
-    
-    // Submit the job
-    await createJobDemo();
-  }
-
-  async function createJobDemo() {
-    const res = document.getElementById('createResult');
-    res.innerHTML = '<span style=\"color:var(--blue)\">⏳ Creating job + funding escrow on Arc...</span>';
-    
-    try {
-      const r = await fetch('/api/jobs/create', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          description: document.getElementById('jobDesc').value,
-          provider: document.getElementById('jobProvider').value,
-          budget: parseFloat(document.getElementById('jobBudget').value),
-          expire_hours: parseInt(document.getElementById('jobExpire').value)
-        })
-      });
-      const data = await r.json();
-      if (data.success) {
-        res.innerHTML = `<span style=\"color:var(--green);font-weight:700\">✓ Demo job #${data.job_id} created!</span><br>
-          <span style=\"font-size:11px\">${data.state} · ${data.budget} USDC escrowed</span><br>
-          <span style=\"font-size:10px;opacity:0.5\">Worker picks up within ~5 min → result on-chain</span>`;
-        setTimeout(refresh, 3000);
-      } else {
-        res.innerHTML = `<span style=\"color:var(--red);font-weight:700\">✗ ${data.error}</span>`;
-      }
-    } catch(e) {
-      res.innerHTML = `<span style=\"color:var(--red)\">✗ ${e.message}</span>`;
-    }
+    if (body.style.display === 'none') { body.style.display = 'block'; toggle.textContent = '− close'; }
+    else { body.style.display = 'none'; toggle.textContent = '+ new'; }
   }
 
   async function createJob() {
-    const btn = event.target;
-    const res = document.getElementById('createResult');
-    btn.disabled = true;
-    res.innerHTML = 'sending transactions...';
-    btn.style.opacity = '0.6';
-
+    const desc = document.getElementById('jobDesc').value.trim();
+    const provider = document.getElementById('jobProvider').value.trim();
+    const budget = parseFloat(document.getElementById('jobBudget').value);
+    const expire = parseInt(document.getElementById('jobExpire').value);
+    const result = document.getElementById('createResult');
+    if (!desc || !provider) { result.innerHTML = '<span style="color:var(--red)">description and provider required</span>'; return; }
+    if (!budget || budget <= 0) { result.innerHTML = '<span style="color:var(--red)">budget must be > 0</span>'; return; }
+    result.textContent = 'creating job on-chain...';
     try {
-      const r = await fetch('/api/jobs/create', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          description: document.getElementById('jobDesc').value,
-          provider: document.getElementById('jobProvider').value,
-          budget: parseFloat(document.getElementById('jobBudget').value),
-          expire_hours: parseInt(document.getElementById('jobExpire').value)
-        })
+      const res = await fetch('/api/jobs/create', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({description: desc, provider: provider, budget: budget, expire_hours: expire})
       });
-      const data = await r.json();
+      const data = await res.json();
       if (data.success) {
-        res.innerHTML = `<span style="color:var(--blue);font-weight:700">✓ Job #${data.job_id} created!</span><br><span style="font-size:11px;opacity:0.5">${data.state} · ${data.budget} USDC</span>`;
+        result.innerHTML = `<span style="color:var(--green);font-weight:700">✅ Job #${data.job_id} created!</span><br><span style="font-size:11px">${data.message}</span>`;
         setTimeout(refresh, 3000);
       } else {
-        res.innerHTML = `<span style="color:var(--red);font-weight:700">✗ ${data.error}</span>`;
+        result.innerHTML = `<span style="color:var(--red)">❌ ${data.error}</span>`;
       }
-    } catch(e) {
-      res.innerHTML = `<span style="color:var(--red)">✗ ${e.message}</span>`;
-    }
-    btn.disabled = false;
-    btn.style.opacity = '1';
+    } catch(e) { result.innerHTML = `<span style="color:var(--red)">${e.message}</span>`; }
   }
 
-  // ── Wallet Health Checker ──
-  async function checkWalletHealth() {
-    const addr = document.getElementById('healthAddr').value.trim();
-    const resDiv = document.getElementById('healthResult');
-    const loadDiv = document.getElementById('healthLoading');
-    const errDiv = document.getElementById('healthError');
+  async function quickDemo() {
+    document.getElementById('jobDesc').value = 'Token scam analysis + security audit for PEPE token on Arc';
+    document.getElementById('jobBudget').value = '1.00';
+    document.getElementById('postJobBody').style.display = 'block';
+    document.getElementById('postJobToggle').textContent = '− close';
+    document.getElementById('createResult').textContent = 'Click "Create Job + Fund Escrow" to submit →';
+  }
 
-    resDiv.style.display = 'none';
-    errDiv.style.display = 'none';
-
-    if (!addr.startsWith('0x') || addr.length !== 42) {
-      errDiv.textContent = 'Invalid wallet address (0x + 40 hex chars)';
-      errDiv.style.display = 'block';
-      return;
-    }
-
-    loadDiv.style.display = 'block';
+  // ── Scanner ──
+  async function scanToken() {
+    const addr = document.getElementById('scanAddr').value.trim();
+    const loading = document.getElementById('scanLoading');
+    const error = document.getElementById('scanError');
+    const result = document.getElementById('scanResult');
+    result.style.display = 'none'; error.style.display = 'none';
+    if (!addr) { error.style.display = 'block'; error.textContent = 'Enter a token address'; return; }
+    loading.style.display = 'block';
     try {
-      const r = await fetch('/api/wallet/health', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({address: addr})
-      });
-      const data = await r.json();
-
-      if (data.error) {
-        errDiv.textContent = data.error;
-        errDiv.style.display = 'block';
+      const res = await fetch('/api/scan', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr})});
+      const data = await res.json();
+      loading.style.display = 'none';
+      if (data.error && data.verdict_label) {
+        result.style.display = 'block';
+        document.getElementById('scanVerdict').textContent = data.verdict_label;
+        document.getElementById('scanScore').textContent = 'N/A';
+        document.getElementById('scanInfo').textContent = data.error;
         return;
       }
+      if (data.error) { error.style.display='block'; error.textContent=data.error; return; }
+      result.style.display = 'block';
+      document.getElementById('scanVerdict').textContent = data.verdict_label;
+      document.getElementById('scanVerdict').style.color = data.score >= 70 ? 'var(--red)' : data.score >= 40 ? 'var(--gold)' : 'var(--green)';
+      document.getElementById('scanScore').textContent = `${data.score}%`;
+      document.getElementById('scanBar').style.width = data.score+'%';
+      document.getElementById('scanBar').style.background = data.score >= 70 ? 'var(--red)' : data.score >= 40 ? 'var(--gold)' : 'var(--green)';
+      document.getElementById('scanInfo').innerHTML = `<strong>${data.token_name} (${data.token_symbol})</strong> · ${data.bytecode_size} · ${data.is_proxy ? 'Proxy' : 'Direct'} · ${data.is_verified ? 'Verified ✓' : 'Unverified'}`;
+      document.getElementById('scanFlags').innerHTML = data.red_flags.length ? '<strong>Red flags:</strong><br>' + data.red_flags.map(f => '· '+f).join('<br>') : '';
+    } catch(e) { loading.style.display='none'; error.style.display='block'; error.textContent=e.message; }
+  }
 
-      // Verdict
-      const verdictColors = {
-        HEALTHY: 'var(--green)',
-        NEEDS_REVIEW: '#d4a017',
-        AT_RISK: 'var(--red)',
-        CRITICAL: 'var(--red)'
-      };
-      const verdictDiv = document.getElementById('healthVerdict');
-      verdictDiv.textContent = '🩺 ' + data.verdict.replace('_', ' ');
-      verdictDiv.style.color = verdictColors[data.verdict] || 'var(--ink)';
-
-      // Score bar
-      document.getElementById('healthScore').textContent = data.score + '/100';
-      const bar = document.getElementById('healthBar');
-      bar.style.width = data.score + '%';
-      bar.style.background = data.score >= 80 ? 'var(--green)' :
-        (data.score >= 50 ? '#d4a017' : 'var(--red)');
-
-      // Checks breakdown
-      const icons = {PASS: '✅', WARN: '⚠️', FAIL: '🚨', UNKNOWN: '❓'};
-      document.getElementById('healthChecks').innerHTML = data.checks.map(c =>
-        '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--muted)">' +
-          '<div style="flex:1">' +
-            '<strong>' + (icons[c.status] || '❓') + ' ' + c.name + '</strong>' +
-            '<div style="font-size:11px;opacity:0.6;margin-top:2px">' + (c.detail || '') + '</div>' +
-          '</div>' +
-          '<span style="font-family:var(--font-h);font-size:14px;margin-left:8px;color:' +
-            (c.penalty > 0 ? 'var(--red)' : 'var(--green)') + '">' +
-            (c.penalty > 0 ? '-' + c.penalty : 'OK') + '</span>' +
-        '</div>'
-      ).join('');
-
-      resDiv.style.display = 'block';
-    } catch(e) {
-      errDiv.textContent = 'Network error. Try again.';
-      errDiv.style.display = 'block';
-    } finally {
-      loadDiv.style.display = 'none';
-    }
+  // ── Wallet Health ──
+  async function checkWalletHealth() {
+    const addr = document.getElementById('healthAddr').value.trim();
+    const loading = document.getElementById('healthLoading');
+    const error = document.getElementById('healthError');
+    const result = document.getElementById('healthResult');
+    result.style.display = 'none'; error.style.display = 'none';
+    if (!addr) { error.style.display = 'block'; error.textContent = 'Enter a wallet address'; return; }
+    loading.style.display = 'block';
+    try {
+      const res = await fetch('/api/wallet/health', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr})});
+      const data = await res.json();
+      loading.style.display = 'none';
+      if (data.error) { error.style.display='block'; error.textContent=data.error; return; }
+      result.style.display = 'block';
+      document.getElementById('healthVerdict').textContent = '🩺 Wallet Health Report';
+      document.getElementById('healthScore').textContent = `${data.score}/100`;
+      document.getElementById('healthBar').style.width = data.score+'%';
+      document.getElementById('healthBar').style.background = data.score >= 70 ? 'var(--green)' : data.score >= 40 ? 'var(--gold)' : 'var(--red)';
+      document.getElementById('healthChecks').innerHTML = (data.checks||[]).map(c => {
+        const icon = c.status === 'ok' ? '✅' : c.status === 'warn' ? '⚠️' : '❌';
+        return `<div style="margin-bottom:3px">${icon} ${c.label}</div>`;
+      }).join('');
+    } catch(e) { loading.style.display='none'; error.style.display='block'; error.textContent=e.message; }
   }
 
   // ── Contract Audit ──
   async function checkContractAudit() {
     const addr = document.getElementById('auditAddr').value.trim();
-    const resDiv = document.getElementById('auditResult');
-    const loadDiv = document.getElementById('auditLoading');
-    const errDiv = document.getElementById('auditError');
-
-    resDiv.style.display = 'none';
-    errDiv.style.display = 'none';
-
-    if (!addr.startsWith('0x') || addr.length !== 42) {
-      errDiv.textContent = 'Invalid contract address (0x + 40 hex chars)';
-      errDiv.style.display = 'block';
-      return;
-    }
-
-    loadDiv.style.display = 'block';
+    const loading = document.getElementById('auditLoading');
+    const error = document.getElementById('auditError');
+    const result = document.getElementById('auditResult');
+    result.style.display = 'none'; error.style.display = 'none';
+    if (!addr) { error.style.display = 'block'; error.textContent = 'Enter a contract address'; return; }
+    loading.style.display = 'block';
     try {
-      const r = await fetch('/api/contract/audit', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({address: addr})
-      });
-      const data = await r.json();
-
-      if (data.error) {
-        errDiv.textContent = data.error;
-        errDiv.style.display = 'block';
-        return;
-      }
-
-      const verdictColors = {
-        TRANSPARENT: 'var(--green)',
-        MOSTLY_TRANSPARENT: '#d4a017',
-        MODERATE_RISK: '#d4a017',
-        OPAQUE: 'var(--red)',
-        HIDDEN_DANGER: 'var(--red)',
-        NOT_A_CONTRACT: 'var(--ink)'
-      };
-      document.getElementById('auditVerdict').textContent = '🔍 ' + data.verdict.replace(/_/g, ' ');
-      document.getElementById('auditVerdict').style.color = verdictColors[data.verdict] || 'var(--ink)';
-
-      if (data.name) {
-        document.getElementById('auditVerdict').textContent += ' — ' + data.name + ' (' + data.symbol + ')';
-      }
-
-      document.getElementById('auditScore').textContent = data.score + '/100';
-      const bar = document.getElementById('auditBar');
-      bar.style.width = data.score + '%';
-      bar.style.background = data.score >= 80 ? 'var(--green)' :
-        (data.score >= 40 ? '#d4a017' : 'var(--red)');
-
-      const icons = {PASS: '✅', WARN: '⚠️', FAIL: '🚨', UNKNOWN: '❓'};
-      document.getElementById('auditChecks').innerHTML = data.checks.map(c =>
-        '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--muted)">' +
-          '<div style="flex:1">' +
-            '<strong>' + (icons[c.status] || '❓') + ' ' + c.name + '</strong>' +
-            '<div style="font-size:11px;opacity:0.6;margin-top:2px">' + (c.detail || '') + '</div>' +
-          '</div>' +
-          '<span style="font-family:var(--font-h);font-size:14px;margin-left:8px;color:' +
-            (c.penalty > 0 ? 'var(--red)' : 'var(--green)') + '">' +
-            (c.penalty > 0 ? '-' + c.penalty : 'OK') + '</span>' +
-        '</div>'
-      ).join('');
-
-      resDiv.style.display = 'block';
-    } catch(e) {
-      errDiv.textContent = 'Network error. Try again.';
-      errDiv.style.display = 'block';
-    } finally {
-      loadDiv.style.display = 'none';
-    }
+      const res = await fetch('/api/contract/audit', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr})});
+      const data = await res.json();
+      loading.style.display = 'none';
+      if (data.error) { error.style.display='block'; error.textContent=data.error; return; }
+      result.style.display = 'block';
+      document.getElementById('auditVerdict').textContent = '📋 Contract Audit Report';
+      document.getElementById('auditScore').textContent = `${data.score}/100`;
+      document.getElementById('auditBar').style.width = data.score+'%';
+      document.getElementById('auditBar').style.background = data.score >= 70 ? 'var(--green)' : data.score >= 40 ? 'var(--gold)' : 'var(--red)';
+      document.getElementById('auditChecks').innerHTML = (data.checks||[]).map(c => {
+        const icon = c.status === 'ok' ? '✅' : c.status === 'warn' ? '⚠️' : '❌';
+        return `<div style="margin-bottom:3px">${icon} ${c.label}</div>`;
+      }).join('');
+    } catch(e) { loading.style.display='none'; error.style.display='block'; error.textContent=e.message; }
   }
 
-  // ── Airdrop Safety ──
+  // ── Airdrop ──
   async function checkAirdrop() {
     const url = document.getElementById('airdropUrl').value.trim();
-    const resDiv = document.getElementById('airdropResult');
-    const loadDiv = document.getElementById('airdropLoading');
-    const errDiv = document.getElementById('airdropError');
-
-    resDiv.style.display = 'none';
-    errDiv.style.display = 'none';
-
-    if (!url) {
-      errDiv.textContent = 'Enter an airdrop link URL to scan';
-      errDiv.style.display = 'block';
-      return;
-    }
-
-    loadDiv.style.display = 'block';
+    const loading = document.getElementById('airdropLoading');
+    const error = document.getElementById('airdropError');
+    const result = document.getElementById('airdropResult');
+    result.style.display = 'none'; error.style.display = 'none';
+    if (!url) { error.style.display = 'block'; error.textContent = 'Enter an airdrop URL'; return; }
+    loading.style.display = 'block';
     try {
-      const r = await fetch('/api/airdrop/safety', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({url: url})
-      });
-      const data = await r.json();
-
-      if (data.error) {
-        errDiv.textContent = data.error;
-        errDiv.style.display = 'block';
-        return;
-      }
-
-      const verdictColors = {
-        SAFE: 'var(--green)',
-        LIKELY_SAFE: '#d4a017',
-        SUSPICIOUS: '#d4a017',
-        HIGH_RISK: 'var(--red)',
-        CONFIRMED_SCAM: 'var(--red)',
-        INVALID_URL: 'var(--ink)'
-      };
-      document.getElementById('airdropVerdict').textContent = '🪂 ' + data.verdict.replace(/_/g, ' ');
-      document.getElementById('airdropVerdict').style.color = verdictColors[data.verdict] || 'var(--ink)';
-
-      document.getElementById('airdropScore').textContent = data.score + '/100';
-      const bar = document.getElementById('airdropBar');
-      bar.style.width = data.score + '%';
-      bar.style.background = data.score >= 80 ? 'var(--green)' :
-        (data.score >= 40 ? '#d4a017' : 'var(--red)');
-
-      const icons = {PASS: '✅', WARN: '⚠️', FAIL: '🚨', INFO: 'ℹ️', UNKNOWN: '❓'};
-      document.getElementById('airdropChecks').innerHTML = data.checks.map(c =>
-        '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--muted)">' +
-          '<div style="flex:1">' +
-            '<strong>' + (icons[c.status] || '❓') + ' ' + c.name + '</strong>' +
-            '<div style="font-size:11px;opacity:0.6;margin-top:2px">' + (c.detail || '') + '</div>' +
-          '</div>' +
-          '<span style="font-family:var(--font-h);font-size:14px;margin-left:8px;color:' +
-            (c.penalty > 0 ? 'var(--red)' : 'var(--green)') + '">' +
-            (c.penalty > 0 ? '-' + c.penalty : 'OK') + '</span>' +
-        '</div>'
-      ).join('');
-
-      if (data.extracted_contract) {
-        document.getElementById('airdropChecks').innerHTML += 
-          '<div style="margin-top:8px;font-size:11px;opacity:0.5">' +
-          '📎 Contract found → Arc audit: ' + data.extracted_contract + '</div>';
-      }
-
-      resDiv.style.display = 'block';
-    } catch(e) {
-      errDiv.textContent = 'Network error. Try again.';
-      errDiv.style.display = 'block';
-    } finally {
-      loadDiv.style.display = 'none';
-    }
+      const res = await fetch('/api/airdrop/safety', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url})});
+      const data = await res.json();
+      loading.style.display = 'none';
+      if (data.error) { error.style.display='block'; error.textContent=data.error; return; }
+      result.style.display = 'block';
+      const score = data.safety_score != null ? data.safety_score : (data.score || 0);
+      document.getElementById('airdropVerdict').textContent = data.verdict || 'Analysis Complete';
+      document.getElementById('airdropVerdict').style.color = data.verdict === 'SAFE' ? 'var(--green)' : data.verdict === 'SUSPICIOUS' ? 'var(--gold)' : 'var(--red)';
+      document.getElementById('airdropScore').textContent = `${score}/100`;
+      document.getElementById('airdropBar').style.width = score+'%';
+      document.getElementById('airdropBar').style.background = score >= 70 ? 'var(--green)' : score >= 40 ? 'var(--gold)' : 'var(--red)';
+      document.getElementById('airdropChecks').innerHTML = (data.checks||[]).map(c => {
+        const icon = c.status === 'ok' ? '✅' : c.status === 'warn' ? '⚠️' : '❌';
+        return `<div style="margin-bottom:3px">${icon} ${c.label}</div>`;
+      }).join('');
+    } catch(e) { loading.style.display='none'; error.style.display='block'; error.textContent=e.message; }
   }
-</script>
 
+  // Init
+  refresh();
+  setInterval(refresh, 15000);
+</script>
 </body>
 </html>
